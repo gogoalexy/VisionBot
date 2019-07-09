@@ -6,7 +6,7 @@ BLUE_LED_PIN = 3 # operation indicator
 
 sensor.reset() # Initialize the camera sensor.
 sensor.set_pixformat(sensor.GRAYSCALE) # grayscale image
-sensor.set_framesize(sensor.QQQVGA) # 80*60 resolution
+sensor.set_framesize(sensor.B64X64) # 80*60 resolution
 sensor.skip_frames(time = 2000) # Let new settings take affect.
 sensor.set_auto_whitebal(False) # Turn off white balance.
 clock = time.clock() # Tracks FPS.
