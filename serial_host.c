@@ -42,7 +42,7 @@ int main()
     // tty.c_oflag &= ~ONOEOT; // Prevent removal of C-d chars (0x004) in output (NOT PRESENT ON LINUX)
 
     tty.c_cc[VTIME] = 1;    // Wait for up to 0.1s (10 deciseconds), returning as soon as any data is received.
-    tty.c_cc[VMIN] = 0;
+    tty.c_cc[VMIN] = 26;
 
     // Set in/out baud rate to be 9600
     cfsetispeed(&tty, B115200);
@@ -56,7 +56,7 @@ int main()
     write(serial_port, msg, sizeof(msg));
 
     // Allocate memory for read buffer, set size according to your needs
-    char read_buf [92];
+    char read_buf [26];
     memset(&read_buf, '\0', sizeof(read_buf));
 
     // Read bytes. The behaviour of read() (e.g. does it block?,

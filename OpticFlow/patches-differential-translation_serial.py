@@ -21,7 +21,7 @@ BLOCK_H = 8 # pow2
 # up +- half of the hoizontal and vertical resolution.
 
 import sensor, image, time
-
+from pyb import USB_VCP, LED
 # NOTE!!! You have to use a small power of 2 resolution when using
 # find_displacement(). This is because the algorithm is powered by
 # something called phase correlation which does the image comparison
