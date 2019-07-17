@@ -10,12 +10,15 @@
 #include <termios.h> // Contains POSIX terminal control definitions
 #include <unistd.h> // write(), read(), close()
 
+#define BAUD B115200
+#define sizePacket 26
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 int initSerial(char* port);
-int getOpticFlow(int fd, int8_t* buffer);
+int getOpticFlow(int fd, int8_t buffer[], size_t length);
 int closeSerial(int fd);
 
 #ifdef __cplusplus

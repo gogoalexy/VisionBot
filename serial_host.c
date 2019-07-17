@@ -1,7 +1,5 @@
 #include "serial_host.h"
 
-#define BAUD B115200
-
 int initSerial(char* port)
 {
     // Open the serial port.
@@ -30,7 +28,7 @@ int initSerial(char* port)
     tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
     // tty.c_oflag &= ~OXTABS; // Prevent conversion of tabs to spaces (NOT PRESENT ON LINUX)
     // tty.c_oflag &= ~ONOEOT; // Prevent removal of C-d chars (0x004) in output (NOT PRESENT ON LINUX)
-    tty.c_cc[VTIME] = 1;    // Wait for up to 0.1s (10 deciseconds), returning as soon as any data is received.
+    tty.c_cc[VTIME] = 10;    // Wait for up to 0.1s (10 deciseconds), returning as soon as any data is received.
     tty.c_cc[VMIN] = 26;
     // Set in/out baud rate
     cfsetispeed(&tty, BAUD);
@@ -43,22 +41,23 @@ int initSerial(char* port)
     return fd;
 }
 
-int getOpticFlow(int fd, int8_t* buffer)
+int getOpticFlow(int fd, int8_t buffer[], size_t length)
 {
     // On success, the number of bytes written is returned.  On error, -1 is
     // returned, and errno is set to indicate the cause of the error.
     uint8_t msg[] = {0x01};
     write(fd, msg, sizeof(msg));
 
-    memset(&buffer, '\0', sizeof(buffer));
+    memset(buffer, '\0', length);
     // Read bytes. The behaviour of read() (e.g. does it block?,
     // how long does it block for?) depends on the configuration
     // settings above, specifically VMIN and VTIME
-    int num_bytes = read(fd, &buffer, sizeof(buffer));
+    int num_bytes = read(fd, buffer, length);
     // n is the number of bytes read. n may be 0 if no bytes were received, and can also be -1 to signal an error.
     if (num_bytes < 0) {
         printf("Error reading: %s", strerror(errno));
     }
+    return num_bytes;
 }
 
 int closeSerial(int fd)
