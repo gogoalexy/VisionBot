@@ -8,7 +8,7 @@ BLOCK_H = 16
 ret, frame1 = cap.read()
 prvs = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('output.avi',fourcc, 25.0, (316,208))
+out = cv2.VideoWriter('output.avi',fourcc, 14.5, (316,208))
 
 while(1):
     ret, frame2 = cap.read()
@@ -19,7 +19,7 @@ while(1):
     
         for y in range(6, 207, BLOCK_H):
             for x in range(6, 315, BLOCK_W):
-                cv2.line(frame2, (x, y), (x+int(flow[y, x, 0]), y+int(flow[y, x, 1])), ( 0, 255, 0 ), thickness=1, lineType=4, shift=0)
+                cv2.line(frame2, (x, y), (x+int(2*flow[y, x, 0]), y+int(2*flow[y, x, 1])), ( 0, 255, 0 ), thickness=2, lineType=4, shift=0)
         out.write(frame2)
         cv2.imshow('frame2',frame2)
         prvs = next
