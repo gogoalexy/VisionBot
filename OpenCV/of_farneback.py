@@ -17,7 +17,7 @@ while(1):
         #next = frame2
         next = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
         flow = cv2.calcOpticalFlowFarneback(prvs, next, None,0.5, 3, 15, 3, 5, 1.2, 0)
-    
+
         for y in range(6, 240, BLOCK_H):
             for x in range(6, 320, BLOCK_W):
                 cv2.line(frame2, (x, y), (x+int(2*flow[y, x, 0]), y+int(2*flow[y, x, 1])), ( 0, 255, 0 ), thickness=2, lineType=4, shift=0)
@@ -26,7 +26,7 @@ while(1):
         prvs = next
         if cv2.waitKey(1) & 0xff == ord('q'):
             break
-        
+
     else:
         break
 
