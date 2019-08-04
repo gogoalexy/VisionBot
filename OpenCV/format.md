@@ -7,17 +7,17 @@ The `.flow` file is actually a pure `.txt` file. You can open the file with any 
 3. The order presenting all the pixels in a frame is from upper-left to lower-right, and pixels are divided by semicolons.
 4. The element type is floating point number rounded to the first place after decimal point.
 
-___[Pixel order]___
-
-     1---->
-     -----------------
-  2  |               |
-  |  |               |
-  \/ |               |
-     |               |
-     -----------------
-
-___[Example]___
+__[Pixel order]__
+```
+      1---->
+	  ---------------------------
+	2  |				|
+	|  |				|
+	\/ |				|
+	   |				|
+	  ---------------------------
+```
+__[Example]__
 
 ```
 0.0,0.0;0.0,0.0;......;0.0,0.0;
