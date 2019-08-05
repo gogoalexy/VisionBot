@@ -14,16 +14,18 @@ print("Processing...")
 
 ret, frame1 = cap.read()
 prvs = cv2.cvtColor(frame1, cv2.COLOR_RGB2GRAY)
+counter = 0
 
 while(1):
+    counter = counter + 1
     ret, frame2 = cap.read()
     if ret==True:
         next = cv2.cvtColor(frame2, cv2.COLOR_RGB2GRAY)
         flow = cv2.calcOpticalFlowFarneback(prvs, next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
-
+        print("frame: {}".format(counter))
         for y in range(0, fheight):
             for x in range(0, fwidth):
-                outFile.write( str( round(flow[y, x, 0], 1) ) + ',' + str( round( flow[y, x, 1], 2) ) + ';' )
+                outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) + ';' )
 
         outFile.write('\n')
         prvs = next
