@@ -1,6 +1,7 @@
 import sys
 from os.path import splitext
 import cv2
+import math
 import numpy as np
 
 inFile = str( sys.argv[1] )
