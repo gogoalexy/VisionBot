@@ -26,7 +26,7 @@ while(1):
     if ret==True:
         #next = frame2
         next = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
-        flow = cv2.calcOpticalFlowFarneback(prvs, next, None,0.5, 3, 15, 3, 5, 1.2, 0)
+        flow = cv2.calcOpticalFlowFarneback(prvs, next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
 
         for y in range(0, fheight, BLOCK_H):
             for x in range(0, fwidth, BLOCK_W):
