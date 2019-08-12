@@ -13,7 +13,7 @@ def cropBorder(srcLength, dstLength):
     return begin, end
 
 inFile = str( sys.argv[1] )
-outFileName = splitext(inFile)[0] + "cd.avi"
+outFileName = splitext(inFile)[0] + "_norm.mp4"
 src = cv2.VideoCapture(inFile)
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
 
@@ -21,6 +21,8 @@ fps = int( src.get(cv2.CAP_PROP_FPS) )
 srcHW = tuple([int(src.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(src.get(cv2.CAP_PROP_FRAME_WIDTH))])
 dstHW = tuple([128, 128])
 print("Input file: {} with {} fps, {} pixels high, {} pixels wide".format(inFile, fps, srcHW[0], srcHW[1]))
+if srcHW[0] < dstHW[0] or srcHW[1] < dstHW[1]:
+    print('\033[93m' + "Warning: Original video resolution is lower than the target resolution." + '\033[0m')
 print("Processing...")
 
 if srcHW[0] > srcHW[1]:
@@ -41,6 +43,6 @@ elif srcHW[0] < srcHW[1]:
         dst.write(cv2.resize(cropframe, dsize=dstHW, interpolation=cv2.INTER_LINEAR))
         ret, frame = src.read()
 
-print("Output file: {} with {} fps, {} pixels high, {} pixels wide".format(outFileName, fps, dstHW[0], dstHW[1]))
+print("Output file: {} with {} fps, {} pixels high, {} pixels wide".format(outFileName, fps, int(dst.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(dst.get(cv2.CAP_PROP_FRAME_WIDTH))))
 src.release()
 dst.release()
