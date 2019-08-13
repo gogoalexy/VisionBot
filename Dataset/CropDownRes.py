@@ -19,7 +19,7 @@ fourcc = cv2.VideoWriter_fourcc(*'MJPG')
 
 fps = int( src.get(cv2.CAP_PROP_FPS) )
 srcHW = tuple([int(src.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(src.get(cv2.CAP_PROP_FRAME_WIDTH))])
-dstHW = tuple([128, 128])
+dstHW = tuple([64, 64])
 print("Input file: {} with {} fps, {} pixels high, {} pixels wide".format(inFile, fps, srcHW[0], srcHW[1]))
 if srcHW[0] < dstHW[0] or srcHW[1] < dstHW[1]:
     print('\033[93m' + "Warning: Original video resolution is lower than the target resolution." + '\033[0m')
