@@ -22,9 +22,10 @@ while(cap.isOpened()):
     ret, current_frame = cap.read()
     if ret == True:
         curr = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
-        motion.getBM(prvs, curr, BM)
+        motionlib.getBM(prvs, curr, BM)
         outframe = visualize.drawGrids(current_frame, 0, 63, 8)
         out.write(visualize.drawFlowArrow(outframe, BM))
+        prvs = curr
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     else: 

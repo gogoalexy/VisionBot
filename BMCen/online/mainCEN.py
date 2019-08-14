@@ -9,8 +9,8 @@ import motionlib
 
 HW = tuple([64, 64])
 cap = cv2.VideoCapture(0)
-src.set(cv2.CAP_PROP_FRAME_WIDTH, HW[1])
-src.set(cv2.CAP_PROP_FRAME_HEIGHT, HW[0])
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, HW[1])
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HW[0])
 fps = int( cap.get(cv2.CAP_PROP_FPS) )
 
 ret, previous_frame = cap.read()
@@ -23,16 +23,17 @@ while(cap.isOpened()):
     ret, current_frame = cap.read()
     if ret == True:
         curr = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
-        prvsBinMass = motion.getCEN(prvs, curr, prvsBinMass, CEN)
+        prvsBinMass = motionlib.getCEN(prvs, curr, prvsBinMass, CEN)
         outframe = visualize.drawGrids(current_frame, 0, 63, 8)
         cv2.imshow("Centroid", visualize.drawFlowArrow(outframe, CEN))
+        prvs = curr
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    else: 
+    else:
         break
     end = time.time()
     fps  = 1 / (end - start);
     print(fps)
- 
+
 cap.release()
 cv2.destroyAllWindows()

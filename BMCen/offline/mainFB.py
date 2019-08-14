@@ -26,10 +26,11 @@ while(cap.isOpened()):
             for x in range(4, HW[1], 8):
                 cv2.line(current_frame, (x, y), (x+int(flow[y, x, 0]), y+int(flow[y, x, 1])), ( 0, 255, 0 ), thickness=2, lineType=4, shift=0)
         out.write(current_frame)
+        prvs = curr
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    else: 
+    else:
         break
- 
+
 cap.release()
 out.release()
