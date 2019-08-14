@@ -43,6 +43,6 @@ elif srcHW[0] < srcHW[1]:
         dst.write(cv2.resize(cropframe, dsize=dstHW, interpolation=cv2.INTER_LINEAR))
         ret, frame = src.read()
 
-print("Output file: {} with {} fps, {} pixels high, {} pixels wide".format(outFileName, fps, int(dst.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(dst.get(cv2.CAP_PROP_FRAME_WIDTH))))
+print("Output file: {} with {} fps, {} pixels high, {} pixels wide".format(outFileName, fps, dstHW[0], dstHW[1]))
 src.release()
 dst.release()
