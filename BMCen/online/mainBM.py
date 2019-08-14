@@ -2,6 +2,7 @@ import sys
 import cv2
 import time
 import numpy as np
+from ctypes import cdll
 from os.path import splitext
 sys.path.append("../")
 import visualize
@@ -28,11 +29,11 @@ while(cap.isOpened()):
         prvs = curr
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    else: 
+    else:
         break
     end = time.time()
     fps  = 1 / (end - start);
     print(fps)
- 
+
 cap.release()
 cv2.destroyAllWindows()

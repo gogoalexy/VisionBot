@@ -2,10 +2,13 @@ import sys
 import cv2
 import time
 import numpy as np
+from ctypes import cdll
 from os.path import splitext
 sys.path.append("../")
 import visualize
 import motionlib
+
+cdll.LoadLibrary("")
 
 HW = tuple([64, 64])
 cap = cv2.VideoCapture(0)
