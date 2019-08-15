@@ -2,7 +2,7 @@
 
 using namespace cv;
 using namespace std;
-
+/*
 string type2str(int type) {
     string r;
 
@@ -56,6 +56,7 @@ void get_saliency(Mat diff, int Loc[8][8])
     //printf("\n");
     return;
 }
+*/
 
 void get_BM(Mat currentFrame, Mat prevFrame, int BM[8][8][2])
 {
@@ -163,7 +164,7 @@ void get_CEN(Mat diff,
     }
     return;
 }
-
+/*
 void get_max_sal(int Sal[8][8], int &max_sal, int &position_x, int &position_y)
 {
     int i, j, min_x, max_x, max_y, min_y;
@@ -249,4 +250,4 @@ Mat Draw_Vxy_Arrow_CEN(Mat frame, float Vxy[8][8][2], int Loc[8][8], int positio
     }
     return frame;
 }
-
+*/

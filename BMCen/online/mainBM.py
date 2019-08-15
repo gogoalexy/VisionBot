@@ -2,11 +2,18 @@ import sys
 import cv2
 import time
 import numpy as np
+import numpy.ctypeslib as npct
 from ctypes import cdll
 from os.path import splitext
 sys.path.append("../")
 import visualize
-import motionlib
+
+ucharPtr = npct.ndpointer(dtype=np.uint8, ndim=1, flags='CONTIGUOUS')
+motionlib = cdll("../build/motionlib.so")
+motionlib.get_BM.restype = None
+motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=numpy.int32)]
+motionlib.get_CEN.restype = None
+motionlib.get_CEN.argtypes = [ucharPtr, npct.ndpointer(dtype=numpy.int32), npct.ndpointer(dtype=numpy.int32), npct.ndpointer(dtype=numpy.float64)]
 
 HW = tuple([64, 64])
 cap = cv2.VideoCapture(0)
