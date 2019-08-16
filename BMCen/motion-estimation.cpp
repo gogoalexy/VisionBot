@@ -57,13 +57,22 @@ void get_saliency(Mat diff, int Loc[8][8])
     return;
 }
 */
+Mat array2image(uchar* image_byte)
+{
+    int image_rows = 64;
+    int image_cols = 64;
+    Mat img = cv::Mat(image_rows, image_cols, CV_8U, image_byte);
+    return img;
+}
 
-void get_BM(Mat currentFrame, Mat prevFrame, int BM[8][8][2])
+void get_BM(uchar* cFrame, uchar* pFrame, int BM[8][8][2])
 {
     int i, j, srchx, srchy;
     int Wx, Wy;
     int cost, bestcost = 99999;
     int cnt, tmpx, tmpy;
+    Mat currentFrame = array2image(cFrame);
+    Mat prevFrame = array2image(pFrame);
 
     for(i = 0; i < 8; i++) {
         for(j = 0; j < 8; j++) {
@@ -101,8 +110,8 @@ void get_BM(Mat currentFrame, Mat prevFrame, int BM[8][8][2])
     return;
 }
 
-void get_CEN(Mat diff, 
-         int currBinaryMass[64][64], int prevBinaryMass[64][64], 
+void get_CEN(uchar* dFrame,
+         int currBinaryMass[64][64], int prevBinaryMass[64][64],
          float CEN[8][8][2])
 {
     int i, j, cmi, cmj;
@@ -110,6 +119,7 @@ void get_CEN(Mat diff,
     int sum_1, r_sum_1, c_sum_1;
     int sum_2, r_sum_2, c_sum_2;
     float ced1[2], ced2[2];
+    Mat diff = array2image(dFrame);
 
     for(i = 0; i < 64; i++) {
         for(j = 0; j < 64; j++) {
@@ -168,7 +178,7 @@ void get_CEN(Mat diff,
 void get_max_sal(int Sal[8][8], int &max_sal, int &position_x, int &position_y)
 {
     int i, j, min_x, max_x, max_y, min_y;
-    
+
     for(max_sal = 0, i = 0; i < 8; i++) {
         for(j = 0; j < 8; j++) {
             if(Sal[i][j] > max_sal) {
@@ -199,13 +209,13 @@ Mat Draw_Vxy_Arrow(Mat frame, int Vxy[8][8][2], int Loc[8][8])
     int i, j;
 
     for(i = 0; i < 8; i++) {
-        for(j = 0; j < 8; j++) {    
-            line(frame, 
-                Point((i*8+4)*8, (j*8+4)*8), 
-                Point((i*8+4+Vxy[i][j][0])*8, (j*8+4+Vxy[i][j][1])*8), 
+        for(j = 0; j < 8; j++) {
+            line(frame,
+                Point((i*8+4)*8, (j*8+4)*8),
+                Point((i*8+4+Vxy[i][j][0])*8, (j*8+4+Vxy[i][j][1])*8),
                 Scalar(80+Loc[i][j]*3, 80+Loc[i][j]*3, 80+Loc[i][j]*3), 2, 8);
-            circle(frame, 
-                Point((i*8+4+Vxy[i][j][0])*8, (j*8+4+Vxy[i][j][1])*8), 
+            circle(frame,
+                Point((i*8+4+Vxy[i][j][0])*8, (j*8+4+Vxy[i][j][1])*8),
                 3, Scalar(80+Loc[i][j]*3, 80+Loc[i][j]*3, 80+Loc[i][j]*3), -1);
         }
     }
@@ -234,13 +244,13 @@ Mat Draw_Vxy_Arrow_CEN(Mat frame, float Vxy[8][8][2], int Loc[8][8], int positio
     int i, j;
 
     for(i = 0; i < 8; i++) {
-        for(j = 0; j < 8; j++) {    
-            line(frame, 
-                Point((i*8+4)*8, (j*8+4)*8), 
-                Point((i*8+4+(int)Vxy[i][j][0])*8, (j*8+4+(int)Vxy[i][j][1])*8), 
+        for(j = 0; j < 8; j++) {
+            line(frame,
+                Point((i*8+4)*8, (j*8+4)*8),
+                Point((i*8+4+(int)Vxy[i][j][0])*8, (j*8+4+(int)Vxy[i][j][1])*8),
                 Scalar(80+Loc[i][j]*3, 0, 0), 2, 8);
-            circle(frame, 
-                Point((i*8+4+(int)Vxy[i][j][0])*8, (j*8+4+(int)Vxy[i][j][1])*8), 
+            circle(frame,
+                Point((i*8+4+(int)Vxy[i][j][0])*8, (j*8+4+(int)Vxy[i][j][1])*8),
                 3, Scalar(80+Loc[i][j]*3, 0, 0), -1);
             rectangle(frame,
                 Point((position_x*8)*8, (position_y*8)*8),

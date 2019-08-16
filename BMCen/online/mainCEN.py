@@ -8,7 +8,7 @@ from os.path import splitext
 sys.path.append("../")
 import visualize
 
-ucharPtr = npct.ndpointer(dtype=np.uint8, ndim=1, flags='CONTIGUOUS')
+ucharPtr = npct.ndpointer(dtype=np.uint8, flags='CONTIGUOUS')
 motionlib = ctypes.cdll.LoadLibrary("../build/libmotion.so")
 motionlib.get_BM.restype = None
 motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=np.int32)]
@@ -33,9 +33,9 @@ while(cap.isOpened()):
     if ret == True:
         curr = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
         diff = cv2.absdiff(curr, prvs)
-        tmpimg = np.asarray(diff, dtype=np.uint8, order='C')
-        tmpimg = tmpimg.ctypes.data_as(ctypes.c_char_p)
-        #print(str(type(diff)))
+        #tmpimg = np.asarray(diff, dtype=np.uint8, order='C')
+        #tmpimg = tmpimg.ctypes.data_as(ctypes.c_char_p)
+        #print(str(tmpimg.))
         motionlib.get_CEN(diff, currBinMass, prvsBinMass, CEN)
         outframe = visualize.drawGrids(current_frame, 0, 63, 8)
         cv2.imshow("Centroid", visualize.drawFlowArrow(outframe, CEN))

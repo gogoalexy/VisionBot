@@ -8,7 +8,7 @@ from os.path import splitext
 sys.path.append("../")
 import visualize
 
-ucharPtr = npct.ndpointer(dtype=np.uint8, ndim=1, flags='CONTIGUOUS')
+ucharPtr = npct.ndpointer(dtype=np.uint8,  flags='CONTIGUOUS') # ndim=1 away
 motionlib = cdll.LoadLibrary("../build/libmotion.so")
 motionlib.get_BM.restype = None
 motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=np.int32)]
@@ -26,11 +26,11 @@ prvs = cv2.cvtColor(previous_frame, cv2.COLOR_BGR2GRAY)
 
 while(cap.isOpened()):
     start = time.time()
-    BM = np.zeros((8, 8, 2))
+    BM = np.zeros((8, 8, 2), dtype=np.int32)
     ret, current_frame = cap.read()
     if ret == True:
         curr = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
-        motionlib.getBM(prvs, curr, BM)
+        motionlib.get_BM(prvs, curr, BM)
         outframe = visualize.drawGrids(current_frame, 0, 63, 8)
         cv2.imshow("Blocking Matching", visualize.drawFlowArrow(outframe, BM))
         prvs = curr
