@@ -3,18 +3,17 @@ import cv2
 import time
 import numpy as np
 import numpy.ctypeslib as npct
-from ctypes import cdll
+import ctypes
 from os.path import splitext
 sys.path.append("../")
 import visualize
-import motionlib
 
 ucharPtr = npct.ndpointer(dtype=np.uint8, ndim=1, flags='CONTIGUOUS')
-motionlib = cdll("../build/motionlib.so")
+motionlib = ctypes.cdll.LoadLibrary("../build/libmotion.so")
 motionlib.get_BM.restype = None
-motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=numpy.int32)]
+motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=np.int32)]
 motionlib.get_CEN.restype = None
-motionlib.get_CEN.argtypes = [ucharPtr, npct.ndpointer(dtype=numpy.int32), npct.ndpointer(dtype=numpy.int32), npct.ndpointer(dtype=numpy.float64)]
+motionlib.get_CEN.argtypes = [ucharPtr, npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.float64)]
 
 HW = tuple([64, 64])
 cap = cv2.VideoCapture(0)
@@ -24,7 +23,8 @@ fps = int( cap.get(cv2.CAP_PROP_FPS) )
 
 ret, previous_frame = cap.read()
 prvs = cv2.cvtColor(previous_frame, cv2.COLOR_BGR2GRAY)
-prvsBinMass = np.zeros((64, 64))
+prvsBinMass = np.zeros((64, 64), dtype=np.int32)
+currBinMass = np.zeros((64, 64), dtype=np.int32)
 
 while(cap.isOpened()):
     start = time.time()
@@ -32,7 +32,11 @@ while(cap.isOpened()):
     ret, current_frame = cap.read()
     if ret == True:
         curr = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
-        prvsBinMass = motionlib.getCEN(prvs, curr, prvsBinMass, CEN)
+        diff = cv2.absdiff(curr, prvs)
+        tmpimg = np.asarray(diff, dtype=np.uint8, order='C')
+        tmpimg = tmpimg.ctypes.data_as(ctypes.c_char_p)
+        #print(str(type(diff)))
+        motionlib.get_CEN(diff, currBinMass, prvsBinMass, CEN)
         outframe = visualize.drawGrids(current_frame, 0, 63, 8)
         cv2.imshow("Centroid", visualize.drawFlowArrow(outframe, CEN))
         prvs = curr

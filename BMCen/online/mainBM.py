@@ -9,11 +9,11 @@ sys.path.append("../")
 import visualize
 
 ucharPtr = npct.ndpointer(dtype=np.uint8, ndim=1, flags='CONTIGUOUS')
-motionlib = cdll("../build/motionlib.so")
+motionlib = cdll.LoadLibrary("../build/libmotion.so")
 motionlib.get_BM.restype = None
-motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=numpy.int32)]
+motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=np.int32)]
 motionlib.get_CEN.restype = None
-motionlib.get_CEN.argtypes = [ucharPtr, npct.ndpointer(dtype=numpy.int32), npct.ndpointer(dtype=numpy.int32), npct.ndpointer(dtype=numpy.float64)]
+motionlib.get_CEN.argtypes = [ucharPtr, npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.float64)]
 
 HW = tuple([64, 64])
 cap = cv2.VideoCapture(0)
