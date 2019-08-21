@@ -1,13 +1,12 @@
 #include "motion-estimation.h"
 
-using namespace cv;
 using namespace std;
 
-Mat array2image(uchar* image_byte)
+cv::Mat array2image(uchar* image_byte)
 {
     int image_rows = 64;
     int image_cols = 64;
-    Mat img = cv::Mat(image_rows, image_cols, CV_8U, image_byte);
+    cv::Mat img = cv::Mat(image_rows, image_cols, CV_8U, image_byte);
     return img;
 }
 
@@ -17,8 +16,8 @@ void get_BM(uchar* cFrame, uchar* pFrame, int BM[8][8][2])
     int Wx, Wy;
     int cost, bestcost = 99999;
     int cnt, tmpx, tmpy;
-    Mat currentFrame = array2image(cFrame);
-    Mat prevFrame = array2image(pFrame);
+    cv::Mat currentFrame = array2image(cFrame);
+    cv::Mat prevFrame = array2image(pFrame);
 
     for(i = 0; i < 8; i++) {
         for(j = 0; j < 8; j++) {
@@ -38,8 +37,8 @@ void get_BM(uchar* cFrame, uchar* pFrame, int BM[8][8][2])
                         //tmp = 64 * (cnt / 8) + (cnt % 8);
                         tmpx = cnt / 8;
                         tmpy = cnt % 8;
-                        cost += abs(prevFrame.at<uchar>(j*8+tmpy, i*8+tmpx)-
-                                currentFrame.at<uchar>(srchy+tmpy, srchx+tmpx));
+                        int diff = cv::abs(prevFrame.at<uchar>(j*8+tmpy, i*8+tmpx)-currentFrame.at<uchar>(srchy+tmpy, srchx+tmpx));
+                        cost += diff > 5 ? diff : 0;
                     }
                     if(cost <= bestcost) {
                         bestcost = cost;
@@ -56,7 +55,7 @@ void get_BM(uchar* cFrame, uchar* pFrame, int BM[8][8][2])
     return;
 }
 
-void get_CEN(uchar* dFrame,
+void get_CEN(uchar* cFrame, uchar* pFrame,
          int currBinaryMass[64][64], int prevBinaryMass[64][64],
          float CEN[8][8][2])
 {
@@ -65,7 +64,10 @@ void get_CEN(uchar* dFrame,
     int sum_1, r_sum_1, c_sum_1;
     int sum_2, r_sum_2, c_sum_2;
     float ced1[2], ced2[2];
-    Mat diff = array2image(dFrame);
+    cv::Mat diff;
+    cv::Mat currentFrame = array2image(cFrame);
+    cv::Mat prevFrame = array2image(pFrame);
+    cv::absdiff(currentFrame, prevFrame, diff);
 
     for(i = 0; i < 64; i++) {
         for(j = 0; j < 64; j++) {

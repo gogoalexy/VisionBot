@@ -13,7 +13,7 @@ motionlib = cdll.LoadLibrary("../build/libmotion.so")
 motionlib.get_BM.restype = None
 motionlib.get_BM.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=np.int32)]
 motionlib.get_CEN.restype = None
-motionlib.get_CEN.argtypes = [ucharPtr, npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.float64)]
+motionlib.get_CEN.argtypes = [ucharPtr, ucharPtr, npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.int32), npct.ndpointer(dtype=np.float64)]
 
 HW = tuple([64, 64])
 cap = cv2.VideoCapture(0)
@@ -35,8 +35,6 @@ while(cap.isOpened()):
     ret, current_frame = cap.read()
     if ret == True:
         curr = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
-        #diff = cv2.absdiff(curr, prvs)
-        #ret, thresh = cv2.threshold(diff, 155, 255, cv2.THRESH_TOZERO)
         motionlib.get_BM(prvs, curr, BM)
         outframe = cv2.resize(current_frame, (512, 512))
         if framecount % 10 == 0:
