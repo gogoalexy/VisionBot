@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.out
 
 # Distribution / packaging
 .Python
@@ -105,5 +106,13 @@ venv.bak/
 
 # Videos
 vid/
+*.mjpg
 *.mp4
 *.avi
+
+# Optic flow
+*.flo
+*.flow
+
+# Others
+tmp/
