@@ -29,22 +29,22 @@ out = cv2.VideoWriter(outFileName, fourcc, videoParam["fps"], videoParam["outSiz
 verticalCropPoint = cropBorder(videoParam["size"][0], videoParam["outSize"][0])
 horizontalCropPoint = cropBorder(videoParam["size"][1], videoParam["outSize"][1])
 
-circle = {"center": (512, 512), "initialRadius": 5, "initialThickness": 1, "brigntness": 250, "velocity": 0.012}
-shortestLenhth2border = min(videoParam["size"][0]-circle["center"][0], circle["center"][0], videoParam["size"][1]-circle["center"][1], circle["center"][1])
+marker = {"type": cv2.MARKER_SQUARE, "position": (512, 512), "initialSize": 51, "initialThickness": 2, "brigntness": 250, "velocity": 0.012}
+shortestLenhth2border = min(videoParam["size"][0]-marker["position"][0], marker["position"][0], videoParam["size"][1]-marker["position"][1], marker["position"][1])
 
 for t in range(0, videoParam["time"]*videoParam["fps"]):
     img = np.zeros(videoParam["size"], dtype=np.uint8)
     if t == 0:
-        r = circle["initialRadius"]
-        thic = circle["initialThickness"]
+        size = marker["initialSize"]
+        thic = marker["initialThickness"]
     else:
-        r += fastIncrement(circle["velocity"], t)
-        thic += slowIncrement(circle["velocity"], t)
+        size += fastIncrement(marker["velocity"], t)
+        thic += slowIncrement(marker["velocity"], t)
 
-    if isOut(r, thic, shortestLenhth2border):
+    if isOut(size, thic, shortestLenhth2border):
         print("Warning: Graph is out of border. Interrupted.")
         break
-    cv2.circle(img, circle["center"], int(r), color=circle["brigntness"], thickness=int(thic))
+    cv2.drawMarker(img, marker["position"], marker["brigntness"], marker["type"], int(size), int(thic))
     outImg = img[verticalCropPoint[0]:verticalCropPoint[1], horizontalCropPoint[0]:horizontalCropPoint[1]]
     out.write(cv2.cvtColor(outImg, cv2.COLOR_GRAY2BGR))
     cv2.imshow("test", outImg)
