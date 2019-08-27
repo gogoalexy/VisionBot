@@ -14,9 +14,9 @@ def calcAngularErrorForEachPixel(predictedFlowArray, groundtruthFlowArray):
 def calcEndpointError(predictedFlow, groundtruthFlow):
     return np.linalg.norm(predictedFlow - groundtruthFlow)
 
-def calcEndpointErrorForEachPixel(1DpredictedFlow, 1DgroundtruthFlow):
+def calcEndpointErrorForEachPixel(predictedFlowArray, groundtruthFlowArray):
     performance = []
-    for predictedFlow, groundtruthFlow in zip(1DpredictedFlow, 1DgroundtruthFlow):
+    for predictedFlow, groundtruthFlow in zip(predictedFlowArray, groundtruthFlowArray):
         performance.append(clacEndpointError(predictedFlow, groundtruthFlow))
     return performance
 
