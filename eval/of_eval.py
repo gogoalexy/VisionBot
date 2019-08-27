@@ -5,9 +5,9 @@ def calcAngularError(predictedFlow, groundtruthFlow):
     denominator = np.sqrt(1.0 + predictedFlow[0]**2 + predictedFlow[1]**2) * np.sqrt(1.0 + groundtruthFlow[0]**2 + groundtruthFlow[1]**2)
     return np.arccos(numerator / denominator)
 
-def calcAngularErrorForEachPixel(1DpredictedFlow, 1DgroundtruthFlow):
+def calcAngularErrorForEachPixel(predictedFlowArray, groundtruthFlowArray):
     performance = []
-    for predictedFlow, groundtruthFlow in zip(1DpredictedFlow, 1DgroundtruthFlow):
+    for predictedFlow, groundtruthFlow in zip(predictedFlowArray, groundtruthFlowArray):
         performance.append(clacAngularError(predictedFlow, groundtruthFlow))
     return performance
 
