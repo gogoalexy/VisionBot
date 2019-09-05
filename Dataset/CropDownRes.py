@@ -26,7 +26,7 @@ if srcHW[0] < dstHW[0] or srcHW[1] < dstHW[1]:
     print('\033[93m' + "Warning: Original video resolution is lower than the target resolution." + '\033[0m')
 print("Processing...")
 
-if srcHW[0] > srcHW[1]:
+if srcHW[0] >= srcHW[1]:
     border = cropBorder(srcHW[0], srcHW[1])
     dst = cv2.VideoWriter(outFileName, fourcc, fps, dstHW)
     ret, frame = src.read()
@@ -43,6 +43,9 @@ elif srcHW[0] < srcHW[1]:
         cropframe = frame[0:, border[0]:border[1]]
         dst.write(cv2.resize(cropframe, dsize=dstHW, interpolation=cv2.INTER_AREA))
         ret, frame = src.read()
+else:
+    dst = cv2.VideoWriter(outFileName, fourcc, fps, dstHW)
+    print("Do nothing")
 
 print("Output file: {} with {} fps, {} pixels high, {} pixels wide".format(outFileName, fps, dstHW[0], dstHW[1]))
 src.release()

@@ -46,34 +46,39 @@ while(1):
         forward = 0.0
         left = 0.0
         right = 0.0
+        outFile.write('[')
         for y in range(0, fheight):
             for x in range(0, fwidth):
-                # outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) + ';' )
-                forward += np.dot(flow[y, x], forwardP(y, x))
-                left += np.dot(flow[y, x], leftP)
-                right += np.dot(flow[y, x], rightP)
-
-        resultF.append(forward)
-        resultL.append(left)
-        resultR.append(right)
-        print( "{}, {}, {}".format(str(forward), str(left), str(right)) )
+                if x == fwidth - 1:
+                    outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) )
+                else:
+                    outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) + ',' )
+            outFile.write(';')
+                # forward += np.dot(flow[y, x], forwardP(y, x))
+                # left += np.dot(flow[y, x], leftP)
+                # right += np.dot(flow[y, x], rightP)
+        outFile.write(']\n')
+        # resultF.append(forward)
+        # resultL.append(left)
+        # resultR.append(right)
+        # print( "{}, {}, {}".format(str(forward), str(left), str(right)) )
         prvs = next
         if cv2.waitKey(1) & 0xff == ord('q'):
             break
 
     else:
-        outFile.write("forward:")
-        s = ''.join(str(resultF))
-        outFile.write(s)
-        outFile.write('\n')
-        outFile.write("left:")
-        s = ''.join(str(resultL))
-        outFile.write(s)
-        outFile.write('\n')
-        outFile.write("right:")
-        s = ''.join(str(resultR))
-        outFile.write(s)
-        outFile.write('\n')
+        # outFile.write("forward:")
+        # s = ''.join(str(resultF))
+        # outFile.write(s)
+        # outFile.write('\n')
+        # outFile.write("left:")
+        # s = ''.join(str(resultL))
+        # outFile.write(s)
+        # outFile.write('\n')
+        # outFile.write("right:")
+        # s = ''.join(str(resultR))
+        # outFile.write(s)
+        # outFile.write('\n')
         break
 
 print("Done.")
