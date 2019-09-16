@@ -19,14 +19,14 @@ def isOut(radius, thickness, limit):
     else:
         return False
 
-videoParam = {"size": (680, 680), "outSize": (512, 512),"time": 6, "fps": 30}
+videoParam = {"size": (680, 680), "outSize": (512, 512),"time": 10, "fps": 30}
 outFileName = str( sys.argv[1] )
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
 out = cv2.VideoWriter(outFileName, fourcc, videoParam["fps"], videoParam["outSize"])
 verticalCropPoint = cropBorder(videoParam["size"][0], videoParam["outSize"][0])
 horizontalCropPoint = cropBorder(videoParam["size"][1], videoParam["outSize"][1])
 
-marker = {"type": cv2.MARKER_SQUARE, "position": [520, 300], "initialSize": 100, "initialThickness": 5, "brigntness": 250, "velocity": 4}
+marker = {"type": cv2.MARKER_SQUARE, "position": [30, 300], "initialSize": 100, "initialThickness": 5, "brigntness": 250, "velocity": 4}
 shortestLenhth2border = min(videoParam["size"][0]-marker["position"][0], marker["position"][0], videoParam["size"][1]-marker["position"][1], marker["position"][1])
 
 for t in range(0, videoParam["time"]*videoParam["fps"]):
@@ -35,8 +35,8 @@ for t in range(0, videoParam["time"]*videoParam["fps"]):
         size = marker["initialSize"]
         thic = marker["initialThickness"]
 
-    marker["position"][0] -= marker["velocity"]
-    if isOut(size, thic, shortestLenhth2border):
+    marker["position"][0] += marker["velocity"]
+    if marker["position"][0] >= videoParam["size"][0]-marker["initialSize"]:
         print("Warning: Graph is out of border. Interrupted.")
         break
     cv2.drawMarker(img, tuple(marker["position"]), marker["brigntness"], marker["type"], int(size), int(thic))
