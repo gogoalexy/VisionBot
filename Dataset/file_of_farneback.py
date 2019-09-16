@@ -50,9 +50,9 @@ while(1):
         for y in range(0, fheight):
             for x in range(0, fwidth):
                 if x == fwidth - 1:
-                    outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) )
+                    outFile.write( str( round(flow[y, x, 0], 2) ) + ',' + str( round( flow[y, x, 1], 2) ) )
                 else:
-                    outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) + ',' )
+                    outFile.write( str( round(flow[y, x, 0], 2) ) + ',' + str( round( flow[y, x, 1], 2) ) + ',' )
             outFile.write(';')
                 # forward += np.dot(flow[y, x], forwardP(y, x))
                 # left += np.dot(flow[y, x], leftP)
