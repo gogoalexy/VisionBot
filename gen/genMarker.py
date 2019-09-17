@@ -19,6 +19,7 @@ def isOut(radius, thickness, limit):
     else:
         return False
 
+# Zoom in increment
 fastIncrement = lambda v, t: np.tan(v*t)
 slowIncrement = lambda v, t: np.tan(v*t)/3
 
@@ -28,7 +29,7 @@ fourcc = cv2.VideoWriter_fourcc(*'MJPG')
 out = cv2.VideoWriter(outFileName, fourcc, videoParam["fps"], videoParam["outSize"])
 verticalCropPoint = cropBorder(videoParam["size"][0], videoParam["outSize"][0])
 horizontalCropPoint = cropBorder(videoParam["size"][1], videoParam["outSize"][1])
-
+# Increment velocity here
 marker = {"type": cv2.MARKER_SQUARE, "position": (512, 512), "initialSize": 51, "initialThickness": 2, "brigntness": 250, "velocity": 0.012}
 shortestLenhth2border = min(videoParam["size"][0]-marker["position"][0], marker["position"][0], videoParam["size"][1]-marker["position"][1], marker["position"][1])
 
@@ -38,6 +39,7 @@ for t in range(0, videoParam["time"]*videoParam["fps"]):
         size = marker["initialSize"]
         thic = marker["initialThickness"]
     else:
+        # Increase tan(v*t)
         size += fastIncrement(marker["velocity"], t)
         thic += slowIncrement(marker["velocity"], t)
 
