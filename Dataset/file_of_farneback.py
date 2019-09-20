@@ -4,6 +4,7 @@ import cv2
 import math
 import numpy as np
 import cProfile
+import time
 
 inFile = str( sys.argv[1] )
 outFile = open( splitext(inFile)[0] + ".flow", 'w' )
@@ -36,12 +37,14 @@ resultF = []
 resultL = []
 resultR = []
 
+start = time.time()
+
 while(1):
     vlength = vlength - 1
     ret, frame2 = cap.read()
     if ret==True:
-        next = cv2.cvtColor(frame2, cv2.COLOR_RGB2GRAY)
-        flow = cv2.calcOpticalFlowFarneback(prvs, next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+        curr = cv2.cvtColor(frame2, cv2.COLOR_RGB2GRAY)
+        flow = cv2.calcOpticalFlowFarneback(prvs, curr, None, 0.5, 3, 15, 3, 5, 1.2, 0)
         print("{} frames remain".format(vlength))
         forward = 0.0
         left = 0.0
@@ -49,38 +52,39 @@ while(1):
         outFile.write('[')
         for y in range(0, fheight):
             for x in range(0, fwidth):
-                if x == fwidth - 1:
-                    outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) )
-                else:
-                    outFile.write( str( int(flow[y, x, 0]) ) + ',' + str( int( flow[y, x, 1]) ) + ',' )
-            outFile.write(';')
-                # forward += np.dot(flow[y, x], forwardP(y, x))
-                # left += np.dot(flow[y, x], leftP)
-                # right += np.dot(flow[y, x], rightP)
+            #    if x == fwidth - 1:
+            #        outFile.write( str( (flow[y, x, 0]) ) + ',' + str( ( flow[y, x, 1]) ) )
+            #    else:
+            #        outFile.write( str( (flow[y, x, 0]) ) + ',' + str( ( flow[y, x, 1]) ) + ',' )
+            # outFile.write(';')
+                forward += np.dot(flow[y, x], forwardP(y, x))
+                left += np.dot(flow[y, x], leftP)
+                right += np.dot(flow[y, x], rightP)
         outFile.write(']\n')
-        # resultF.append(forward)
-        # resultL.append(left)
-        # resultR.append(right)
+        resultF.append(forward)
+        resultL.append(left)
+        resultR.append(right)
         # print( "{}, {}, {}".format(str(forward), str(left), str(right)) )
-        prvs = next
+        prvs = curr
         if cv2.waitKey(1) & 0xff == ord('q'):
             break
 
     else:
-        # outFile.write("forward:")
-        # s = ''.join(str(resultF))
-        # outFile.write(s)
-        # outFile.write('\n')
-        # outFile.write("left:")
-        # s = ''.join(str(resultL))
-        # outFile.write(s)
-        # outFile.write('\n')
-        # outFile.write("right:")
-        # s = ''.join(str(resultR))
-        # outFile.write(s)
-        # outFile.write('\n')
+        outFile.write("forward:")
+        s = ''.join(str(resultF))
+        outFile.write(s)
+        outFile.write('\n')
+        outFile.write("left:")
+        s = ''.join(str(resultL))
+        outFile.write(s)
+        outFile.write('\n')
+        outFile.write("right:")
+        s = ''.join(str(resultR))
+        outFile.write(s)
+        outFile.write('\n')
         break
-
+end = time.time()
 print("Done.")
+print(end-start)
 cap.release()
 outFile.close()
