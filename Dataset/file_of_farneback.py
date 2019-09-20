@@ -60,6 +60,7 @@ while(1):
                 forward += np.dot(flow[y, x], forwardP(y, x))
                 left += np.dot(flow[y, x], leftP)
                 right += np.dot(flow[y, x], rightP)
+
         outFile.write(']\n')
         resultF.append(forward)
         resultL.append(left)
