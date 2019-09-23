@@ -4,7 +4,7 @@ A repository for vision algorithm developments.
 ## Calculate Optical Flow
 The program OpticalFlow.py under BMCEN folder is responsible for calculating dense optical flow with Farneback method realized in OpenCV. The program can receive video file or video stream as input and output the result in video file or plain text upon your choice.
 
-###Prerequisites
+### Prerequisites
 * Python 3 (The program may be python 2 incompatible.)
 * OpenCV 4.1.1 (at least 3.4 or later)
 
