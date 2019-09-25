@@ -18,6 +18,8 @@ preprocessor.findSideToCrop()
 preprocessor.findCropPoints()
 scaleRatio = preprocessor.getDisplayTargetRatio()
 
+algo = ImageProcessing.Algorithm()
+
 arrowMaker = ImageProcessing.VideoArtist(scaleRatio)
 arrowMaker.findBestFrameMapping((8, 8))
 
@@ -32,7 +34,7 @@ while(port.inputVideoIsOpened()):
         frame = port.getInputVideoFrame()
         croppedFrame = preprocessor.cropFrameIntoSquare(frame)
         currentFrame = preprocessor.convertFrameIntoSpecifiedFormat(croppedFrame)
-        OpticalFlow = ImageProcessing.calculateOpticalFlow(previousFrame, currentFrame)
+        OpticalFlow = algo.calculateOpticalFlow(previousFrame, currentFrame)
         displayFrame = preprocessor.convertFrameIntoOutputFormat(currentFrame)
         displayFrameMarkedWithFlow = arrowMaker.drawFlowArrows(displayFrame, OpticalFlow)
         port.logDataUponRequirement(displayFrameMarkedWithFlow, OpticalFlow)
@@ -40,7 +42,7 @@ while(port.inputVideoIsOpened()):
         previousFrame = currentFrame
     except:
         break
-    
+
 port.terminateFileIOUponRequirement()
 monitor.terminateAllWindows()
 
