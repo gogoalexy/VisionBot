@@ -170,8 +170,6 @@ float iz_network::adaptive_term(int neuron_index)
 extern "C"
 {
     iz_network* iz_network_new() {return new iz_network();}
-    int iz_network_set_neurons(iz_network* network) {return network->set_neurons();}
-    int iz_network_get_weight(iz_network* network) {return network->get_weight();}
     int iz_network_num_neurons(iz_network* network) {return network->num_neurons();}
     void iz_network_send_synapse(iz_network* network) {return network->send_synapse();}
     void iz_network_set_biascurrent(iz_network* network, int neuron_index, int biascurrent) {return network->set_biascurrent(neuron_index, biascurrent);}

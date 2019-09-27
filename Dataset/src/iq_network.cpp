@@ -172,8 +172,6 @@ int iq_network::potential(int neuron_index)
 extern "C"
 {
     iq_network* iq_network_new() {return new iq_network();}
-    int iq_network_set_neurons(iq_network* network) {return network->set_neurons();}
-    int iq_network_get_weight(iq_network* network) {return network->get_weight();}
     int iq_network_num_neurons(iq_network* network) {return network->num_neurons();}
     void iq_network_send_synapse(iq_network* network) {return network->send_synapse();}
     void iq_network_set_biascurrent(iq_network* network, int neuron_index, int biascurrent) {return network->set_biascurrent(neuron_index, biascurrent);}
