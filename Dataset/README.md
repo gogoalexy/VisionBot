@@ -26,7 +26,7 @@ I also have an [Izhikevich model](include/iz_network.h) for comparison. It is th
 You can import the library using `iqif.py` by
 
 ```python
-from iqif import
+from iqif import *
 ```
 .
 
