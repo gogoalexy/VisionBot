@@ -56,7 +56,7 @@ class UserInterface:
     
     def collectDuration(self):
         try:
-            duration = float(input("Enter duration: "))
+            duration = float(input("Enter duration (seconds): "))
             self.infoPacket.setDuration(duration)
         except:
             self.unrecognizeable()
@@ -73,7 +73,7 @@ class UserInterface:
         self.collectOutputVideoName()
         self.collectMovePattern()
         self.collectMoveDirection()
-        self.collectStartPoint()
+        # self.collectStartPoint()
         self.collectDuration()
         self.collectSpeed()
         return self.infoPacket

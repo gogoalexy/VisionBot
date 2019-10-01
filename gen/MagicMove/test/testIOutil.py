@@ -9,6 +9,17 @@ from Definitions import InfoCarrier
 
 class TestImageInput(unittest.TestCase):
     
+    def test_shrinkToFitOutput(self):
+        image = cv2.imread("lenna_full.jpg")
+        info = InfoCarrier()
+        self.inputModule = IOutil.ImageInput(info)
+        self.inputModule.image = image
+        self.inputModule.shrinkToFitOutput()
+        y = self.inputModule.image.shape[0]
+        x = self.inputModule.image.shape[1]
+        self.assertEqual(y, 512)
+        self.assertEqual(x, 512)
+    
     def test_getImage(self):
         testName = "lenna_full.jpg"
         answer = cv2.imread(testName)

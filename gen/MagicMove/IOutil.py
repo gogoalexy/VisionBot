@@ -9,6 +9,9 @@ class ImageInput:
         imageName = self.info.getSourceImageName()
         self.image = cv2.imread(imageName)
     
+    def shrinkToFitOutput(self):
+        self.image = cv2.resize(self.image, (512, 512), cv2.INTER_AREA)
+    
     def getImage(self):
         return self.image
 

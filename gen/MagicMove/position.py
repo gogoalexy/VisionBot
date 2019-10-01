@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 src = cv2.imread("target.jpg")
+src = cv2.resize(src, (512, 512), cv2.INTER_AREA)
 outFileName = "move.avi"
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
 
@@ -12,7 +13,7 @@ dstTri = np.array( [[10, 10], [src.shape[0]+9, 10], [10, src.shape[1]+9]] ).asty
 #warp_mat = cv2.getPerspectiveTransform(srcTri, dstTri)
 #warp_dst = cv2.warpPerspective(src, warp_mat, (src.shape[1], src.shape[0]), borderValue=(0, 255, 255))
 warp_mat = cv2.getAffineTransform(srcTri, dstTri)
-warp_dst = cv2.warpAffine(src, warp_mat, (src.shape[0], src.shape[1]), borderValue=(255, 255, 255))
+warp_dst = cv2.warpAffine(src, warp_mat, (512, 512), borderValue=(255, 255, 255))
 
 cv2.imwrite("target_shift10-10.jpg", warp_dst)
 cv2.waitKey(0)
