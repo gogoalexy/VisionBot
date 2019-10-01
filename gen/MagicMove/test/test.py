@@ -1,9 +1,10 @@
+import sys
 import unittest
 import numpy as np
 import cv2
+sys.path.append(../)
 import DefineImagePattern
 import GeometricTransform
-import Argument
 
 class TestTrianglePatternMethods(unittest.TestCase):
 

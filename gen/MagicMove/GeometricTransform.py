@@ -21,4 +21,14 @@ class AffineTransformation:
 
 
 class PerspectiveTransformation:
-    pass
+    
+    def __init__(self, image):
+        self.image = np.array(image)
+        self.imageHW = (self.image.shape[0], self.image.shape[1])
+        self.imageBorder = [[0, 0], [self.imageHW[0]-1, 0], [self.imageHW[0]-1, self.imageHW[1]-1], [0, self.imageHW[1]-1]]
+        
+    def calculateTransformationMatrix(self, x, y):
+        pass
+    
+    def doTransformation(self):
+        pass
