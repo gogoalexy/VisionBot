@@ -13,14 +13,14 @@ class testUserInterface(unittest.TestCase):
         with mock.patch("builtins.input", return_value=testName):
             interface.collectInputImageName()
         self.assertEqual(interface.infoPacket.getSourceImageName(), testName)
-    
+
     def test_collectOutputVideoName(self):
         testName = "test.avi"
         interface = UserInterface.UserInterface()
         with mock.patch("builtins.input", return_value=testName):
             interface.collectOutputVideoName()
         self.assertEqual(interface.infoPacket.getDestinationVideoName(), testName)
-    
+
     def test_collectMovePattern(self):
         legalOption = '1'
         legalAnswer = MovePattern.ZOOM
@@ -31,7 +31,7 @@ class testUserInterface(unittest.TestCase):
         self.assertEqual(interface.infoPacket.getMovePattern(), legalAnswer)
         with mock.patch("builtins.input", return_value=illegalOption):
             self.assertRaises(SystemExit, interface.collectMovePattern)
-    
+
     def test_collectMoveDirection(self):
         legalOption = '1'
         legalAnswer = Zoom.IN
@@ -43,7 +43,7 @@ class testUserInterface(unittest.TestCase):
         self.assertEqual(interface.infoPacket.getMoveDirection(), legalAnswer)
         with mock.patch("builtins.input", return_value=illegalOption):
             self.assertRaises(SystemExit, interface.collectMoveDirection)
-    
+
     def test_collectStartPoint(self):
         legalPoint = '6 4'
         legalAnswer = (6, 4)
@@ -54,10 +54,10 @@ class testUserInterface(unittest.TestCase):
         self.assertEqual(interface.infoPacket.getStartPoint(), legalAnswer)
         with mock.patch("builtins.input", return_value=illegalPoint):
             self.assertRaises(SystemExit, interface.collectStartPoint)
-        
+
     def test_collectDuration(self):
-        legalDuration = '11.0'
-        legalAnswer = 11.0
+        legalDuration = '11'
+        legalAnswer = 11
         illegalDuration = 'uwu'
         interface = UserInterface.UserInterface()
         with mock.patch("builtins.input", return_value=legalDuration):
@@ -65,21 +65,21 @@ class testUserInterface(unittest.TestCase):
         self.assertEqual(interface.infoPacket.getDuration(), legalAnswer)
         with mock.patch("builtins.input", return_value=illegalDuration):
             self.assertRaises(SystemExit, interface.collectDuration)
-    
+
     def test_collectSpeed(self):
-        legalSpeed = '5.0 4.0'
-        legalAnswer = (5.0, 4.0)
-        illegalSpeed = '45'
+        legalSpeed = '4'
+        legalAnswer = 4.0
+        illegalSpeed = 'u45'
         interface = UserInterface.UserInterface()
         with mock.patch("builtins.input", return_value=legalSpeed):
             interface.collectSpeed()
         self.assertEqual(interface.infoPacket.getSpeed(), legalAnswer)
         with mock.patch("builtins.input", return_value=illegalSpeed):
             self.assertRaises(SystemExit, interface.collectSpeed)
-    
+
     @unittest.skip("All cases have been tested above.")
     def test_gatherEssentialParametersFromUser(self):
         pass
-    
+
 if __name__ == "__main__":
     unittest.main()

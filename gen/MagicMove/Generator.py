@@ -1,7 +1,7 @@
 import UserInterface
 import IOutil
 import GeometricTransform
-from Definitions import InfoCarrier, MovePattern
+from Definitions import InfoCarrier, MovePattern, Zoom, Pan, Rotate
 
 ui = UserInterface.UserInterface()
 message = ui.gatherEssentialParametersFromUser()
@@ -12,19 +12,45 @@ writer = IOutil.VideoOutput(message)
 
 pattern = message.getMovePattern()
 direction = message.getMoveDirection()
-duration = message.getDuration
+duration = message.getDuration()
+speed = message.getSpeed()
 if pattern == MovePattern.ZOOM:
-    GeometricTransform.PerspectiveTransformation(image)
-    for time in duration*30:
-        pass
+    proc = GeometricTransform.PerspectiveTransformation(image)
+    n = 0
+    for time in range(duration*30):
+        proc.calculateTransformationMatrix(n, n)
+        result = proc.doTransformation()
+        writer.writeImageIntoVideo(result)
+        if direction == Zoom.IN:
+            n += speed
+        elif direction == Zoom.OUT:
+            n -= speed
 elif pattern == MovePattern.PAN:
-    GeometricTransform.AffineTransformation(image)
-    for time in duration*30:
-        pass
+    proc = GeometricTransform.AffineTransformation(image)
+    x, y = 0, 0
+    for time in range(duration*30):
+        proc.calculateTransformationMatrix(x, y)
+        result = proc.doTransformation()
+        writer.writeImageIntoVideo(result)
+        if direction == Pan.LEFT:
+            x -= speed
+        elif direction == Pan.UP:
+            y -= speed
+        elif direction == Pan.RIGHT:
+            x += speed
+        elif direction == Pan.DOWN:
+            y += speed
 elif pattern == MovePattern.Rotate:
-    GeometricTransform.RotationTransformation(image)
-    for time in duration*30:
-        pass
+    proc = GeometricTransform.RotationTransformation(image)
+    n = 0
+    for time in range(duration*30):
+        proc.calculateTransformationMatrix(n, 1.0)
+        result = proc.doTransformation
+        writer.writeImageIntoVideo(result)
+        if direction == Rotate.CW:
+            n += speed
+        elif direction == Rotate.CCW:
+            n -= speed
 else:
     print("Abort!")
 

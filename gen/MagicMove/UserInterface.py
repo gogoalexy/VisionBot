@@ -6,19 +6,19 @@ class UserInterface:
     def __init__(self):
         self.infoPacket = InfoCarrier()
         self.pattern = MovePattern.NA
-        
+
     def unrecognizeable(self):
         print("Unrecognizable option.")
         sys.exit(1)
-    
+
     def collectInputImageName(self):
         inputImageName = input("Enter input image name: ")
         self.infoPacket.setSourceImageName(inputImageName)
-    
+
     def collectOutputVideoName(self):
         outputVideoName = input("Enter output video name: ")
         self.infoPacket.setDestinationVideoName(outputVideoName)
-    
+
     def collectMovePattern(self):
         try:
             pattern = int(input("Enter pattern [Zoom=1/Pan=2/Rotate=3]: "))
@@ -27,7 +27,7 @@ class UserInterface:
         except:
             self.infoPacket.setMovePattern(MovePattern.NA)
             self.unrecognizeable()
-    
+
     def collectMoveDirection(self):
         try:
             if self.pattern == MovePattern.ZOOM:
@@ -46,28 +46,28 @@ class UserInterface:
                 self.unrecognizeable()
         except:
             self.unrecognizeable()
-    
+
     def collectStartPoint(self):
         start = input("Enter the start point x y: ")
         start = tuple(int(e) for e in start.split())
         if len(start) != 2:
             self.unrecognizeable()
         self.infoPacket.setStartPoint(start)
-    
+
     def collectDuration(self):
         try:
-            duration = float(input("Enter duration (seconds): "))
+            duration = int(input("Enter duration (seconds): "))
             self.infoPacket.setDuration(duration)
         except:
             self.unrecognizeable()
-    
+
     def collectSpeed(self):
-        speed = input("Enter speed |x| |y|: ")
-        speed = tuple(float(e) for e in speed.split())
-        if len(speed) != 2:
+        try:
+            speed = float(input("Enter speed |v|: "))
+            self.infoPacket.setSpeed(speed)
+        except:
             self.unrecognizeable()
-        self.infoPacket.setSpeed(speed)
-    
+
     def gatherEssentialParametersFromUser(self):
         self.collectInputImageName()
         self.collectOutputVideoName()
