@@ -3,12 +3,12 @@ import cv2
 import unittest
 from unittest import mock
 from numpy import testing
-sys.path.append("../")
+sys.path.append("../src")
 import IOutil
 from Definitions import InfoCarrier
 
 class TestImageInput(unittest.TestCase):
-    
+
     def test_shrinkToFitOutput(self):
         image = cv2.imread("lenna_full.jpg")
         info = InfoCarrier()
@@ -19,7 +19,7 @@ class TestImageInput(unittest.TestCase):
         x = self.inputModule.image.shape[1]
         self.assertEqual(y, 512)
         self.assertEqual(x, 512)
-    
+
     def test_getImage(self):
         testName = "lenna_full.jpg"
         answer = cv2.imread(testName)
@@ -27,7 +27,7 @@ class TestImageInput(unittest.TestCase):
         info.getSourceImageName = mock.MagicMock(return_value=testName)
         self.inputModule = IOutil.ImageInput(info)
         testing.assert_array_equal(self.inputModule.getImage(), answer)
-    
+
 class TestVideoOutput(unittest.TestCase):
 
     def test_init(self):

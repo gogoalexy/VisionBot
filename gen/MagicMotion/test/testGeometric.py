@@ -2,7 +2,7 @@ import sys
 import unittest
 import numpy as np
 import cv2
-sys.path.append('../')
+sys.path.append('../src')
 import DefineImagePattern
 import GeometricTransform
 

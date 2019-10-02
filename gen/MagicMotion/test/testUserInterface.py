@@ -1,7 +1,7 @@
 import sys
 import unittest
 from unittest import mock
-sys.path.append("../")
+sys.path.append("../src")
 import UserInterface
 from Definitions import MovePattern, Zoom, Pan, Rotate
 

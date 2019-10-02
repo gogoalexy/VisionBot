@@ -1,4 +1,5 @@
 import sys
+from os.path import splitext
 from Definitions import MovePattern, Zoom, Pan, Rotate, InfoCarrier
 
 class UserInterface:
@@ -16,7 +17,8 @@ class UserInterface:
         self.infoPacket.setSourceImageName(inputImageName)
 
     def collectOutputVideoName(self):
-        outputVideoName = input("Enter output video name: ")
+        rawOutputVideoName = input("Enter output video name: ")
+        outputVideoName = splitext(rawOutputVideoName)[0] + '.avi'
         self.infoPacket.setDestinationVideoName(outputVideoName)
 
     def collectMovePattern(self):

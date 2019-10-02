@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append("../")
+sys.path.append("../src")
 import Definitions
 
 class testInfoCarrier(unittest.TestCase):

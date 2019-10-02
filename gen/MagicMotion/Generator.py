@@ -1,3 +1,5 @@
+import sys
+sys.path.append('src')
 import UserInterface
 import IOutil
 import GeometricTransform
@@ -40,12 +42,12 @@ elif pattern == MovePattern.PAN:
             x += speed
         elif direction == Pan.DOWN:
             y += speed
-elif pattern == MovePattern.Rotate:
+elif pattern == MovePattern.ROTATE:
     proc = GeometricTransform.RotationTransformation(image)
     n = 0
     for time in range(duration*30):
         proc.calculateTransformationMatrix(n, 1.0)
-        result = proc.doTransformation
+        result = proc.doTransformation()
         writer.writeImageIntoVideo(result)
         if direction == Rotate.CW:
             n += speed
