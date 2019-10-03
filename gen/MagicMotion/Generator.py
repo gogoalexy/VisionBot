@@ -29,19 +29,26 @@ if pattern == MovePattern.ZOOM:
             n -= speed
 elif pattern == MovePattern.PAN:
     proc = GeometricTransform.AffineTransformation(image)
-    x, y = 0, 0
+    if direction == Pan.LEFT:
+        x, y = -300, 0
+    elif direction == Pan.UP:
+        x, y = 0, -300
+    elif direction == Pan.RIGHT:
+        x, y = 300, 0
+    elif direction == Pan.DOWN:
+        x, y = 0, 300
     for time in range(duration*30):
         proc.calculateTransformationMatrix(x, y)
         result = proc.doTransformation()
         writer.writeImageIntoVideo(result)
         if direction == Pan.LEFT:
-            x -= speed
-        elif direction == Pan.UP:
-            y -= speed
-        elif direction == Pan.RIGHT:
             x += speed
-        elif direction == Pan.DOWN:
+        elif direction == Pan.UP:
             y += speed
+        elif direction == Pan.RIGHT:
+            x -= speed
+        elif direction == Pan.DOWN:
+            y -= speed
 elif pattern == MovePattern.ROTATE:
     proc = GeometricTransform.RotationTransformation(image)
     n = 0

@@ -23,4 +23,5 @@ The program is under the `gen` folder and named as `Generator.py`. You only have
 1. The output video is compressed into MJPG format, so the program forces the output stream placed in AVI container. Thus, whatever file extension you type when the program ask you, the output file will always be in `avi`.
 2. No matter what the size of the original image, the image will be resized into 512-by-512 without cropping. That is, it is recommended to prepre a square or near-square image as input.
 3. The speed in the program is defined as pixels per frame when zooming or panning the image. When it comes to rotating, the speed is defined by degrees per frame.
+4. All the motions described here are camera-centric, i.e. pan left means the camera panning left so the motion field is from left to right.
 
