@@ -2,6 +2,7 @@ import sys
 import cv2
 import time
 import numpy as np
+import ImageProcessing
 import motionFieldTemplate
 
 cap = cv2.VideoCapture(0)
@@ -10,28 +11,35 @@ fwidth = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH) )
 fheight = int( cap.get(cv2.CAP_PROP_FRAME_HEIGHT) )
 start = time.time()
 
-leftTemplate = motionFieldTemplate.createCamLeftShiftTemplate()
-rightTemplate = motionFieldTemplate.createCamRightShiftTemplate()
-upTemplate = motionFieldTemplate.createCamUpShiftTemplate()
-downTemplate = motionFieldTemplate.createCamDownShiftTemplate()
-forwardTemplate = motionFieldTemplate.createCamZoomInTemplate()
-backwardTemplate = motionFieldTemplate.createCamZoomOutTemplate()
+preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
+preprocessor.findSideToCrop()
+preprocessor.findCropPoints()
+algo = ImageProcessing.Algorithm()
 
-ret, frame1 = cap.read()
-prvs = cv2.cvtColor(frame1, cv2.COLOR_RGB2GRAY)
+leftTemplate = motionFieldTemplate.createCamLeftShiftTemplate(64, 64).flatten()
+rightTemplate = motionFieldTemplate.createCamRightShiftTemplate(64, 64).flatten()
+upTemplate = motionFieldTemplate.createCamUpShiftTemplate(64, 64).flatten()
+downTemplate = motionFieldTemplate.createCamDownShiftTemplate(64, 64).flatten()
+forwardTemplate = motionFieldTemplate.createCamZoomInTemplate(64, 64).flatten()
+backwardTemplate = motionFieldTemplate.createCamZoomOutTemplate(64, 64).flatten()
+
+ret, frame = cap.read()
+croppedFrame = preprocessor.cropFrameIntoSquare(frame)
+prvs = preprocessor.convertFrameIntoSpecifiedFormat(croppedFrame)
 
 while(True):
     start_time = time.time()
-    ret, frame2 = cap.read()
+    ret, frame = cap.read()
     if ret==True:
-        curr = cv2.cvtColor(frame2, cv2.COLOR_RGB2GRAY)
-        flow = cv2.calcOpticalFlowFarneback(prvs, curr, None, 0.5, 3, 15, 3, 5, 1.2, 0)
-        forward = np.dot(flow, forwardTemplate)
-        backward = np.dot(flow, backwardTemplate)
-        left = np.dot(flow, leftTemplate)
-        right = np.dot(flow, rightTemplate)
-        up = np.dot(flow, upTemplate)
-        down = np.dot(flow. downTemplate)
+        croppedFrame = preprocessor.cropFrameIntoSquare(frame)
+        curr = preprocessor.convertFrameIntoSpecifiedFormat(croppedFrame)
+        flow = algo.calculateOpticalFlow(prvs, curr).flatten()
+        forward = np.inner(flow, forwardTemplate)
+        backward = np.inner(flow, backwardTemplate)
+        left = np.inner(flow, leftTemplate)
+        right = np.inner(flow, rightTemplate)
+        up = np.inner(flow, upTemplate)
+        down = np.inner(flow, downTemplate)
 
         prvs = curr
         if cv2.waitKey(1) & 0xff == ord('q'):
@@ -41,4 +49,3 @@ while(True):
 
 
 cap.release()
-cv2.destroyAllWindows()
