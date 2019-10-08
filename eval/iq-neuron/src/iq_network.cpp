@@ -33,12 +33,12 @@ iq_network::~iq_network()
 int iq_network::linenum_neuronParameter()
 {
     int i[7], linenum = 0;
-    FILE *fp = fopen("../inputs/neuronParameter_IQIF.txt", "r");
+    FILE *fp = fopen("iq-neuron/inputs/neuronParameter_IQIF.txt", "r");
     if(fp == NULL) {
         printf("neuronParameter_IQIF.txt file not opened\n");
         return -1;
     }
-    
+
     while(fscanf(fp, " %d %d %d %d %d %d %d", &i[0], &i[1], &i[2],
             &i[3], &i[4], &i[5], &i[6]) == 7) {
         linenum++;
@@ -59,7 +59,7 @@ int iq_network::set_neurons()
         return 1;
     }
     */
-    fp = fopen("../inputs/neuronParameter_IQIF.txt", "r");
+    fp = fopen("iq-neuron/inputs/neuronParameter_IQIF.txt", "r");
     while(fscanf(fp, " %d %d %d %d %d %d %d", &i, &rest, &threshold,
             &reset, &a, &b, &noise) == 7) {
         (_neurons + i)->set(rest, threshold, reset, a, b, noise);
@@ -83,7 +83,7 @@ int iq_network::get_weight()
         *(_biascurrent + i) = 0;
     }
 
-    fp = fopen("../inputs/Connection_Table_IQIF.txt", "r");
+    fp = fopen("iq-neuron/inputs/Connection_Table_IQIF.txt", "r");
     if(fp == NULL) {
         printf("Connection_Table_IQIF.txt file not opened\n");
         return 1;

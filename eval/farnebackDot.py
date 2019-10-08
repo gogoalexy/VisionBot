@@ -4,6 +4,8 @@ import time
 import numpy as np
 import ImageProcessing
 import motionFieldTemplate
+sys.path.append("iq-neuron")
+import iqif
 
 cap = cv2.VideoCapture(0)
 fps = int( cap.get(cv2.CAP_PROP_FPS) )
@@ -15,6 +17,11 @@ preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
 preprocessor.findSideToCrop()
 preprocessor.findCropPoints()
 algo = ImageProcessing.Algorithm()
+
+network = iqif.iqnet()
+print(network.num_neurons())
+network.set_biascurrent(0,4)
+network.set_biascurrent(1,4)
 
 leftTemplate = motionFieldTemplate.createCamLeftShiftTemplate(64, 64).flatten()
 rightTemplate = motionFieldTemplate.createCamRightShiftTemplate(64, 64).flatten()
@@ -45,6 +52,10 @@ while(True):
         if cv2.waitKey(1) & 0xff == ord('q'):
             break
     print("ZoomIn: {}, ZoomOut: {}, PanLeft: {}, PanRight: {}, PanUp: {}, PanDown: {}".format(forward, backward, left, right, up, down))
+    for i in range (0,2000):
+        network.send_synapse();
+        print("0: %d" % network.potential(0))
+        print("1: %d" % network.potential(1))
     print("FPS: {}".format(1.0 / (time.time() - start_time)))
 
 

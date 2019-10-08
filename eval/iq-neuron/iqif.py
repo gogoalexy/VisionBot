@@ -1,9 +1,8 @@
 import ctypes
 import sys
 
-libiq = ctypes.CDLL("./libiq-network.so")
-libiz = ctypes.CDLL("./libiz-network.so")
-print(libiq)
+libiq = ctypes.CDLL("iq-neuron/build/libiq-network.so")
+libiz = ctypes.CDLL("iq-neuron/build/libiz-network.so")
 
 class iqnet(object):
     def __init__(self):
@@ -55,7 +54,7 @@ class iznet(object):
 
         libiz.iz_network_adaptive_term.argtypes = [ctypes.c_void_p, ctypes.c_int]
         libiz.iz_network_adaptive_term.restype = ctypes.c_float
-        
+
         self.obj = libiz.iz_network_new()
 
     def num_neurons(self):
@@ -69,23 +68,7 @@ class iznet(object):
 
     def potential(self, neuron_index):
         return libiz.iz_network_potential(self.obj, neuron_index)
-    
+
     def adaptive_term(self, neuron_index):
         return libiz.iz_network_adaptive_term(self.obj, neuron_index)
-
-network = iqnet()
-print(network.num_neurons())
-network.set_biascurrent(0,4)
-network.set_biascurrent(1,4)
-for i in range (0,2000):
-    network.send_synapse();
-    print("0: %d" % network.potential(0))
-    print("1: %d" % network.potential(1))
-network.set_biascurrent(0,0)
-network.set_biascurrent(1,0)
-for i in range (0,1000):
-    network.send_synapse();
-    print("0: %d" % network.potential(0))
-    print("1: %d" % network.potential(1))
-print("OK?")
 
