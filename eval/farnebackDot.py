@@ -4,6 +4,7 @@ import time
 import numpy as np
 import ImageProcessing
 import motionFieldTemplate
+import snn
 
 NOT_RPi = False
 
@@ -21,37 +22,34 @@ if NOT_RPi:
     preprocessor.findSideToCrop()
     preprocessor.findCropPoints()
 else:
-    cap.set(cv2.CAP_PROP_FPS, 30)
+    cap.set(cv2.CAP_PROP_FPS, 32)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 64)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 64)
+    preprocessor = ImageProcessing.VideoPreprocessor(64, 64)
 
 ret, frame = cap.read()
 if NOT_RPi:
-    croppedFrame = preprocessor.cropFrameIntoSquare(frame)
-prvs = preprocessor.convertFrameIntoSpecifiedFormat(croppedFrame)
+    frame = preprocessor.cropFrameIntoSquare(frame)
+prvs = preprocessor.convertFrameIntoSpecifiedFormat(frame)
 
 algo = ImageProcessing.Algorithm()
 
 AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
+net = snn.initNet()
 
 while(True):
     start_time = time.time()
     ret, frame = cap.read()
     if ret==True:
         if NOT_RPi:
-            croppedFrame = preprocessor.cropFrameIntoSquare(frame)
-
-        curr = preprocessor.convertFrameIntoSpecifiedFormat(croppedFrame)
+            frame = preprocessor.cropFrameIntoSquare(frame)
+        curr = preprocessor.convertFrameIntoSpecifiedFormat(frame)
         FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
-        dottedFlow = dotWithTemplates(FlattenFlow, AllFlattenTemplates)
-
+        dottedFlow = motionFieldTemplate.dotWithTemplates(FlattenFlow, AllFlattenTemplates)
         prvs = curr
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
 
     print(dottedFlow)
-
+    snn.run(net, 2000)
     print("FPS: {}".format(1.0 / (time.time() - start_time)))
-
 
 cap.release()

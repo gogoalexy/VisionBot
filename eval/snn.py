@@ -12,9 +12,9 @@ def initNet():
 def run(network, steps):
     for step in range(0, steps):
         network.send_synapse()
-        print( "0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}".format(network.potential(0),
-        network.potential(1), network.potential(2), network.potential(3), network.potential(4),
-        network.potential(5), network.potential(6), network.potential(7)) )
+        #print( "0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}".format(network.potential(0),
+        #network.potential(1), network.potential(2), network.potential(3), network.potential(4),
+        #network.potential(5), network.potential(6), network.potential(7)) )
 
 def getPotential(network, neuronID):
     return network.potential(neuronID)
