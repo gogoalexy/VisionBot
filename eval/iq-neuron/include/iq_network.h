@@ -24,12 +24,10 @@ private:
     int linenum_neuronParameter();
     int _num_neurons;
     int *_tau, *_f, *_n;
-    int *_weight, *_current, *_biascurrent;
+    int *_weight, *_scurrent, *_ncurrent, *_biascurrent;
     iq_neuron *_neurons;
 
 };
-
-
 
 #endif
 
