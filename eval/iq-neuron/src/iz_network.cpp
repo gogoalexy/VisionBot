@@ -30,12 +30,12 @@ int iz_network::linenum_neuronParameter()
 {
     int linenum = 0;
     float f[9];
-    FILE *fp = fopen("../inputs/neuronParameter_Izhikevich.txt", "r");
+    FILE *fp = fopen("iq-neuron/inputs/neuronParameter_Izhikevich.txt", "r");
     if(fp == NULL) {
         printf("neuronParameter_Izhikevich.txt file not opened\n");
         return -1;
     }
-    
+
     while(fscanf(fp, " %f %f %f %f %f %f %f %f %f", &f[0], &f[1], &f[2],
             &f[3], &f[4], &f[5], &f[6], &f[7], &f[8]) == 9) {
         linenum++;
@@ -58,7 +58,7 @@ int iz_network::set_neurons()
         return 1;
     }
     */
-    fp = fopen("../inputs/neuronParameter_Izhikevich.txt", "r");
+    fp = fopen("iq-neuron/inputs/neuronParameter_Izhikevich.txt", "r");
     while(fscanf(fp, " %d %f %f %f %f %f %f %f %d", &i, &a, &b, &c, &d, &k, &rest, &threshold, &noise) == 9) {
         (_neurons + i)->set(a, b, c, d, k, rest, threshold, noise);
     }
@@ -79,7 +79,7 @@ int iz_network::get_weight()
         }
         *(_biascurrent + i) = 0;
     }
-    fp = fopen("../inputs/Connection_Table_Izhikevich.txt", "r");
+    fp = fopen("iq-neuron/inputs/Connection_Table_Izhikevich.txt", "r");
     if(fp == NULL) {
         printf("Connection_Table_Izhikevich.txt file not opened\n");
         return 1;
