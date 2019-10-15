@@ -2,6 +2,7 @@ import sys
 import cv2
 import time
 import numpy as np
+import Indicator
 import ImageProcessing
 import motionFieldTemplate
 sys.path.append("iq-neuron")
@@ -53,9 +54,7 @@ while(True):
             break
     print("ZoomIn: {}, ZoomOut: {}, PanLeft: {}, PanRight: {}, PanUp: {}, PanDown: {}".format(forward, backward, left, right, up, down))
     for i in range (0,2000):
-        network.send_synapse();
-        print("0: %d" % network.potential(0))
-        print("1: %d" % network.potential(1))
+        network.send_synapse()
     print("FPS: {}".format(1.0 / (time.time() - start_time)))
 
 
