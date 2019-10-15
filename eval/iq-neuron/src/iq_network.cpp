@@ -10,7 +10,8 @@ iq_network::iq_network()
     _f = new int[_num_neurons * _num_neurons]();
     _n = new int[_num_neurons * _num_neurons]();
     _weight = new int[_num_neurons * _num_neurons]();
-    _current = new int[_num_neurons * _num_neurons]();
+    _scurrent = new int[_num_neurons * _num_neurons]();
+    _ncurrent = new int[_num_neurons]();
     _biascurrent = new int[_num_neurons]();
 
     get_weight();
@@ -21,7 +22,8 @@ iq_network::iq_network()
 iq_network::~iq_network()
 {
     delete[] _weight;
-    delete[] _current;
+    delete[] _scurrent;
+    delete[] _ncurrent;
     delete[] _biascurrent;
     delete[] _tau;
     delete[] _f;
@@ -74,13 +76,14 @@ int iq_network::get_weight()
     FILE *fp;
     for(i = 0; i < _num_neurons; i++) {
         for(j = 0; j < _num_neurons; j++) {
-            *(_current + _num_neurons*i + j) = 0;
+            *(_scurrent + _num_neurons*i + j) = 0;
             *(_weight + _num_neurons*i + j) = 0;
             *(_tau + _num_neurons*i + j) = 0;
             *(_f + _num_neurons*i + j) = 0;
             *(_n + _num_neurons*i + j) = 0;
         }
         *(_biascurrent + i) = 0;
+        *(_ncurrent + i) = 0;
     }
 
     fp = fopen("iq-neuron/inputs/Connection_Table_IQIF.txt", "r");
@@ -112,37 +115,42 @@ int iq_network::num_neurons()
 
 void iq_network::send_synapse()
 {
-    int i, j, temp;
+    int i, j;
+    int *pts, *ptw, *ptn, *ptf;
 
-    /* accumulate individual synapse current */
+    /* accumulating/decaying synapse current */
     for(i = 0; i < _num_neurons; i++) {
+        pts = _scurrent + _num_neurons*i;
+        ptn = _n + _num_neurons*i;
+        ptf = _f + _num_neurons*i;
         if((_neurons + i)->is_firing()) {
-            //printf("neuron %d has fired!\n", i);
+            ptw = _weight + _num_neurons*i;
             for(j = 0; j < _num_neurons; j++) {
-                *(_current + _num_neurons*i + j) += *(_weight + _num_neurons*i + j);
+                *(pts + j) += *(ptw + j);
+                *(_ncurrent + j) += *(pts + j);
+                if(*(ptn + j) > *(ptf + j)) {
+                    *(ptn + j) = 0;
+                    *(pts + j) = *(pts + j) * 9 / 10;
+                }
+                (*(ptn + j))++;
+            }
+        }
+        else {
+            for(j = 0; j < _num_neurons; j++) {
+                *(_ncurrent + j) += *(pts + j);
+                if(*(ptn + j) > *(ptf + j)) {
+                    *(ptn + j) = 0;
+                    *(pts + j) = *(pts + j) * 9 / 10;
+                }
+                (*(ptn + j))++;
             }
         }
     }
 
-    /* accumulate and inject current into neurons, solving DE */
-    for(j = 0; j < _num_neurons; j++) {
-        temp = 0;
-        for(i = 0; i < _num_neurons; i++) {
-            temp += *(_current + _num_neurons*i + j);
-        }
-        (_neurons + j)->iq(temp + *(_biascurrent + j));
-    }
-
-    /* synapse exponential decay */
+    /* solving DE, reset post-syn current */
     for(i = 0; i < _num_neurons; i++) {
-        for(j = 0; j < _num_neurons; j++) {
-            temp = _num_neurons*i + j;
-            if(*(_n + temp) > *(_f + temp)) {
-                *(_n + temp) = 0;
-                *(_current + temp) = *(_current + temp) * 9 / 10;
-            }
-            *(_n + temp) += 1;
-        }
+        (_neurons + i)->iq(*(_ncurrent + i) + *(_biascurrent + i));
+        *(_ncurrent + i) = 0;
     }
 
     return;
