@@ -28,7 +28,7 @@ The program is under the `gen` folder and named as `Generator.py`. You only have
 ## November Demo
 Moonshot project November demo core.
 
-## Prerequisites
+### Prerequisites
 * Python 3
 * OpenCV 4
 * Numpy
