@@ -8,7 +8,8 @@ iz_network::iz_network()
     _neurons = new iz_neuron[_num_neurons];
     _tau = new int[_num_neurons * _num_neurons]();
     _weight = new float[_num_neurons * _num_neurons]();
-    _current = new float[_num_neurons * _num_neurons]();
+    _scurrent = new float[_num_neurons * _num_neurons]();
+    _ncurrent = new float[_num_neurons]();
     _biascurrent = new float[_num_neurons]();
 
     get_weight();
@@ -19,7 +20,8 @@ iz_network::iz_network()
 iz_network::~iz_network()
 {
     delete[] _weight;
-    delete[] _current;
+    delete[] _scurrent;
+    delete[] _ncurrent;
     delete[] _biascurrent;
     delete[] _tau;
     delete[] _neurons;
@@ -73,11 +75,12 @@ int iz_network::get_weight()
     FILE *fp;
     for(i = 0; i < _num_neurons; i++) {
         for(j = 0; j < _num_neurons; j++) {
-            *(_current + _num_neurons*i + j) = 0;
+            *(_scurrent + _num_neurons*i + j) = 0;
             *(_weight + _num_neurons*i + j) = 0;
             *(_tau + _num_neurons*i + j) = 1;
         }
         *(_biascurrent + i) = 0;
+        *(_ncurrent + i) = 0;
     }
     fp = fopen("iq-neuron/inputs/Connection_Table_Izhikevich.txt", "r");
     if(fp == NULL) {
@@ -106,33 +109,34 @@ int iz_network::num_neurons()
 void iz_network::send_synapse()
 {
     int i, j, temp;
+    int *ptt;
+    float *pts, *ptw;
     float total_current;
 
-    /* accumulate individual synapse current */
+    /* accumulating/decaying synapse current */
     for(i = 0; i < _num_neurons; i++) {
+        pts = _scurrent + _num_neurons*i;
+        ptt = _tau + _num_neurons*i;
         if((_neurons + i)->is_firing()) {
-            //printf("neuron %d has fired!\n", i);
+            ptw = _weight + _num_neurons*i;
             for(j = 0; j < _num_neurons; j++) {
-                *(_current + _num_neurons*i + j) += *(_weight + _num_neurons*i + j);
+                *(pts + j) += *(ptw + j);
+                *(_ncurrent + j) += *(pts + j);
+                *(pts + j) = *(pts + j) * (*(ptt + j) - 1) / *(ptt + j);
+            }
+        }
+        else {
+            for(j = 0; j < _num_neurons; j++) {
+                *(_ncurrent + j) += *(pts + j);
+                *(pts + j) = *(pts + j) * (*(ptt + j) - 1) / *(ptt + j);
             }
         }
     }
 
-    /* accumulate and inject current into neurons, solving DE */
-    for(j = 0; j < _num_neurons; j++) {
-        total_current = 0;
-        for(i = 0; i < _num_neurons; i++) {
-            total_current += *(_current + _num_neurons*i + j);
-        }
-        (_neurons + j)->iz_rk4(total_current + *(_biascurrent + j));
-    }
-
-    /* synapse exponential decay */
+    /* solving DE, reset post-syn current */
     for(i = 0; i < _num_neurons; i++) {
-        for(j = 0; j < _num_neurons; j++) {
-            temp = _num_neurons*i + j;
-            *(_current + temp) = *(_current + temp) * (*(_tau + temp) - 1) / *(_tau + temp);
-        }
+        (_neurons + i)->iz_rk4(*(_ncurrent + i) + *(_biascurrent + i));
+        *(_ncurrent + i) = 0;
     }
 
     return;
@@ -167,6 +171,16 @@ float iz_network::adaptive_term(int neuron_index)
     return (_neurons + neuron_index)->adaptive_term();
 }
 
+int iz_network::spike_count(int neuron_index)
+{
+    return (_neurons + neuron_index)->spike_count();
+}
+
+float iz_network::spike_rate(int neuron_index)
+{
+    return (_neurons + neuron_index)->spike_rate();
+}
+
 extern "C"
 {
     iz_network* iz_network_new() {return new iz_network();}
@@ -175,5 +189,7 @@ extern "C"
     void iz_network_set_biascurrent(iz_network* network, int neuron_index, int biascurrent) {return network->set_biascurrent(neuron_index, biascurrent);}
     float iz_network_potential(iz_network* network, int neuron_index) {return network->potential(neuron_index);}
     float iz_network_adaptive_term(iz_network* network, int neuron_index) {return network->adaptive_term(neuron_index);}
+    int iz_network_spike_count(iz_network* network, int neuron_index) {return network->spike_count(neuron_index);}
+    float iz_network_spike_rate(iz_network* network, int neuron_index) {return network->spike_rate(neuron_index);}
 }
 

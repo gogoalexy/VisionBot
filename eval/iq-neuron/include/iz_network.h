@@ -20,17 +20,17 @@ public:
     void set_biascurrent(int neuron_index, float biascurrent);
     float potential(int neuron_index);
     float adaptive_term(int neuron_index);
+    int spike_count(int neuron_index);
+    float spike_rate(int neuron_index);
 
 private:
     int linenum_neuronParameter();
     int _num_neurons;
     int *_tau;
-    float *_weight, *_current, *_biascurrent;
+    float *_weight, *_scurrent, *_ncurrent, *_biascurrent;
     iz_neuron *_neurons;
 
 };
-
-
 
 #endif
 

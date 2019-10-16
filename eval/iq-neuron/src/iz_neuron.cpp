@@ -97,27 +97,17 @@ bool iz_neuron::is_firing()
 
 int iz_neuron::spike_count()
 {
-    return _spike_count;
+    int count = _spike_count;
+    _spike_count = 0;
+    return count;
 }
 
 float iz_neuron::spike_rate()
 {
     float r = _spike_count / (float) t_neuron;
-    reset_time();
-    reset_spike_count();
-    return r;
-}
-
-void iz_neuron::reset_time()
-{
-    t_neuron = 0;
-    return;
-}
-
-void iz_neuron::reset_spike_count()
-{
     _spike_count = 0;
-    return;
+    t_neuron = 0;
+    return r;
 }
 
 void iz_neuron::funca(float &fa, const float I, const float dtt,
