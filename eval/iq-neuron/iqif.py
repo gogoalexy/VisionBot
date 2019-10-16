@@ -21,6 +21,12 @@ class iqnet(object):
         libiq.iq_network_potential.argtypes = [ctypes.c_void_p, ctypes.c_int]
         libiq.iq_network_potential.restype = ctypes.c_int
 
+        libiq.iq_network_spike_count.argtypes = [ctypes.c_void_p, ctypes.c_int]
+        libiq.iq_network_spike_count.restype = ctypes.c_int
+
+        libiq.iq_network_spike_rate.argtypes = [ctypes.c_void_p, ctypes.c_int]
+        libiq.iq_network_spike_rate.restype = ctypes.c_float
+        
         self.obj = libiq.iq_network_new()
 
     def num_neurons(self):
@@ -34,6 +40,12 @@ class iqnet(object):
 
     def potential(self, neuron_index):
         return libiq.iq_network_potential(self.obj, neuron_index)
+
+    def spike_count(self, neuron_index):
+        return libiq.iq_network_spike_count(self.obj, neuron_index)
+
+    def spike_rate(self, neuron_index):
+        return libiq.iq_network_spike_rate(self.obj, neuron_index)
 
 class iznet(object):
     def __init__(self):
@@ -55,6 +67,12 @@ class iznet(object):
         libiz.iz_network_adaptive_term.argtypes = [ctypes.c_void_p, ctypes.c_int]
         libiz.iz_network_adaptive_term.restype = ctypes.c_float
 
+        libiz.iz_network_spike_count.argtypes = [ctypes.c_void_p, ctypes.c_int]
+        libiz.iz_network_spike_count.restype = ctypes.c_int
+
+        libiz.iz_network_spike_rate.argtypes = [ctypes.c_void_p, ctypes.c_int]
+        libiz.iz_network_spike_rate.restype = ctypes.c_float
+        
         self.obj = libiz.iz_network_new()
 
     def num_neurons(self):
@@ -71,4 +89,10 @@ class iznet(object):
 
     def adaptive_term(self, neuron_index):
         return libiz.iz_network_adaptive_term(self.obj, neuron_index)
+
+    def spike_count(self, neuron_index):
+        return libiz.iz_network_spike_count(self.obj, neuron_index)
+
+    def spike_rate(self, neuron_index):
+        return libiz.iz_network_spike_rate(self.obj, neuron_index)
 
