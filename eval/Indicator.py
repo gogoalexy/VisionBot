@@ -1,11 +1,11 @@
 
 class Indicator():
 
-    def __init__(self, gpio=False):
-        if gpio:
+    def __init__(self):
+        try:
             from gpiozero import LED
             self.show = PiIndicator()
-        else:
+        except:
             self.show = GeneralIndicator()
 
     def turnOn(self, index):

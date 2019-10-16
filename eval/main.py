@@ -23,7 +23,7 @@ prvs = vs.readMono()
 algo = Algorithm()
 AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
 snn = SNN()
-led = Indicator(gpio=args["picamera"])
+led = Indicator()
 
 fps = FPS().start()
 while not fps.isPassed(args["num_frames"]):
