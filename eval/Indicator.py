@@ -1,6 +1,23 @@
-from gpiozero import LED
 
 class Indicator():
+
+    def __init__(self, gpio=False):
+        if gpio:
+            from gpiozero import LED
+            self.show = PiIndicator()
+        else:
+            self.show = GeneralIndicator()
+
+    def turnOn(self, index):
+        self.show.turnOn(index)
+
+    def turnOffAll(self):
+        self.show.turnOffAll()
+
+    def turnOff(self, index):
+        self.show.turnOff(index)
+
+class PiIndicator():
 
     def __init__(self):
         upLight = LED(27)
@@ -22,3 +39,18 @@ class Indicator():
 
     def turnOff(self, index):
         self.lookup[index].off()
+
+class GeneralIndicator():
+
+    def __init__(self):
+        self.lookup = [ "upLight", "downLight", "leftLight", "rightLight", "zoominLight", "zoomoutLight", "rotatecwLight", "rotateccwLight" ]
+
+    def turnOn(self, index):
+        print(self.lookup[index])
+
+    def turnOffAll(self):
+        pass
+
+    def turnOff(self, index):
+        print(self.lookup[index])
+

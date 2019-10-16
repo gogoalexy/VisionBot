@@ -30,10 +30,14 @@ Moonshot project November demo core.
 
 ### File Structure
 1. The entire project is under the folder `eval`.
-2. The main entries are `main.py` and `farnebackDot.py`. `main.py` is Raspberry Pi camera module specific, so it's totally USBCam incompatible. However, the multi-threaded version of `farneback.py` is under construction.
+2. The main entry is `main.py`. If you would like to enable Raspberry Pi camera module specific optimization, you should find the command in Usage section.
 3. Unit tests are under the `test` folder.
 4. IQIF neuron simulator is under the folder `iq-neuron`.
 
 ### Usage
-`python3 main.py (-n FRAME_NUMBERS) (-d)`
-The program accepts two optional parameters. One is how many frames i.e. how long the video, you want to test by typing `-n FRAMES_NUMBERS`. The second one denotes whether you want to display the raw video in real-time by appending `-d` or `--display`.
+`python3 main.py (-n FRAME_NUMBERS) (-d) (-p)`
+The program accepts three optional parameters:
+1.  To set how many frames, i.e. how long the video, you want to test, you should append `-n FRAMES_NUMBERS`.
+2. `-d` or `--display` denotes you want to display the raw video in real-time.
+3. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
+__Note: Before executing the program, please complie the iq-neuron simulator first.__
