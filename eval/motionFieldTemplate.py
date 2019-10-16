@@ -98,3 +98,22 @@ def createCamRotateCCWTemplate(height, width):
                 template[y][x][0] = 0.0
                 template[y][x][1] = 0.0
     return template
+
+# Order: UP, DOWN, LEFT, RIGHT, ZOOMIN, ZOOMOUT, ROTATECW, ROTATECCW
+def createAllFlattenTemplate(height, width):
+    allTemplates = []
+    allTemplates.append(createCamUpShiftTemplate(height, width).flatten())
+    allTemplates.append(createCamDownShiftTemplate(height, width).flatten())
+    allTemplates.append(createCamLeftShiftTemplate(height, width).flatten())
+    allTemplates.append(createCamRightShiftTemplate(height, width).flatten())
+    allTemplates.append(createCamZoomInTemplate(height, width).flatten())
+    allTemplates.append(createCamZoomOutTemplate(height, width).flatten())
+    allTemplates.append(createCamRotateCWTemplate(height, width).flatten())
+    allTemplates.append(createCamRotateCCWTemplate(height, width).flatten())
+    return allTemplates
+
+def dotWithTemplates(tobeDotted, templates):
+    results = []
+    for template in templates:
+        results.append(np.inner(tobeDotted, template))
+    return results

@@ -2,59 +2,55 @@ import sys
 import cv2
 import time
 import numpy as np
-import Indicator
 import ImageProcessing
 import motionFieldTemplate
-sys.path.append("iq-neuron")
-import iqif
+
+NOT_RPi = False
+
+if NOT_RPi:
+    pass
+else:
+    import Indicator
 
 cap = cv2.VideoCapture(0)
-fps = int( cap.get(cv2.CAP_PROP_FPS) )
-fwidth = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH) )
-fheight = int( cap.get(cv2.CAP_PROP_FRAME_HEIGHT) )
-start = time.time()
-
-preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
-preprocessor.findSideToCrop()
-preprocessor.findCropPoints()
-algo = ImageProcessing.Algorithm()
-
-network = iqif.iqnet()
-print(network.num_neurons())
-network.set_biascurrent(0,4)
-network.set_biascurrent(1,4)
-
-leftTemplate = motionFieldTemplate.createCamLeftShiftTemplate(64, 64).flatten()
-rightTemplate = motionFieldTemplate.createCamRightShiftTemplate(64, 64).flatten()
-upTemplate = motionFieldTemplate.createCamUpShiftTemplate(64, 64).flatten()
-downTemplate = motionFieldTemplate.createCamDownShiftTemplate(64, 64).flatten()
-forwardTemplate = motionFieldTemplate.createCamZoomInTemplate(64, 64).flatten()
-backwardTemplate = motionFieldTemplate.createCamZoomOutTemplate(64, 64).flatten()
+if NOT_RPi:
+    fps = int( cap.get(cv2.CAP_PROP_FPS) )
+    fwidth = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH) )
+    fheight = int( cap.get(cv2.CAP_PROP_FRAME_HEIGHT) )
+    preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
+    preprocessor.findSideToCrop()
+    preprocessor.findCropPoints()
+else:
+    cap.set(cv2.CAP_PROP_FPS, 30)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 64)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 64)
 
 ret, frame = cap.read()
-croppedFrame = preprocessor.cropFrameIntoSquare(frame)
+if NOT_RPi:
+    croppedFrame = preprocessor.cropFrameIntoSquare(frame)
 prvs = preprocessor.convertFrameIntoSpecifiedFormat(croppedFrame)
+
+algo = ImageProcessing.Algorithm()
+
+AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
 
 while(True):
     start_time = time.time()
     ret, frame = cap.read()
     if ret==True:
-        croppedFrame = preprocessor.cropFrameIntoSquare(frame)
+        if NOT_RPi:
+            croppedFrame = preprocessor.cropFrameIntoSquare(frame)
+
         curr = preprocessor.convertFrameIntoSpecifiedFormat(croppedFrame)
-        flow = algo.calculateOpticalFlow(prvs, curr).flatten()
-        forward = np.inner(flow, forwardTemplate)
-        backward = np.inner(flow, backwardTemplate)
-        left = np.inner(flow, leftTemplate)
-        right = np.inner(flow, rightTemplate)
-        up = np.inner(flow, upTemplate)
-        down = np.inner(flow, downTemplate)
+        FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
+        dottedFlow = dotWithTemplates(FlattenFlow, AllFlattenTemplates)
 
         prvs = curr
-        if cv2.waitKey(1) & 0xff == ord('q'):
-            break
-    print("ZoomIn: {}, ZoomOut: {}, PanLeft: {}, PanRight: {}, PanUp: {}, PanDown: {}".format(forward, backward, left, right, up, down))
-    for i in range (0,2000):
-        network.send_synapse()
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+    print(dottedFlow)
+
     print("FPS: {}".format(1.0 / (time.time() - start_time)))
 
 
