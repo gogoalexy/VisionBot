@@ -1,5 +1,6 @@
 import sys
 import time
+sys.path.append("../")
 import snn
 
 start = time.time()

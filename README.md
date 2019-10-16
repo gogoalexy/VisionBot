@@ -10,7 +10,7 @@ The program OpticalFlow.py under BMCEN folder is responsible for calculating den
 
 ### Usage
 OpticalFlow.py accepts several command-line arguments to toggle among different input/output modes. The basic format is shown below:
-`python OpticalFlow.py (-i INPUT | -s) [-o] [-flow]`
+`python3 OpticalFlow.py (-i INPUT | -s) [-o] [-flow]`
 1. `(-i INPUT | -s)`: Input selection is a required argumant. You must clarify the file you would like to use or you would like to use a online camera.
 2. `[-o] [-flow]`: Output requirements are optional. By default the program will output nothing but show the results on the monitor. If you want to output video, please specify the argument `-o`. If you want to output flow in text, please specify the argument `-flow`. Also, it is possible to output them two at the same time.
 __Note: It is not recommended to output flow text when the input is video stream, since writing a text file is quite time-consuming and the speed of the video stream will be affected.__
@@ -25,3 +25,15 @@ The program is under the `gen` folder and named as `Generator.py`. You only have
 3. The speed in the program is defined as pixels per frame when zooming or panning the image. When it comes to rotating, the speed is defined by degrees per frame.
 4. All the motions described here are camera-centric, i.e. pan left means the camera panning left so the motion field is from left to right.
 
+## November Demo
+Moonshot project November demo core.
+
+### File Structure
+1. The entire project is under the folder `eval`.
+2. The main entries are `main.py` and `farnebackDot.py`. `main.py` is Raspberry Pi camera module specific, so it's totally USBCam incompatible. However, the multi-threaded version of `farneback.py` is under construction.
+3. Unit tests are under the `test` folder.
+4. IQIF neuron simulator is under the folder `iq-neuron`.
+
+### Usage
+`python3 main.py (-n FRAME_NUMBERS) (-d)`
+The program accepts two optional parameters. One is how many frames i.e. how long the video, you want to test by typing `-n FRAMES_NUMBERS`. The second one denotes whether you want to display the raw video in real-time by appending `-d` or `--display`.

@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+sys.path.append("../")
 import motionFieldTemplate as mft
 
 left = mft.createCamLeftShiftTemplate(8, 8)
