@@ -2,7 +2,7 @@ from gpiozero import LED
 
 class Indicator():
 
-    def __init__():
+    def __init__(self):
         upLight = LED(27)
         downLight = LED(22)
         leftLight = LED(4)
@@ -11,10 +11,14 @@ class Indicator():
         zoomoutLight = LED(23)
         rotatecwLight = LED(24)
         rotateccwLight = LED(25)
-        self.lookup = {"UP": upLight, "DOWN": downLight, "LEFT": leftLight, "RIGHT": rightLight, "ZOOMIN": zoominLight, "ZOOMOUT": zoomoutLight, "ROTATECW": rotatecwLight, "ROTATECCW": rotateccwLight}
+        self.lookup = [ upLight, downLight, leftLight, rightLight, zoominLight, zoomoutLight, rotatecwLight, rotateccwLight ]
 
-    def turnOn(index):
+    def turnOn(self, index):
         self.lookup[index].on()
 
-    def turnOff(index):
+    def turnOffAll(self):
+        for led in self.lookup:
+            led.off()
+
+    def turnOff(self, index):
         self.lookup[index].off()
