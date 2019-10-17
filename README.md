@@ -13,6 +13,7 @@ OpticalFlow.py accepts several command-line arguments to toggle among different 
 `python3 OpticalFlow.py (-i INPUT | -s) [-o] [-flow]`
 1. `(-i INPUT | -s)`: Input selection is a required argumant. You must clarify the file you would like to use or you would like to use a online camera.
 2. `[-o] [-flow]`: Output requirements are optional. By default the program will output nothing but show the results on the monitor. If you want to output video, please specify the argument `-o`. If you want to output flow in text, please specify the argument `-flow`. Also, it is possible to output them two at the same time.
+
 __Note: It is not recommended to output flow text when the input is video stream, since writing a text file is quite time-consuming and the speed of the video stream will be affected.__
 
 ## MagicMotion
@@ -49,4 +50,6 @@ The program accepts three optional parameters:
 1.  To set how many frames, i.e. how long the video, you want to test, you should append `-n FRAMES_NUMBERS`.
 2. `-d` or `--display` denotes you want to display the raw video in real-time.
 3. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
+4. `-iz` or `--izhikevich` switch the system to use Izhikevich model not the default IQIF model.
+
 __Note: Before executing the program, please complie the iq-neuron simulator first.__
