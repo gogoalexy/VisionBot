@@ -14,7 +14,8 @@ import motionFieldTemplate
 ap = argparse.ArgumentParser()
 ap.add_argument("-n", "--num-frames", type=int, default=1000, help="# of frames to loop over for FPS test")
 ap.add_argument("-d", "--display", help="Whether or not frames should be displayed", action="store_true")
-ap.add_argument("-p", "--picamera", help="whether or not the Raspberry Pi camera should be used", action="store_true")
+ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
+ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
 
 frameHW = (64, 64)
@@ -24,7 +25,7 @@ prvs = vs.readMono()
 
 algo = Algorithm()
 AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
-snn = SNN()
+snn = SNN(args["izhikevich"])
 led = Indicator.Indicator()
 
 fps = FPS().start()
@@ -39,6 +40,7 @@ while not fps.isPassed(args["num_frames"]):
         key = cv2.waitKey(1) & 0xFF
 
     prvs = curr
+    snn.stimulate(3, 2)
     snn.run(2000)
     neuron = snn.getMostActiveNeuron()
     led.turnOffAll()
@@ -49,7 +51,7 @@ while not fps.isPassed(args["num_frames"]):
 led.turnOffAll()
 fps.stop()
 print("Elasped time: {:.3f}".format(fps.elapsed()))
-print("Approx. FPS: {:.3f}".format(fps.fps()))
+print("Approx. average FPS: {:.3f}".format(fps.fps()))
 
 cv2.destroyAllWindows()
 vs.stop()
