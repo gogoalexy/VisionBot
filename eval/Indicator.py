@@ -3,7 +3,7 @@ class Indicator():
 
     def __init__(self):
         try:
-            from gpiozero import LED
+            from PiOnly import PiIndicator
             self.show = PiIndicator()
         except:
             self.show = GeneralIndicator()
@@ -17,28 +17,6 @@ class Indicator():
     def turnOff(self, index):
         self.show.turnOff(index)
 
-class PiIndicator():
-
-    def __init__(self):
-        upLight = LED(27)
-        downLight = LED(22)
-        leftLight = LED(4)
-        rightLight = LED(17)
-        zoominLight = LED(18)
-        zoomoutLight = LED(23)
-        rotatecwLight = LED(24)
-        rotateccwLight = LED(25)
-        self.lookup = [ upLight, downLight, leftLight, rightLight, zoominLight, zoomoutLight, rotatecwLight, rotateccwLight ]
-
-    def turnOn(self, index):
-        self.lookup[index].on()
-
-    def turnOffAll(self):
-        for led in self.lookup:
-            led.off()
-
-    def turnOff(self, index):
-        self.lookup[index].off()
 
 class GeneralIndicator():
 

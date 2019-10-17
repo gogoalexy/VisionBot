@@ -1,12 +1,14 @@
 import time
-import cv2
 import argparse
+
+import cv2
 import numpy as np
+
 from snn import SNN
 from timer import FPS
-from Indicator import Indicator
 from Stream import VideoStreamMono
 from ImageProcessing import Algorithm
+import Indicator
 import motionFieldTemplate
 
 ap = argparse.ArgumentParser()
@@ -23,7 +25,7 @@ prvs = vs.readMono()
 algo = Algorithm()
 AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
 snn = SNN()
-led = Indicator()
+led = Indicator.Indicator()
 
 fps = FPS().start()
 while not fps.isPassed(args["num_frames"]):
