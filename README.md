@@ -31,7 +31,7 @@ Moonshot project November demo core.
 
 ### Hardware Setup
 Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25 are used.
-![routing diagram from Pi to LEDs on a bread board](/eval/routing/routePi_LED_bb.png)
+![routing diagram from Pi to LEDs on a bread board](/eval/wiring/wirePi_LED_bb.png)
 
 ### Prerequisites
 * Python 3
