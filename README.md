@@ -29,6 +29,10 @@ The program is under the `gen` folder and named as `Generator.py`. You only have
 ## November Demo
 Moonshot project November demo core.
 
+### Hardware Setup
+Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25 are used.
+![routing diagram from Pi to LEDs on a bread board](/eval/routing/routePi_LED_bb.png)
+
 ### Prerequisites
 * Python 3
 * OpenCV 4
@@ -42,10 +46,11 @@ Raspberry Pi Specific:
 1. The entire project is under the folder `eval`.
 2. The main entry is `main.py`. If you would like to enable Raspberry Pi camera module specific optimization, you should find the command in Usage section.
 3. Unit tests are under the `test` folder.
-4. IQIF neuron simulator is under the folder `iq-neuron`.
+4. Wiring information is under the `wiring` folder.
+5. IQIF neuron simulator is under the folder `iq-neuron`.
 
 ### Usage
-`python3 main.py (-n FRAME_NUMBERS) (-d) (-p)`
+`python3 main.py (-n FRAME_NUMBERS) (-d) (-p) (-iz)`
 The program accepts three optional parameters:
 1.  To set how many frames, i.e. how long the video, you want to test, you should append `-n FRAMES_NUMBERS`.
 2. `-d` or `--display` denotes you want to display the raw video in real-time.
