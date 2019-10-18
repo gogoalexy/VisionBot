@@ -4,7 +4,9 @@
 
 * gcc (C++11)
 
-* cmake
+* OpenMP >= 4.5
+
+* cmake >= 3.9
 
 ## Compiling & Running:
 
@@ -26,7 +28,7 @@ I also have an [Izhikevich model](include/iz_network.h) for comparison. It is th
 You can import the library using `iqif.py` by
 
 ```python
-from iqif import *
+import iqif
 ```
 .
 
