@@ -13,6 +13,7 @@ import motionFieldTemplate
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-n", "--num-frames", type=int, default=1000, help="# of frames to loop over for FPS test")
+ap.add_argument("-t", "--num-threads", type=int, default=1, help="# of threads to accelerate")
 ap.add_argument("-d", "--display", help="Whether or not frames should be displayed", action="store_true")
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
@@ -25,7 +26,7 @@ prvs = vs.readMono()
 
 algo = Algorithm()
 AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
-snn = SNN(args["izhikevich"])
+snn = SNN(args["izhikevich"], args["num_threads"])
 led = Indicator.Indicator()
 
 fps = FPS().start()
