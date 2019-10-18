@@ -26,6 +26,9 @@ class iqnet(object):
 
         libiq.iq_network_spike_rate.argtypes = [ctypes.c_void_p, ctypes.c_int]
         libiq.iq_network_spike_rate.restype = ctypes.c_float
+
+        libiq.iq_network_set_num_threads.argtypes = [ctypes.c_void_p, ctypes.c_int]
+        libiq.iq_network_set_num_threads.restype = ctypes.c_void_p
         
         self.obj = libiq.iq_network_new()
 
@@ -46,6 +49,9 @@ class iqnet(object):
 
     def spike_rate(self, neuron_index):
         return libiq.iq_network_spike_rate(self.obj, neuron_index)
+
+    def set_num_threads(self, num_threads):
+        return libiq.iq_network_set_num_threads(self.obj, num_threads)
 
 class iznet(object):
     def __init__(self):
