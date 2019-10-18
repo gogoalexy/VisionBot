@@ -1,20 +1,34 @@
-from gpiozero import LED
 
 class Indicator():
 
-    def __init__():
-        upLight = LED(27)
-        downLight = LED(22)
-        leftLight = LED(4)
-        rightLight = LED(17)
-        zoominLight = LED(18)
-        zoomoutLight = LED(23)
-        rotatecwLight = LED(24)
-        rotateccwLight = LED(25)
-        self.lookup = {"UP": upLight, "DOWN": downLight, "LEFT": leftLight, "RIGHT": rightLight, "ZOOMIN": zoominLight, "ZOOMOUT": zoomoutLight, "ROTATECW": rotatecwLight, "ROTATECCW": rotateccwLight}
+    def __init__(self):
+        try:
+            from PiOnly import PiIndicator
+            self.show = PiIndicator()
+        except:
+            self.show = GeneralIndicator()
 
-    def turnOn(index):
-        self.lookup[index].on()
+    def turnOn(self, index):
+        self.show.turnOn(index)
 
-    def turnOff(index):
-        self.lookup[index].off()
+    def turnOffAll(self):
+        self.show.turnOffAll()
+
+    def turnOff(self, index):
+        self.show.turnOff(index)
+
+
+class GeneralIndicator():
+
+    def __init__(self):
+        self.lookup = [ "upLight", "downLight", "leftLight", "rightLight", "zoominLight", "zoomoutLight", "rotatecwLight", "rotateccwLight" ]
+
+    def turnOn(self, index):
+        print(self.lookup[index])
+
+    def turnOffAll(self):
+        pass
+
+    def turnOff(self, index):
+        print(self.lookup[index])
+
