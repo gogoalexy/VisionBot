@@ -76,8 +76,8 @@ def createCamRotateCWTemplate(height, width):
             i = x - center[1]
             norm = math.sqrt(i**2 + j**2)
             if norm:
-                template[y][x][0] = -i/norm
-                template[y][x][1] = -j/norm
+                template[y][x][0] = -j/norm
+                template[y][x][1] = i/norm
             else:
                 template[y][x][0] = 0.0
                 template[y][x][1] = 0.0
@@ -92,8 +92,8 @@ def createCamRotateCCWTemplate(height, width):
             i = x - center[1]
             norm = math.sqrt(i**2 + j**2)
             if norm:
-                template[y][x][0] = i/norm
-                template[y][x][1] = j/norm
+                template[y][x][0] = j/norm
+                template[y][x][1] = -i/norm
             else:
                 template[y][x][0] = 0.0
                 template[y][x][1] = 0.0
