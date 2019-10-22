@@ -23,6 +23,8 @@ You can change the neuron parameters in the [neuron parameter file](inputs/neuro
 
 Currently the synaptic weights and neuron parameters CANNOT be changed during runtime session. Sorry.
 
+It is recommended to use multithreading only when number of neurons is large (>100 for example).
+
 I also have an [Izhikevich model](include/iz_network.h) for comparison. It is the same as IQIF ones.
 
 You can import the library using `iqif.py` by

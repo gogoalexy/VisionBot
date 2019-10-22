@@ -115,14 +115,48 @@ int iq_network::num_neurons()
 
 void iq_network::send_synapse()
 {
-    int i, j;
-    int *pts, *ptw, *ptn, *ptf;
-
     /* accumulating/decaying synapse current */
-    #pragma omp parallel
-    {
-        int ncurrent_private[_num_neurons] = {0};
-        #pragma omp for
+    if(_num_threads > 1) {
+        #pragma omp parallel
+        {
+            int ncurrent_private[_num_neurons] = {0};
+            #pragma omp for
+            for(int i = 0; i < _num_neurons; i++) {
+                int *pts = _scurrent + _num_neurons*i;
+                int *ptn = _n + _num_neurons*i;
+                int *ptf = _f + _num_neurons*i;
+                if((_neurons + i)->is_firing()) {
+                    int *ptw = _weight + _num_neurons*i;
+                    for(int j = 0; j < _num_neurons; j++) {
+                        *(pts + j) += *(ptw + j);
+                        ncurrent_private[j] += *(pts + j);
+                        if(*(ptn + j) > *(ptf + j)) {
+                            *(ptn + j) = 0;
+                            *(pts + j) = *(pts + j) * 9 / 10;
+                        }
+                        (*(ptn + j))++;
+                    }
+                }
+                else {
+                    for(int j = 0; j < _num_neurons; j++) {
+                        ncurrent_private[j] += *(pts + j);
+                        if(*(ptn + j) > *(ptf + j)) {
+                            *(ptn + j) = 0;
+                            *(pts + j) = *(pts + j) * 9 / 10;
+                        }
+                        (*(ptn + j))++;
+                    }
+                }
+            }
+            #pragma omp critical
+            {
+                for(int i = 0; i < _num_neurons; i++) {
+                    *(_ncurrent + i) += ncurrent_private[i];
+                }
+            }
+        }
+    }
+    else {
         for(int i = 0; i < _num_neurons; i++) {
             int *pts = _scurrent + _num_neurons*i;
             int *ptn = _n + _num_neurons*i;
@@ -131,7 +165,7 @@ void iq_network::send_synapse()
                 int *ptw = _weight + _num_neurons*i;
                 for(int j = 0; j < _num_neurons; j++) {
                     *(pts + j) += *(ptw + j);
-                    ncurrent_private[j] += *(pts + j);
+                    *(_ncurrent + j) += *(pts + j);
                     if(*(ptn + j) > *(ptf + j)) {
                         *(ptn + j) = 0;
                         *(pts + j) = *(pts + j) * 9 / 10;
@@ -141,7 +175,7 @@ void iq_network::send_synapse()
             }
             else {
                 for(int j = 0; j < _num_neurons; j++) {
-                    ncurrent_private[j] += *(pts + j);
+                    *(_ncurrent + j) += *(pts + j);
                     if(*(ptn + j) > *(ptf + j)) {
                         *(ptn + j) = 0;
                         *(pts + j) = *(pts + j) * 9 / 10;
@@ -150,14 +184,7 @@ void iq_network::send_synapse()
                 }
             }
         }
-        #pragma omp critical
-        {
-            for(int i = 0; i < _num_neurons; i++) {
-                *(_ncurrent + i) += ncurrent_private[i];
-            }
-        }
     }
-
 
     /* solving DE, reset post-syn current */
     for(int i = 0; i < _num_neurons; i++) {
@@ -201,6 +228,7 @@ float iq_network::spike_rate(int neuron_index)
 
 void iq_network::set_num_threads(int num_threads)
 {
+    _num_threads = num_threads;
     omp_set_num_threads(num_threads);
     return;
 }
