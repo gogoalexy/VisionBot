@@ -36,7 +36,7 @@ plt.subplot(2, 2, 2)
 plt.title("Camera Pan Right")
 plt.quiver(U, V)
 
-
+# The y axis in OpenCV is quite confusing.
 up = mft.createCamUpShiftTemplate(templatex, templatey)
 U, V = traverseSplitXY(up)
 
