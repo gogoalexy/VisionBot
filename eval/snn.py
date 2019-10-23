@@ -20,8 +20,10 @@ class SNN:
             self.network.set_biascurrent(neuronID, current)
 
     def run(self, steps):
-        for step in range(0, steps):
+        step = 0
+        while step < steps:
             self.network.send_synapse()
+            step += 1
 
     def getMostActiveNeuron(self):
         activity = []
@@ -30,6 +32,12 @@ class SNN:
             argmax = max(zip(activity, range(len(activity))))[1]
         return argmax
 
+    def getAllActivityInOrder(self):
+        activity = []
+        for index in range(0, self.numNeurons):
+            activity.append(self.getSpikeCount(index))
+        return activity
+    
     def getPotential(self, neuronID):
         return self.network.potential(neuronID)
 

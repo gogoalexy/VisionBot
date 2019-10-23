@@ -11,6 +11,9 @@ class Indicator():
     def turnOn(self, index):
         self.show.turnOn(index)
 
+    def turnOnConfig(self, threshold, config):
+        self.show.turnOnConfig(threshold, config)
+
     def turnOffAll(self):
         self.show.turnOffAll()
 
@@ -25,10 +28,15 @@ class GeneralIndicator():
 
     def turnOn(self, index):
         print(self.lookup[index])
+        
+    def turnOnConfig(self, threshold, config):
+        for index, activity in enumerate(config, start=0):
+            if activity >= threshold:
+                print(self.lookup[index])
 
     def turnOffAll(self):
         pass
 
     def turnOff(self, index):
-        print(self.lookup[index])
+        pass
 

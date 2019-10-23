@@ -46,10 +46,10 @@ class PiVideoStreamMono:
 class PiIndicator():
 
     def __init__(self):
-        upLight = LED(27)
-        downLight = LED(22)
-        leftLight = LED(4)
-        rightLight = LED(17)
+        upLight = LED(4)
+        downLight = LED(17)
+        leftLight = LED(27)
+        rightLight = LED(22)
         zoominLight = LED(18)
         zoomoutLight = LED(23)
         rotatecwLight = LED(24)
@@ -58,6 +58,11 @@ class PiIndicator():
 
     def turnOn(self, index):
         self.lookup[index].on()
+        
+    def turnOnConfig(self, threshold, config):
+        for index, activity in enumerate(config, start=0):
+            if activity > threshold:
+                self.lookup[index].on()
 
     def turnOffAll(self):
         for led in self.lookup:
