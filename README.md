@@ -43,6 +43,7 @@ Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25 are used.
 * Python 3
 * OpenCV 4
 * Numpy
+* IQIF simulator (come with the repo)
 
 Raspberry Pi Specific:
 * picamera including array submodule
@@ -56,12 +57,12 @@ Raspberry Pi Specific:
 5. IQIF neuron simulator is under the folder `iq-neuron`.
 
 ### Usage
-`python3 main.py (-n FRAME_NUMBERS) (-t THREAD_NUMBERS) (-d) (-p) (-iz)`
+`python3 main.py (-n FRAME_NUMBERS) (-t THREAD_NUMBERS) (-d) (-df) (-p) (-iz)`
 The program accepts three optional parameters:
 1. To set how many frames, i.e. how long the video, you want to test, you should append `-n FRAMES_NUMBERS`.
 2. In order to accelerate IQIF network, you can append `-t THREAD_NUMBERS` to specify how many threads to use.
 3. `-d` or `--display` denotes you want to display the raw video in real-time.
-4. `df` or `--display-flow` enables real-time display of optical flow traces.
+4. `-df` or `--display-flow` enables real-time display of optical flow traces.
 5. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
 6. `-iz` or `--izhikevich` switch the system to use Izhikevich model not the default IQIF model.
 
