@@ -1,12 +1,12 @@
 # VisionBot
 A repository for vision algorithm developments.
 
-## Prerequisites
-* Python 3 (The program may be python 2 incompatible.)
-* OpenCV 4 (at least 3.4 or later)
-
 ## Calculate Optical Flow
 The program OpticalFlow.py under BMCEN folder is responsible for calculating dense optical flow with Farneback method realized in OpenCV. The program can receive video file or video stream as input and output the result in video file or plain text upon your choice.
+
+### Prerequisites
+* Python 3 (The program may be python 2 incompatible.)
+* OpenCV 4 (at least 3.4 or later)
 
 ### Usage
 OpticalFlow.py accepts several command-line arguments to toggle among different input/output modes. The basic format is shown below:
@@ -19,12 +19,18 @@ __Note: It is not recommended to output flow text when the input is video stream
 ## MagicMotion
 MagicMotion is a utility for generating videos from a single image with desired moving path.
 
+### Prerequisites
+* Python 3 (The program may be python 2 incompatible.)
+* OpenCV 4 (at least 3.4 or later)
+
 ### Usage
 The program is under the `gen` folder and named as `Generator.py`. You only have to execute the program, and then an interactive interface will collect all the required information. After that, you should find the generated file. However, there are still a few things you need to know:
 1. The output video is compressed into MJPG format, so the program forces the output stream placed in AVI container. Thus, whatever file extension you type when the program ask you, the output file will always be in `avi`.
 2. No matter what the size of the original image, the image will be resized into 512-by-512 without cropping. That is, it is recommended to prepre a square or near-square image as input.
 3. The speed in the program is defined as pixels per frame when zooming or panning the image. When it comes to rotating, the speed is defined by degrees per frame.
 4. All the motions described here are camera-centric, i.e. pan left means the camera panning left so the motion field is from left to right.
+
+-------------------------------------------
 
 ## November Demo
 Moonshot project November demo core.
@@ -55,7 +61,8 @@ The program accepts three optional parameters:
 1. To set how many frames, i.e. how long the video, you want to test, you should append `-n FRAMES_NUMBERS`.
 2. In order to accelerate IQIF network, you can append `-t THREAD_NUMBERS` to specify how many threads to use.
 3. `-d` or `--display` denotes you want to display the raw video in real-time.
-4. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
-5. `-iz` or `--izhikevich` switch the system to use Izhikevich model not the default IQIF model.
+4. `df` or `--display-flow` enables real-time display of optical flow traces.
+5. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
+6. `-iz` or `--izhikevich` switch the system to use Izhikevich model not the default IQIF model.
 
-__Note: Before executing the program, please complie the iq-neuron simulator first.__
+__Note: Before executing the program, please complie the iq-neuron simulator first. You can find detailed instructions in the iq-neuron folder.__

@@ -39,7 +39,6 @@ while True:
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     dottedFlow = motionFieldTemplate.dotWithTemplates(FlattenFlow, AllFlattenTemplates)
     normalizedDottedFlow = [ int(dotted//500) for dotted in dottedFlow ]
-    print(dottedFlow)
 
     if args["display_flow"]:
         showFrame = curr.copy()
@@ -52,11 +51,12 @@ while True:
         cv2.waitKey(1)
 
     if args["display"]:
-        showFrame = curr.copy()
-        interval = 7
+        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        interval = 60
+        cv2.putText(showFrame, "UP   DOWN  LEFT  RIGHT   IN     OUT    CW    CCW", (10, 330), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         for loc, val in enumerate(normalizedDottedFlow):
-            cv2.line(showFrame, (4+loc*interval, 20), (4+loc*interval, 20-val), color=(255, 255, 255), thickness=3)
-        showFrame = cv2.resize(cv2.cvtColor(showFrame, cv2.COLOR_GRAY2BGR), (512, 512))
+            cv2.line(showFrame, (40+loc*interval, 300), (40+loc*interval, 300-val*10), color=(255, 255, 255), thickness=20)
+        
         cv2.imshow("Dotted", showFrame)
         cv2.waitKey(1)
 
