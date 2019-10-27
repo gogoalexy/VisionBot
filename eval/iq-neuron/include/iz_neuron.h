@@ -29,7 +29,7 @@ private:
     float _k, _rest, _threshold;
     int _noise;
     const float VMAX = 255;
-    int _spike_count;
+    int _spike_count = 0;
     bool _is_set = false, _is_firing = false;
 };
 
