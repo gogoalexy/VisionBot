@@ -59,7 +59,7 @@ while True:
         interval = 60
         cv2.putText(showFrame, "UP   DOWN  LEFT  RIGHT   IN     OUT    CW    CCW", (10, 330), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         for loc, val in enumerate(normalizedDottedFlow):
-            cv2.line(showFrame, (40+loc*interval, 300), (40+loc*interval, 300-val*10), color=(255, 255, 255), thickness=20)
+            cv2.line(showFrame, (40+loc*interval, 300), (40+loc*interval, 300-val*10), color=(255, 55, 255), thickness=20)
         cv2.imshow("Dotted", showFrame)
         cv2.waitKey(1)
 

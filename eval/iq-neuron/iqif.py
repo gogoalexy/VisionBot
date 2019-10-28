@@ -1,8 +1,21 @@
+import platform
 import ctypes
 import sys
 
-libiq = ctypes.CDLL("iq-neuron/build/libiq-network.so")
-libiz = ctypes.CDLL("iq-neuron/build/libiz-network.so")
+if platform.system() == "Windows":
+    libiqPath = "iq-neuron/build/libiq-network"
+    libizPath = "iq-neuron/build/libiz-network"
+else:
+    libiqPath = "iq-neuron/build/libiq-network.so"
+    libizPath = "iq-neuron/build/libiz-network.so"
+    
+try:
+    libiq = ctypes.CDLL(libiqPath)
+    libiz = ctypes.CDLL(libizPath)
+except OSError:
+    print("Unable to load iq/iz shared library.")
+    sys.exit()
+
 
 class iqnet(object):
     def __init__(self):
