@@ -1,14 +1,16 @@
+from pathlib import Path
 import platform
 import ctypes
 import sys
 
+buildFolder = Path("iq-neuron/build/")
 if platform.system() == "Windows":
-    libiqPath = "iq-neuron/build/libiq-network"
-    libizPath = "iq-neuron/build/libiz-network"
+    libiqPath = buildFolder / "libiq-network"
+    libizPath = buildFolder / "libiz-network"
 else:
-    libiqPath = "iq-neuron/build/libiq-network.so"
-    libizPath = "iq-neuron/build/libiz-network.so"
-    
+    libiqPath = buildFolder / "libiq-network.so"
+    libizPath = buildFolder / "libiz-network.so"
+
 try:
     libiq = ctypes.CDLL(libiqPath)
     libiz = ctypes.CDLL(libizPath)
@@ -42,7 +44,7 @@ class iqnet(object):
 
         libiq.iq_network_set_num_threads.argtypes = [ctypes.c_void_p, ctypes.c_int]
         libiq.iq_network_set_num_threads.restype = ctypes.c_void_p
-        
+
         self.obj = libiq.iq_network_new()
 
     def num_neurons(self):
@@ -91,7 +93,7 @@ class iznet(object):
 
         libiz.iz_network_spike_rate.argtypes = [ctypes.c_void_p, ctypes.c_int]
         libiz.iz_network_spike_rate.restype = ctypes.c_float
-        
+
         self.obj = libiz.iz_network_new()
 
     def num_neurons(self):
