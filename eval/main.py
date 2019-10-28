@@ -17,7 +17,7 @@ framesToLoop.add_argument("-c", "--continuous", help="Set number of frames to lo
 ap.add_argument("-s", "--steps", type=int, default=50, help="# of steps to simulate for each frame")
 ap.add_argument("-t", "--num-threads", type=int, default=1, help="# of threads to accelerate")
 ap.add_argument("-dn", "--display-neuron", help="Whether or not neural activities should be displayed", action="store_true")
-ap.add_argument("-dt", "--display-dot", help="Whether or not dotted results should be displayed", action="store_true")
+ap.add_argument("-dd", "--display-dot", help="Whether or not dotted results should be displayed", action="store_true")
 ap.add_argument("-df", "--display-flow", help="Whether or not flow frames should be displayed", action="store_true")
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
@@ -43,7 +43,7 @@ while True:
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
     activity = snn.getAllActivityInOrder()
-    
+
     if args["display_flow"]:
         showFrame = curr.copy()
         interval = 8
