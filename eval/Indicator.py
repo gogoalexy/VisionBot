@@ -24,7 +24,8 @@ class Indicator():
 class GeneralIndicator():
 
     def __init__(self):
-        self.lookup = [ "upLight", "downLight", "leftLight", "rightLight", "zoominLight", "zoomoutLight", "rotatecwLight", "rotateccwLight" ]
+        self.lookup = [ "upLight", "downLight", "leftLight", "rightLight", "zoominLight", "zoomoutLight", "rotatecwLight", "rotateccwLight",
+                        "avoidup", "avoiddown", "avoidleft", "avoidright" ]
 
     def turnOn(self, index):
         print(self.lookup[index])

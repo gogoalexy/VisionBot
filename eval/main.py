@@ -65,16 +65,16 @@ while True:
 
     if args["display_neuron"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
-        interval = 60
-        cv2.putText(showFrame, "UP   DOWN  LEFT  RIGHT   IN     OUT    CW    CCW", (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        interval = 40
+        cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wUP wDWN wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         for loc, val in enumerate(activity):
-            cv2.line(showFrame, (40+loc*interval, 450), (40+loc*interval, 450-val*10), color=(255, 255, 55), thickness=20)
+            cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*10), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 
     prvs = curr
     led.turnOffAll()
-    led.turnOnConfig(5, activity)
+    led.turnOnConfig(3, activity)
     fps.update()
     if not args["continuous"] and fps.isPassed(args["num_frames"]):
         break
