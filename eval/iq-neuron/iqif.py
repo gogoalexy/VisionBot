@@ -3,11 +3,12 @@ import platform
 import ctypes
 import sys
 
-buildFolder = Path("iq-neuron/build/")
 if platform.system() == "Windows":
-    libiqPath = buildFolder / "libiq-network"
-    libizPath = buildFolder / "libiz-network"
+    buildFolder = Path("iq-neuron/out/build/x64-Debug")
+    libiqPath = str(buildFolder / "iq-network.dll")
+    libizPath = str(buildFolder / "iz-network.dll")
 else:
+    buildFolder = Path("iq-neuron/build/")
     libiqPath = buildFolder / "libiq-network.so"
     libizPath = buildFolder / "libiz-network.so"
 

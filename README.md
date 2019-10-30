@@ -40,7 +40,7 @@ Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25 are used.
 ![routing diagram from Pi to LEDs on a bread board](/eval/wiring/wirePi_LED_bb.png)
 
 ### Prerequisites
-* Python 3
+* Python 3.4 or later
 * OpenCV 4
 * Numpy
 * IQIF simulator (come with the repo)
@@ -48,6 +48,10 @@ Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25 are used.
 Raspberry Pi Specific:
 * picamera including array submodule
 * gpiozero
+
+### Platform compatibility
+The project is mainly developed on ArchLinux, so no doubtly, it should be compatible with any linux-based OS. In addition, the compatibility with MSVS environment is partially tested, so theoretically it is Windows-compatible.
+If the program goes wrong under MSVS, please make sure the names and paths to the iq-neuron DLL are correct in file `iqif.py`.
 
 ### File Structure
 1. The entire project is under the folder `eval`.

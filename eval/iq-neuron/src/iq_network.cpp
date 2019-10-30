@@ -1,4 +1,4 @@
-#if defined(_WIN32) && defined(iz_network_EXPORTS)
+#if defined(_WIN32) && defined(iq_network_EXPORTS)
 #    define DLLEXPORTIQ __declspec (dllexport)
 #else
 #    define DLLEXPORTIQ
@@ -125,7 +125,7 @@ void iq_network::send_synapse()
     if(_num_threads > 1) {
         #pragma omp parallel
         {
-            int ncurrent_private[_num_neurons] = {0};
+            int* ncurrent_private = new int[_num_neurons]();
             #pragma omp for
             for(int i = 0; i < _num_neurons; i++) {
                 int *pts = _scurrent + _num_neurons*i;
@@ -239,15 +239,15 @@ void iq_network::set_num_threads(int num_threads)
     return;
 }
 
-extern "C" DLLEXPORTIQ
+extern "C"
 {
-    iq_network* iq_network_new() {return new iq_network();}
-    int iq_network_num_neurons(iq_network* network) {return network->num_neurons();}
-    void iq_network_send_synapse(iq_network* network) {return network->send_synapse();}
-    void iq_network_set_biascurrent(iq_network* network, int neuron_index, int biascurrent) {return network->set_biascurrent(neuron_index, biascurrent);}
-    int iq_network_potential(iq_network* network, int neuron_index) {return network->potential(neuron_index);}
-    int iq_network_spike_count(iq_network* network, int neuron_index) {return network->spike_count(neuron_index);}
-    float iq_network_spike_rate(iq_network* network, int neuron_index) {return network->spike_rate(neuron_index);}
-    void iq_network_set_num_threads(iq_network* network, int num_threads) {return network->set_num_threads(num_threads);}
+	DLLEXPORTIQ iq_network* iq_network_new() {return new iq_network();}
+	DLLEXPORTIQ int iq_network_num_neurons(iq_network* network) {return network->num_neurons();}
+	DLLEXPORTIQ void iq_network_send_synapse(iq_network* network) {return network->send_synapse();}
+	DLLEXPORTIQ void iq_network_set_biascurrent(iq_network* network, int neuron_index, int biascurrent) {return network->set_biascurrent(neuron_index, biascurrent);}
+	DLLEXPORTIQ int iq_network_potential(iq_network* network, int neuron_index) {return network->potential(neuron_index);}
+	DLLEXPORTIQ int iq_network_spike_count(iq_network* network, int neuron_index) {return network->spike_count(neuron_index);}
+	DLLEXPORTIQ float iq_network_spike_rate(iq_network* network, int neuron_index) {return network->spike_rate(neuron_index);}
+	DLLEXPORTIQ void iq_network_set_num_threads(iq_network* network, int num_threads) {return network->set_num_threads(num_threads);}
 }
 
