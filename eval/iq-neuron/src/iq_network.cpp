@@ -1,3 +1,9 @@
+#if defined(_WIN32) && defined(iz_network_EXPORTS)
+#    define DLLEXPORTIQ __declspec (dllexport)
+#else
+#    define DLLEXPORTIQ
+#endif
+
 #include "iq_network.h"
 
 using namespace std;
@@ -233,7 +239,7 @@ void iq_network::set_num_threads(int num_threads)
     return;
 }
 
-extern "C"
+extern "C" DLLEXPORTIQ
 {
     iq_network* iq_network_new() {return new iq_network();}
     int iq_network_num_neurons(iq_network* network) {return network->num_neurons();}

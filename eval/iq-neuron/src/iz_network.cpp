@@ -1,3 +1,9 @@
+#if defined(_WIN32) && defined(iz_network_EXPORTS)
+#    define DLLEXPORTIZ __declspec (dllexport)
+#else
+#    define DLLEXPORTIZ
+#endif
+
 #include "iz_network.h"
 
 using namespace std;
@@ -181,7 +187,7 @@ float iz_network::spike_rate(int neuron_index)
     return (_neurons + neuron_index)->spike_rate();
 }
 
-extern "C"
+extern "C" DLLEXPORTIZ
 {
     iz_network* iz_network_new() {return new iz_network();}
     int iz_network_num_neurons(iz_network* network) {return network->num_neurons();}
