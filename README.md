@@ -50,7 +50,7 @@ Raspberry Pi Specific:
 * gpiozero
 
 ### Platform compatibility
-The project is mainly developed on ArchLinux, so no doubtly, it should be compatible with any linux-based OS. In addition, the compatibility with MSVS environment is partially tested, so theoretically it is Windows-compatible.
+The project is mainly developed on ArchLinux and Raspbian, so no doubtly, it should be compatible with any linux-based OS. In addition, the compatibility with MSVS environment is partially tested, so theoretically it is Windows-compatible.
 If the program goes wrong under MSVS, please make sure the names and paths to the iq-neuron DLL are correct in file `iqif.py`.
 
 ### File Structure
