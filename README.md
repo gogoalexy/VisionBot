@@ -61,14 +61,15 @@ If the program goes wrong under MSVS, please make sure the names and paths to th
 5. IQIF neuron simulator is under the folder `iq-neuron`.
 
 ### Usage
-`python3 main.py (-n FRAME_NUMBERS) (-t THREAD_NUMBERS) (-dn) (-dd) (-df) (-p) (-iz)`
+`python3 main.py (-n FRAME_NUMBERS) (-t THREAD_NUMBERS) (-dn) (-dd) (-df) (-i FILE) (-p) (-iz)`
 The program accepts three optional parameters:
 1. To set how many frames, i.e. how long the video, you want to test, you should append `-n FRAMES_NUMBERS`.
 2. In order to accelerate IQIF network, you can append `-t THREAD_NUMBERS` to specify how many threads to use.
 3. `-dn` or `--display-neuron` denotes you want to display the output neuron activity in real-time.
 4. `-dd` or `--display-dot` visulizes the dot product magnitude on each frame.
 5. `-df` or `--display-flow` enables real-time display of optical flow traces.
-6. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
-7. `-iz` or `--izhikevich` switch the system to use Izhikevich model not the default IQIF model.
+6. `-i` or `--input` gets frames from file rather than stream. (experimental)
+7. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
+8. `-iz` or `--izhikevich` switch the system to use Izhikevich model not the default IQIF model.
 
 __Note: Before executing the program, please complie the iq-neuron simulator first. You can find detailed instructions in the iq-neuron folder.__

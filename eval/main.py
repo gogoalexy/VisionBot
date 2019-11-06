@@ -19,13 +19,18 @@ ap.add_argument("-t", "--num-threads", type=int, default=1, help="# of threads t
 ap.add_argument("-dn", "--display-neuron", help="Whether or not neural activities should be displayed", action="store_true")
 ap.add_argument("-dd", "--display-dot", help="Whether or not dotted results should be displayed", action="store_true")
 ap.add_argument("-df", "--display-flow", help="Whether or not flow frames should be displayed", action="store_true")
+ap.add_argument("-i", "--input", type=str, help="Input video file instead of live stream.")
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
 # Order: UP, DOWN, LEFT, RIGHT, ZOOMIN, ZOOMOUT, ROTATECW, ROTATECCW
 frameHW = (64, 64)
 frameRate = 32
-vs = VideoStreamMono(usePiCamera=args["picamera"], resolution=frameHW, framerate=frameRate).start()
+if args["input"]:
+    vs = VideoStreamMono(src=args["input"], usePiCamera=False, resolution=frameHW, framerate=frameRate).start()
+else:
+    vs = VideoStreamMono(usePiCamera=args["picamera"], resolution=frameHW, framerate=frameRate).start()
+
 time.sleep(2.0)
 prvs = vs.readMono()
 
