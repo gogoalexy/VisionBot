@@ -40,6 +40,8 @@ snn = SNN(args["izhikevich"], args["num_threads"])
 led = Indicator.Indicator()
 
 fps = FPS().start()
+localfps = FPS().start()
+realtimeFPS = 0
 while True:
     curr = vs.readMono()
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
@@ -56,6 +58,7 @@ while True:
             for x in range(4, 64, 8):
                 cv2.line(showFrame, (x, y), (x+int(FlattenFlow[y*128+2*x]), y+int(FlattenFlow[y*128+2*x+1])), color=(255, 255, 255))
         showFrame = cv2.resize(cv2.cvtColor(showFrame, cv2.COLOR_GRAY2BGR), (512, 512))
+        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Flow", showFrame)
         cv2.waitKey(1)
 
@@ -63,6 +66,7 @@ while True:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 60
         cv2.putText(showFrame, "UP   DOWN  LEFT  RIGHT   IN     OUT    CW    CCW", (10, 330), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(normalizedDottedFlow):
             cv2.line(showFrame, (40+loc*interval, 300), (40+loc*interval, 300-val*10), color=(255, 55, 255), thickness=20)
         cv2.imshow("Dotted", showFrame)
@@ -72,6 +76,7 @@ while True:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 40
         cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wUP wDWN wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*10), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
@@ -81,6 +86,12 @@ while True:
     led.turnOffAll()
     led.turnOnConfig(3, activity)
     fps.update()
+    localfps.update()
+    if localfps.isPassed(30):
+        localfps.stop()
+        realtimeFPS = localfps.fps()
+        localfps.reset()
+        localfps.start()
     if not args["continuous"] and fps.isPassed(args["num_frames"]):
         break
 
