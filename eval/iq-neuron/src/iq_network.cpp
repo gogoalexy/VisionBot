@@ -160,6 +160,7 @@ void iq_network::send_synapse()
                     *(_ncurrent + i) += ncurrent_private[i];
                 }
             }
+            delete[] ncurrent_private;
         }
     }
     else {
