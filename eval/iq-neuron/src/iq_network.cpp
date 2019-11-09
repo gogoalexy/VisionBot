@@ -1,3 +1,7 @@
+/* IQIF network
+ * Chen-Fu Yeh, 2019/11/09
+ */
+
 #if defined(_WIN32) && defined(iq_network_EXPORTS)
 #    define DLLEXPORTIQ __declspec (dllexport)
 #else
@@ -27,14 +31,14 @@ iq_network::iq_network()
 
 iq_network::~iq_network()
 {
+    delete[] _neurons;
+    delete[] _tau;
+    delete[] _f;
+    delete[] _n;
     delete[] _weight;
     delete[] _scurrent;
     delete[] _ncurrent;
     delete[] _biascurrent;
-    delete[] _tau;
-    delete[] _f;
-    delete[] _n;
-    delete[] _neurons;
     return;
 }
 
@@ -123,6 +127,7 @@ void iq_network::send_synapse()
 {
     /* accumulating/decaying synapse current */
     if(_num_threads > 1) {
+    // parallel mode
         #pragma omp parallel
         {
             int* ncurrent_private = new int[_num_neurons]();
@@ -133,9 +138,17 @@ void iq_network::send_synapse()
                 int *ptf = _f + _num_neurons*i;
                 if((_neurons + i)->is_firing()) {
                     int *ptw = _weight + _num_neurons*i;
+                    
+                    /* parse through axon index */
                     for(int j = 0; j < _num_neurons; j++) {
+
+                        /* accumulate weight if fired */
                         *(pts + j) += *(ptw + j);
+
+                        /* add current to neuron input */
                         ncurrent_private[j] += *(pts + j);
+
+                        /* synapse decay */
                         if(*(ptn + j) > *(ptf + j)) {
                             *(ptn + j) = 0;
                             *(pts + j) = *(pts + j) * 9 / 10;
@@ -164,6 +177,7 @@ void iq_network::send_synapse()
         }
     }
     else {
+    // single thread mode
         for(int i = 0; i < _num_neurons; i++) {
             int *pts = _scurrent + _num_neurons*i;
             int *ptn = _n + _num_neurons*i;
