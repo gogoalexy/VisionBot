@@ -78,7 +78,7 @@ while True:
         cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wUP wDWN wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
-            cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*10), color=(255, 255, 55), thickness=15)
+            cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 

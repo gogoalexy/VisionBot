@@ -1,8 +1,9 @@
 import math
 import numpy as np
 
-shiftScale = 0.5
-zoomScale = 1.5
+shiftScale = 0.04
+zoomScale = 2.5
+rotateScale = 1.5
 
 def createCamLeftShiftTemplate(height, width):
     template = np.empty((height, width, 2))
@@ -43,13 +44,15 @@ def createCamZoomInTemplate(height, width):
         for x in range(0, width):
             j = y - center[0]
             i = x - center[1]
-            norm = math.sqrt(i**2 + j**2) * zoomScale
-            if norm:
-                template[y][x][0] = i/norm
-                template[y][x][1] = j/norm
+            norm = (i**2 + j**2)
+            if norm < 0.1:
+                norm = 0.1
+            if norm < 3.0:
+                template[y][x][0] = 2*zoomScale * i/norm
+                template[y][x][1] = 2*zoomScale * j/norm
             else:
-                template[y][x][0] = 0.0
-                template[y][x][1] = 0.0
+                template[y][x][0] = zoomScale * i/norm
+                template[y][x][1] = zoomScale * j/norm
 
     return template
 
@@ -60,13 +63,15 @@ def createCamZoomOutTemplate(height, width):
         for x in range(0, width):
             j = y - center[0]
             i = x - center[1]
-            norm = math.sqrt(i**2 + j**2) * zoomScale
-            if norm:
-                template[y][x][0] = -i/norm
-                template[y][x][1] = -j/norm
+            norm = (i**2 + j**2)
+            if norm < 0.1:
+                norm = 0.1
+            if norm < 3.0:
+                template[y][x][0] = 2*zoomScale * -i/norm
+                template[y][x][1] = 2*zoomScale * -j/norm
             else:
-                template[y][x][0] = 0.0
-                template[y][x][1] = 0.0
+                template[y][x][0] = zoomScale * -i/norm
+                template[y][x][1] = zoomScale * -j/norm
 
     return template
 
@@ -77,13 +82,11 @@ def createCamRotateCWTemplate(height, width):
         for x in range(0, width):
             j = y - center[0]
             i = x - center[1]
-            norm = math.sqrt(i**2 + j**2)
-            if norm:
-                template[y][x][0] = j/norm
-                template[y][x][1] = -i/norm
-            else:
-                template[y][x][0] = 0.0
-                template[y][x][1] = 0.0
+            norm = (i**2 + j**2)
+            if norm < 0.1:
+                norm = 0.1
+            template[y][x][0] = rotateScale * j/norm
+            template[y][x][1] = rotateScale * -i/norm
     return template
 
 def createCamRotateCCWTemplate(height, width):
@@ -93,13 +96,11 @@ def createCamRotateCCWTemplate(height, width):
         for x in range(0, width):
             j = y - center[0]
             i = x - center[1]
-            norm = math.sqrt(i**2 + j**2)
-            if norm:
-                template[y][x][0] = -j/norm
-                template[y][x][1] = i/norm
-            else:
-                template[y][x][0] = 0.0
-                template[y][x][1] = 0.0
+            norm = (i**2 + j**2)
+            if norm < 0.1:
+                norm = 0.1
+            template[y][x][0] = rotateScale * -j/norm
+            template[y][x][1] = rotateScale * i/norm
     return template
 
 # Order: UP, DOWN, LEFT, RIGHT, ZOOMIN, ZOOMOUT, ROTATECW, ROTATECCW
