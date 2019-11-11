@@ -1,3 +1,7 @@
+/* IQIF network
+ * Chen-Fu Yeh, 2019/11/09
+ */
+
 #if defined(_WIN32) && defined(iq_network_EXPORTS)
 #    define DLLEXPORTIQ __declspec (dllexport)
 #else
@@ -16,6 +20,7 @@ iq_network::iq_network()
     _f = new int[_num_neurons * _num_neurons]();
     _n = new int[_num_neurons * _num_neurons]();
     _weight = new int[_num_neurons * _num_neurons]();
+    _wlist = new weight_index_list[_num_neurons];
     _scurrent = new int[_num_neurons * _num_neurons]();
     _ncurrent = new int[_num_neurons]();
     _biascurrent = new int[_num_neurons]();
@@ -27,14 +32,15 @@ iq_network::iq_network()
 
 iq_network::~iq_network()
 {
-    delete[] _weight;
-    delete[] _scurrent;
-    delete[] _ncurrent;
-    delete[] _biascurrent;
+    delete[] _neurons;
     delete[] _tau;
     delete[] _f;
     delete[] _n;
-    delete[] _neurons;
+    delete[] _weight;
+    delete[] _wlist;
+    delete[] _scurrent;
+    delete[] _ncurrent;
+    delete[] _biascurrent;
     return;
 }
 
@@ -78,7 +84,7 @@ int iq_network::set_neurons()
 
 int iq_network::get_weight()
 {
-    int i, j, temp, temptwo;
+    int i, j, weight, tau;
     FILE *fp;
     for(i = 0; i < _num_neurons; i++) {
         for(j = 0; j < _num_neurons; j++) {
@@ -98,11 +104,12 @@ int iq_network::get_weight()
         return 1;
     }
 
-    while(fscanf(fp, "%d %d %d %d", &i, &j, &temp, &temptwo) == 4) {
-        *(_weight + _num_neurons*i + j) = temp;
-        *(_tau + _num_neurons*i + j) = temptwo;
-        if(temptwo >= 10) {
-            *(_f + _num_neurons*i + j) = (int) (log10(0.9) / log10((temptwo-1)/(float) temptwo));
+    while(fscanf(fp, "%d %d %d %d", &i, &j, &weight, &tau) == 4) {
+        *(_weight + _num_neurons*i + j) = weight;
+        *(_tau + _num_neurons*i + j) = tau;
+        (_wlist + i)->push_front(j);
+        if(tau >= 10) {
+            *(_f + _num_neurons*i + j) = (int) (log10(0.9) / log10((tau-1)/(float) tau));
         }
         else {
             printf("tau[%d][%d] = %d\n", i, j, *(_tau + _num_neurons*i + j));
@@ -123,6 +130,7 @@ void iq_network::send_synapse()
 {
     /* accumulating/decaying synapse current */
     if(_num_threads > 1) {
+    // parallel mode
         #pragma omp parallel
         {
             int* ncurrent_private = new int[_num_neurons]();
@@ -131,26 +139,39 @@ void iq_network::send_synapse()
                 int *pts = _scurrent + _num_neurons*i;
                 int *ptn = _n + _num_neurons*i;
                 int *ptf = _f + _num_neurons*i;
-                if((_neurons + i)->is_firing()) {
+                if((_neurons + i)->_is_firing) {
                     int *ptw = _weight + _num_neurons*i;
-                    for(int j = 0; j < _num_neurons; j++) {
-                        *(pts + j) += *(ptw + j);
-                        ncurrent_private[j] += *(pts + j);
-                        if(*(ptn + j) > *(ptf + j)) {
-                            *(ptn + j) = 0;
-                            *(pts + j) = *(pts + j) * 9 / 10;
+                    
+                    /* parse through axon index */
+                    weight_index_node *j = (_wlist + i)->_first;
+                    while(j != NULL) {
+
+                        /* accumulate weight if fired */
+                        *(pts + j->_data) += *(ptw + j->_data);
+
+                        /* add current to neuron input */
+                        ncurrent_private[j->_data] += *(pts + j->_data);
+
+                        /* synapse decay */
+                        if(*(ptn + j->_data) > *(ptf + j->_data)) {
+                            *(ptn + j->_data) = 0;
+                            *(pts + j->_data) = *(pts + j->_data) * 9 / 10;
                         }
-                        (*(ptn + j))++;
+                        (*(ptn + j->_data))++;
+
+                        j = j->_next;
                     }
                 }
                 else {
-                    for(int j = 0; j < _num_neurons; j++) {
-                        ncurrent_private[j] += *(pts + j);
-                        if(*(ptn + j) > *(ptf + j)) {
-                            *(ptn + j) = 0;
-                            *(pts + j) = *(pts + j) * 9 / 10;
+                    weight_index_node *j = (_wlist + i)->_first;
+                    while(j != NULL) {
+                        ncurrent_private[j->_data] += *(pts + j->_data);
+                        if(*(ptn + j->_data) > *(ptf + j->_data)) {
+                            *(ptn + j->_data) = 0;
+                            *(pts + j->_data) = *(pts + j->_data) * 9 / 10;
                         }
-                        (*(ptn + j))++;
+                        (*(ptn + j->_data))++;
+                        j = j->_next;
                     }
                 }
             }
@@ -160,33 +181,39 @@ void iq_network::send_synapse()
                     *(_ncurrent + i) += ncurrent_private[i];
                 }
             }
+            delete[] ncurrent_private;
         }
     }
     else {
+    // single thread mode
         for(int i = 0; i < _num_neurons; i++) {
             int *pts = _scurrent + _num_neurons*i;
             int *ptn = _n + _num_neurons*i;
             int *ptf = _f + _num_neurons*i;
-            if((_neurons + i)->is_firing()) {
+            if((_neurons + i)->_is_firing) {
                 int *ptw = _weight + _num_neurons*i;
-                for(int j = 0; j < _num_neurons; j++) {
-                    *(pts + j) += *(ptw + j);
-                    *(_ncurrent + j) += *(pts + j);
-                    if(*(ptn + j) > *(ptf + j)) {
-                        *(ptn + j) = 0;
-                        *(pts + j) = *(pts + j) * 9 / 10;
+                weight_index_node *j = (_wlist + i)->_first;
+                while(j != NULL) {
+                    *(pts + j->_data) += *(ptw + j->_data);
+                    *(_ncurrent + j->_data) += *(pts + j->_data);
+                    if(*(ptn + j->_data) > *(ptf + j->_data)) {
+                        *(ptn + j->_data) = 0;
+                        *(pts + j->_data) = *(pts + j->_data) * 9 / 10;
                     }
-                    (*(ptn + j))++;
+                    (*(ptn + j->_data))++;
+                    j = j->_next;
                 }
             }
             else {
-                for(int j = 0; j < _num_neurons; j++) {
-                    *(_ncurrent + j) += *(pts + j);
-                    if(*(ptn + j) > *(ptf + j)) {
-                        *(ptn + j) = 0;
-                        *(pts + j) = *(pts + j) * 9 / 10;
+                weight_index_node *j = (_wlist + i)->_first;
+                while(j != NULL) {
+                    *(_ncurrent + j->_data) += *(pts + j->_data);
+                    if(*(ptn + j->_data) > *(ptf + j->_data)) {
+                        *(ptn + j->_data) = 0;
+                        *(pts + j->_data) = *(pts + j->_data) * 9 / 10;
                     }
-                    (*(ptn + j))++;
+                    (*(ptn + j->_data))++;
+                    j = j->_next;
                 }
             }
         }

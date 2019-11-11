@@ -1,11 +1,15 @@
+/* IQIF neuron object
+ * Chen-Fu Yeh, 2019/11/09
+ */
+
 #ifndef IQ_NEURON_H
 #define IQ_NEURON_H
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <limits.h>
 
 #define MAX_POTENTIAL 255
+
+class iq_network;
 
 class iq_neuron
 {
@@ -21,6 +25,8 @@ public:
     bool is_firing();
     int spike_count();
     float spike_rate();
+
+    friend class iq_network;                // For direct access to _is_firing
 
 private:
     int t_neuron;                                   // Iterator of timestep
