@@ -19,6 +19,7 @@ ap.add_argument("-t", "--num-threads", type=int, default=1, help="# of threads t
 ap.add_argument("-dn", "--display-neuron", help="Whether or not neural activities should be displayed", action="store_true")
 ap.add_argument("-dd", "--display-dot", help="Whether or not dotted results should be displayed", action="store_true")
 ap.add_argument("-df", "--display-flow", help="Whether or not flow frames should be displayed", action="store_true")
+ap.add_argument("-demo", "--demo-nov", help="Whether to get into graphical demo mode", action="store_true")
 ap.add_argument("-i", "--input", type=str, help="Input video file instead of live stream.")
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
@@ -81,6 +82,9 @@ while True:
             cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
+
+    if args["demo_nov"]:
+        pass
 
     prvs = curr
     led.turnOffAll()
