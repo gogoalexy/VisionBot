@@ -75,7 +75,7 @@ while True:
     if args["display_neuron"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 40
-        cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wUP wDWN wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wRR wFRT wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*20), color=(255, 255, 55), thickness=15)
