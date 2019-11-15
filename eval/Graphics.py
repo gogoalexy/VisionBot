@@ -13,7 +13,7 @@ class Graphics():
         zoomoutArrow = np.array([ ((50, 550), (225, 725)  ), ( (50, 950), (225, 775) ), ( (450, 550), (275, 725) ), ((450, 950), (275, 775)  ) ])
         cwArrow = np.array( [  ] )
         ccwArrow = np.array( [  ] )
-        self.arrows = [upArrow, downArrow, leftArrow, rightArrow, zoominArrow, zoomoutArrow, cwArrow, ccwArrow]
+        self.arrows = [cwArrow, ccwArrow, zoominArrow, zoomoutArrow, downArrow, upArrow, rightArrow, leftArrow]
         frontSide = np.array([[0, 0], [200, 200], [600, 200], [799, 0]])
         rearSide = np.array([[799, 799], [600, 600], [200, 600], [0, 799]])
         leftSide = np.array([[0, 0], [200, 200], [200, 600], [0, 799]])
@@ -36,11 +36,10 @@ class Graphics():
             if activity > threshold:
                 cv2.fillConvexPoly(obstacle, self.sides[index], self.obstacleColor)
         cv2.imshow("Obstacle", obstacle)
-        cv2.waitKey(1)
 
     def showMotion(self, threshold, config):
         motion = self.canvas.copy()
-        for index in range(6):
+        for index in range(8):
             if config[index] > threshold:
                 motion = self.drawArrows(motion, self.arrows[index], self.activeColor)
 
@@ -56,8 +55,9 @@ class Graphics():
             cv2.circle(motion, (750, 750), 170, self.activeColor, thickness=20)
 
         cv2.imshow("Motion", motion)
-        cv2.waitKey(1)
+
     # front, rear, left, right
     def displayConfig(self, thresholds, config):
         self.showMotion(thresholds[0], config[0:8])
         self.showObstacle(thresholds[1], config[8:12])
+        cv2.waitKey(10)
