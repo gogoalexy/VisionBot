@@ -86,11 +86,11 @@ while True:
         cv2.waitKey(1)
 
     if args["demo_nov"]:
-        gui.displayConfig((3, 3), activity)
+        gui.displayConfig((2, 2), activity)
 
     prvs = curr
     led.turnOffAll()
-    led.turnOnConfig(3, activity)
+    led.turnOnConfig(2, activity)
     fps.update()
     localfps.update()
     if localfps.isPassed(30):
