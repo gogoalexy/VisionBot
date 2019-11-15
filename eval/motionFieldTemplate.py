@@ -175,17 +175,16 @@ def createAvoidRightTemplate(height, width):
                     template[y][x][1] = template[y][x][1]
     return template
 
-# Order: UP, DOWN, LEFT, RIGHT, ZOOMIN, ZOOMOUT, ROTATECW, ROTATECCW
 def createAllFlattenTemplate(height, width):
     allTemplates = []
-    allTemplates.append(createCamUpShiftTemplate(height, width).flatten())
-    allTemplates.append(createCamDownShiftTemplate(height, width).flatten())
-    allTemplates.append(createCamLeftShiftTemplate(height, width).flatten())
-    allTemplates.append(createCamRightShiftTemplate(height, width).flatten())
-    allTemplates.append(createCamZoomInTemplate(height, width).flatten())
-    allTemplates.append(createCamZoomOutTemplate(height, width).flatten())
     allTemplates.append(createCamRotateCWTemplate(height, width).flatten())
     allTemplates.append(createCamRotateCCWTemplate(height, width).flatten())
+    allTemplates.append(createCamZoomInTemplate(height, width).flatten())
+    allTemplates.append(createCamZoomOutTemplate(height, width).flatten())
+    allTemplates.append(createCamDownShiftTemplate(height, width).flatten())
+    allTemplates.append(createCamUpShiftTemplate(height, width).flatten())
+    allTemplates.append(createCamRightShiftTemplate(height, width).flatten())
+    allTemplates.append(createCamLeftShiftTemplate(height, width).flatten())
     allTemplates.append(createAvoidRearTemplate(height, width).flatten())
     allTemplates.append(createAvoidFrontTemplate(height, width).flatten())
     allTemplates.append(createAvoidLeftTemplate(height, width).flatten())
@@ -207,7 +206,6 @@ def readAllFlattenTemplate():
       container = np.array(container)
     return Fields
 
-# Direction difference: ZI ZO CW CCW UP DW LT RT
 def dotWithTemplatesOpt(tobeDotted, templates):
     results = []
     for template in templates:

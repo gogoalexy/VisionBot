@@ -25,7 +25,8 @@ ap.add_argument("-i", "--input", type=str, help="Input video file instead of liv
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
-# Order: UP, DOWN, LEFT, RIGHT, ZOOMIN, ZOOMOUT, ROTATECW, ROTATECCW
+# Order: ROTATECW, ROTATECCW, ZOOMIN, ZOOMOUT, DOWN, UP, RIGHT, LEFT
+label = "CW CCW  IN  OUT  DWN UP  RT  LFT wFRT wRR wLT wRT"
 frameHW = (64, 64)
 frameRate = 32
 if args["input"]:
@@ -49,7 +50,7 @@ while True:
     curr = vs.readMono()
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(FlattenFlow, AllFlattenTemplates)
-    normalizedDottedFlow = [ int(dotted//500) for dotted in dottedFlow ]
+    normalizedDottedFlow = [ int(dotted/500) for dotted in dottedFlow ]
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
     activity = snn.getAllActivityInOrder()
@@ -67,18 +68,18 @@ while True:
 
     if args["display_dot"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
-        interval = 60
-        cv2.putText(showFrame, "UP   DOWN  LEFT  RIGHT   IN     OUT    CW    CCW", (10, 330), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        interval = 40
+        cv2.putText(showFrame, label, (15, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(normalizedDottedFlow):
-            cv2.line(showFrame, (40+loc*interval, 300), (40+loc*interval, 300-val*10), color=(255, 55, 255), thickness=20)
+            cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-val*30), color=(255, 55, 255), thickness=20)
         cv2.imshow("Dotted", showFrame)
         cv2.waitKey(1)
 
     if args["display_neuron"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 40
-        cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wRR wFRT wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, label, (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*20), color=(255, 255, 55), thickness=15)

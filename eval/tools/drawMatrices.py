@@ -3,8 +3,8 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-xfile = open("ExternalSynapse_X.txt", 'r')
-yfile = open("ExternalSynapse_Y.txt", 'r')
+xfile = open("../assets/matricesX.txt", 'r')
+yfile = open("../assets/matricesY.txt", 'r')
 
 xFields = [[], [], [], [], [], [], [], []]
 yFields = [[], [], [], [], [], [], [], []]
@@ -24,21 +24,21 @@ plt.figure(0, figsize=(6, 6))
 U = np.array(xFields[0]).reshape((64, 64))
 V = np.array(yFields[0]).reshape((64, 64))
 plt.subplot(2, 2, 1)
-plt.title("Camera Zoom In")
+plt.title("Camera Rotate CCW")
 plt.quiver(U, V)
 
 
 U = np.array(xFields[1]).reshape((64, 64))
 V = np.array(yFields[1]).reshape((64, 64))
 plt.subplot(2, 2, 2)
-plt.title("Camera Rotate CW")
+plt.title("Camera Zoom In")
 plt.quiver(U, V)
 
 
 U = np.array(xFields[2]).reshape((64, 64))
 V = np.array(yFields[2]).reshape((64, 64))
 plt.subplot(2, 2, 3)
-plt.title("Camera Pan Up")
+plt.title("Camera Pan Down")
 plt.quiver(U, V)
 
 

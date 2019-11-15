@@ -24,12 +24,12 @@ class Indicator():
 class GeneralIndicator():
 
     def __init__(self):
-        self.lookup = [ "upLight", "downLight", "leftLight", "rightLight", "zoominLight", "zoomoutLight", "rotatecwLight", "rotateccwLight",
-                        "avoidup", "avoiddown", "avoidleft", "avoidright" ]
+        self.lookup = [ "cw", "ccw", "in", "out", "down", "up", "right", "left",
+                        "OBSfront", "OBSrear", "OBSleft", "OBSright" ]
 
     def turnOn(self, index):
         print(self.lookup[index])
-        
+
     def turnOnConfig(self, threshold, config):
         for index, activity in enumerate(config, start=0):
             if activity >= threshold:
