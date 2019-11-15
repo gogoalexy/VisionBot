@@ -150,7 +150,7 @@ def createAvoidLeftTemplate(height, width):
             norm = math.sqrt(i**2 + j**2)
             if norm < 14:
                 template[y][x][0] = - template[y][x][0]
-                template[y][x][1] = - template[y][x][1]               
+                template[y][x][1] = - template[y][x][1]
             if i < -1:
                 if y>16 and y<47:
                     template[y][x][0] = template[y][x][0]
@@ -191,6 +191,32 @@ def createAllFlattenTemplate(height, width):
     allTemplates.append(createAvoidLeftTemplate(height, width).flatten())
     allTemplates.append(createAvoidRightTemplate(height, width).flatten())
     return allTemplates
+
+def readAllFlattenTemplate():
+    allTemplates = []
+    xfile = open("assets/matricesX.txt", 'r')
+    yfile = open("assets/matricesY.txt", 'r')
+    Fields = [ [], [], [], [], [], [], [], [] ]
+    for xline, yline in zip(xfile, yfile):
+        xmotions = xline.split()
+        ymotions = yline.split()
+        for container, xelement, yelement in zip(Fields, xmotions, ymotions):
+            container.append(float(xelement))
+            container.append(float(yelement))
+    for container in Fields:
+      container = np.array(container)
+    return Fields
+
+# Direction difference: ZI ZO CW CCW UP DW LT RT
+def dotWithTemplatesOpt(tobeDotted, templates):
+    results = []
+    for template in templates:
+        results.append(np.inner(tobeDotted, template))
+    results.insert(1, -results[0])
+    results.insert(3, -results[2])
+    results.insert(5, -results[4])
+    results.insert(7, -results[6])
+    return results
 
 def dotWithTemplates(tobeDotted, templates):
     results = []

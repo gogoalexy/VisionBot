@@ -35,7 +35,7 @@ time.sleep(2.0)
 prvs = vs.readMono()
 
 algo = Algorithm()
-AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
+AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
 led = Indicator.Indicator()
 
@@ -45,7 +45,7 @@ realtimeFPS = 0
 while True:
     curr = vs.readMono()
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
-    dottedFlow = motionFieldTemplate.dotWithTemplates(FlattenFlow, AllFlattenTemplates)
+    dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(FlattenFlow, AllFlattenTemplates)
     normalizedDottedFlow = [ int(dotted//500) for dotted in dottedFlow ]
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
