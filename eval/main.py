@@ -37,7 +37,7 @@ time.sleep(2.0)
 prvs = vs.readMono()
 
 algo = Algorithm()
-AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
+AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
 led = Indicator.Indicator()
 gui = Graphics.Graphics()
@@ -48,7 +48,7 @@ realtimeFPS = 0
 while True:
     curr = vs.readMono()
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
-    dottedFlow = motionFieldTemplate.dotWithTemplates(FlattenFlow, AllFlattenTemplates)
+    dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(FlattenFlow, AllFlattenTemplates)
     normalizedDottedFlow = [ int(dotted//500) for dotted in dottedFlow ]
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
@@ -78,7 +78,7 @@ while True:
     if args["display_neuron"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 40
-        cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wUP wDWN wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, "UP DWN  LT   RT   IN  OUT CW CCW wRR wFRT wLT wRT", (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-val*20), color=(255, 255, 55), thickness=15)

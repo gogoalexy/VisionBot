@@ -87,4 +87,41 @@ plt.title("Camera Rotate CCW")
 plt.quiver(U, V)
 plt.tight_layout()
 
+
+plt.figure(2, figsize=(6, 6))
+obsrear = mft.createAvoidRearTemplate(templatex, templatey)
+U, V = traverseSplitXY(obsrear)
+
+plt.subplot(2, 2, 1)
+plt.title("Rear Obstacle")
+plt.quiver(U, V)
+plt.tight_layout()
+
+
+obsfront = mft.createAvoidFrontTemplate(templatex, templatey)
+U, V = traverseSplitXY(obsfront)
+
+plt.subplot(2, 2, 2)
+plt.title("Front Obstacle")
+plt.quiver(U, V)
+plt.tight_layout()
+
+
+obsleft = mft.createAvoidLeftTemplate(templatex, templatey)
+U, V = traverseSplitXY(obsleft)
+
+plt.subplot(2, 2, 3)
+plt.title("Left Obstacle")
+plt.quiver(U, V)
+plt.tight_layout()
+
+
+obsright = mft.createAvoidRightTemplate(templatex, templatey)
+U, V = traverseSplitXY(obsright)
+
+plt.subplot(2, 2, 4)
+plt.title("Right Obstacle")
+plt.quiver(U, V)
+plt.tight_layout()
+
 plt.show()
