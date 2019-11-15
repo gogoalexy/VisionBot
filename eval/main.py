@@ -8,6 +8,7 @@ from timer import FPS
 from Stream import VideoStreamMono
 from ImageProcessing import Algorithm
 import Indicator
+import Graphics
 import motionFieldTemplate
 
 ap = argparse.ArgumentParser()
@@ -39,6 +40,7 @@ algo = Algorithm()
 AllFlattenTemplates = motionFieldTemplate.createAllFlattenTemplate(64, 64)
 snn = SNN(args["izhikevich"], args["num_threads"])
 led = Indicator.Indicator()
+gui = Graphics.Graphics()
 
 fps = FPS().start()
 localfps = FPS().start()
@@ -84,7 +86,7 @@ while True:
         cv2.waitKey(1)
 
     if args["demo_nov"]:
-        pass
+        gui.displayConfig((3, 3), activity)
 
     prvs = curr
     led.turnOffAll()
