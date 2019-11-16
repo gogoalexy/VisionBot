@@ -4,7 +4,6 @@ import time
 import ctypes
 import numpy as np
 import numpy.ctypeslib as npct
-from os.path import splitext
 sys.path.append("../")
 import visualize
 
