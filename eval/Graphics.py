@@ -5,7 +5,6 @@ class Graphics():
 
 
     def __init__(self):
-        self.counter = 0
         upArrow = np.array([ ( (270, 450), (270, 250) ), ( (350, 450), (350, 250) ), ( (430, 450), (430, 250) ) ])
         downArrow = np.array([ ( (270, 250), (270, 450) ), ( (350, 250), (350, 450) ), ( (430, 250), (430, 450) ) ])
         leftArrow = np.array([ ( (550, 270), (750, 270) ), ( (550, 350), (750, 350) ), ( (550, 430), (750, 430) ) ])
@@ -17,7 +16,7 @@ class Graphics():
         frontSide = np.array([[0, 0], [200, 200], [800, 200], [999, 0]])
         rearSide = np.array([[999, 999], [800, 800], [200, 800], [0, 999]])
         leftSide = np.array([[0, 0], [200, 200], [200, 800], [0, 999]])
-        rightSide = np.array([[999, 0], [600, 200], [800, 800], [999, 999]])
+        rightSide = np.array([[999, 0], [800, 200], [800, 800], [999, 999]])
         self.arrows = [cwArrow, ccwArrow, zoominArrow, zoomoutArrow, downArrow, upArrow, rightArrow, leftArrow, frontSide, rearSide, leftSide, rightSide]
         self.inactiveColor = (80, 80, 80)
         self.activeColor = (255, 255, 255)
@@ -37,17 +36,16 @@ class Graphics():
                 motion = self.drawArrows(motion, self.arrows[index], self.activeColor)
 
         if config[6] > thresholds[0]:
-            cv2.drawMarker(motion, (580, 750), self.activeColor, cv2.MARKER_TRIANGLE_UP, markerSize=50, thickness=20)
-            cv2.drawMarker(motion, (920, 750), self.activeColor, cv2.MARKER_TRIANGLE_DOWN, markerSize=50, thickness=20)
+            cv2.drawMarker(motion, (550, 650), self.activeColor, cv2.MARKER_TRIANGLE_UP, markerSize=50, thickness=20)
+            cv2.drawMarker(motion, (750, 650), self.activeColor, cv2.MARKER_TRIANGLE_DOWN, markerSize=50, thickness=20)
 
         if config[7] > thresholds[0]:
-            cv2.drawMarker(motion, (580, 750), self.activeColor, cv2.MARKER_TRIANGLE_DOWN, markerSize=50, thickness=20)
-            cv2.drawMarker(motion, (920, 750), self.activeColor, cv2.MARKER_TRIANGLE_UP, markerSize=50, thickness=20)
+            cv2.drawMarker(motion, (550, 650), self.activeColor, cv2.MARKER_TRIANGLE_DOWN, markerSize=50, thickness=20)
+            cv2.drawMarker(motion, (750, 650), self.activeColor, cv2.MARKER_TRIANGLE_UP, markerSize=50, thickness=20)
 
         if config[6] > thresholds[0] or config[7] > thresholds[0]:
-            cv2.circle(motion, (750, 750), 170, self.activeColor, thickness=20)
-        cv2.putText(motion, "Frame: {}".format(self.counter), (500, 500), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0))
-        self.counter += 1
+            cv2.circle(motion, (650, 650), 100, self.activeColor, thickness=20)
+
         for index in range(8, 12):
             if config[index] > thresholds[1]:
                 cv2.fillConvexPoly(motion, self.arrows[index], self.obstacleColor)

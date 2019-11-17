@@ -46,6 +46,7 @@ gui = Graphics.Graphics()
 fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
+counter = 0
 while True:
     curr = vs.readMono()
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
@@ -53,7 +54,9 @@ while True:
     normalizedDottedFlow = [ int(dotted/500) for dotted in dottedFlow ]
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
-    activity = snn.getAllActivityInOrder()
+    if counter % 5 == 0:
+        activity = snn.getAllActivityInOrder()
+    counter += 1
 
     if args["display_flow"]:
         showFrame = curr.copy()
