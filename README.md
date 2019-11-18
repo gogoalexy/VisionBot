@@ -58,10 +58,11 @@ If the program goes wrong under MSVS, please make sure the names and paths to th
 2. The main entry is `main.py`. If you would like to enable Raspberry Pi camera module specific optimization, you should find the command in Usage section.
 3. Unit tests are under the `test` folder.
 4. Wiring information is under the `wiring` folder.
-5. IQIF neuron simulator is under the folder `iq-neuron`.
+5. `assets` folder contains matrices for dot operations.
+6. IQIF neuron simulator is under the folder `iq-neuron`.
 
 ### Usage
-`python3 main.py (-n FRAME_NUMBERS) (-t THREAD_NUMBERS) (-dn) (-dd) (-df) (-i FILE) (-p) (-iz)`
+`python3 main.py (-n FRAME_NUMBERS) (-t THREAD_NUMBERS) (-dn) (-dd) (-df) (-i FILE) (-p) (-iz) (-demo)`
 The program accepts three optional parameters:
 1. To set how many frames, i.e. how long the video, you want to test, you should append `-n FRAMES_NUMBERS`.
 2. In order to accelerate IQIF network, you can append `-t THREAD_NUMBERS` to specify how many threads to use.
@@ -71,5 +72,6 @@ The program accepts three optional parameters:
 6. `-i` or `--input` gets frames from file rather than stream. (experimental)
 7. `-p` or `--picamera` indicate you want to enable Raspberry Pi camera module specific optimization and show the neural firing pattern through LEDs.
 8. `-iz` or `--izhikevich` switch the system to use Izhikevich model not the default IQIF model.
+9. `-demo` or `--demo-nov` is Moonshot November specific, however the drawing procedure is quite computation-demanding. You should pay attention on the average framerate at the end of the program.
 
 __Note: Before executing the program, please complie the iq-neuron simulator first. You can find detailed instructions in the iq-neuron folder.__

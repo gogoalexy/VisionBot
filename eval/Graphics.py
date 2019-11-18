@@ -21,7 +21,7 @@ class Graphics():
         self.inactiveColor = (80, 80, 80)
         self.activeColor = (255, 255, 255)
         self.obstacleColor = (20, 200, 250)
-        self.canvas = cv2.imread("MotionBackground.jpg")
+        self.canvas = cv2.imread("assets/MotionBackground.jpg")
 
     def drawArrows(self, image, positions, color):
         for index in range(positions.shape[0]):

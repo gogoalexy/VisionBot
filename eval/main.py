@@ -88,9 +88,8 @@ while True:
         cv2.waitKey(1)
 
     if args["demo_nov"]:
-        if counter % 4 == 0:
+        if counter % 5 == 0:
             gui.displayConfig((5, 3), activity)
-            print(activity)
         counter += 1
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         cv2.imshow("Preview", showFrame)
