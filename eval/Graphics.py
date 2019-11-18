@@ -35,15 +35,15 @@ class Graphics():
             if config[index] > thresholds[0]:
                 motion = self.drawArrows(motion, self.arrows[index], self.activeColor)
 
-        if config[6] > thresholds[0]:
+        if config[0] > thresholds[0]:
             cv2.drawMarker(motion, (550, 650), self.activeColor, cv2.MARKER_TRIANGLE_UP, markerSize=50, thickness=20)
             cv2.drawMarker(motion, (750, 650), self.activeColor, cv2.MARKER_TRIANGLE_DOWN, markerSize=50, thickness=20)
 
-        if config[7] > thresholds[0]:
+        if config[1] > thresholds[0]:
             cv2.drawMarker(motion, (550, 650), self.activeColor, cv2.MARKER_TRIANGLE_DOWN, markerSize=50, thickness=20)
             cv2.drawMarker(motion, (750, 650), self.activeColor, cv2.MARKER_TRIANGLE_UP, markerSize=50, thickness=20)
 
-        if config[6] > thresholds[0] or config[7] > thresholds[0]:
+        if config[0] > thresholds[0] or config[1] > thresholds[0]:
             cv2.circle(motion, (650, 650), 100, self.activeColor, thickness=20)
 
         for index in range(8, 12):
