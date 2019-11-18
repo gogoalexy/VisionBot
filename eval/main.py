@@ -43,6 +43,12 @@ snn = SNN(args["izhikevich"], args["num_threads"])
 led = Indicator.Indicator()
 gui = Graphics.Graphics()
 
+if args["demo_nov"]:
+    gui.mountWindowAt(0, 0)
+    showFrame = cv2.resize(cv2.cvtColor(prvs, cv2.COLOR_GRAY2BGR), (256, 256))
+    cv2.imshow("Preview", showFrame)
+    cv2.moveWindow("Preview", 1000, 0)
+
 fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
@@ -91,7 +97,7 @@ while True:
         if counter % 3 == 0:
             gui.displayConfig((3, 3), activity)
         counter += 1
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
         cv2.imshow("Preview", showFrame)
 
     prvs = curr

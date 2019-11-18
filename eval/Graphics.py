@@ -23,6 +23,10 @@ class Graphics():
         self.obstacleColor = (20, 200, 250)
         self.canvas = cv2.imread("assets/MotionBackground.jpg")
 
+    def mountWindowAt(self, x, y):
+        cv2.imshow("Motion", self.canvas)
+        cv2.moveWindow("Motion", x, y)
+
     def drawArrows(self, image, positions, color):
         for index in range(positions.shape[0]):
             cv2.arrowedLine(image, tuple(positions[index][0]), tuple(positions[index][1]), color, thickness=30)
