@@ -26,7 +26,7 @@ ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
 # Order: ROTATECW, ROTATECCW, ZOOMIN, ZOOMOUT, DOWN, UP, RIGHT, LEFT
-label = "CW CCW  IN  OUT  DWN UP  RT  LFT wFRT wRR wLT wRT"
+label = "CW CCW  IN  OUT  DWN UP  LFT  RT wFRT wRR wLT wRT"
 frameHW = (64, 64)
 frameRate = 32
 if args["input"]:
@@ -51,7 +51,7 @@ while True:
     curr = vs.readMono()
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(FlattenFlow, AllFlattenTemplates)
-    normalizedDottedFlow = [ int(dotted/500) for dotted in dottedFlow ]
+    normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
     if counter % 5 == 0:
@@ -90,11 +90,13 @@ while True:
         cv2.waitKey(1)
 
     if args["demo_nov"]:
-        gui.displayConfig((3, 3), activity)
+        gui.displayConfig((5, 3), activity)
+        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        cv2.imshow("Preview", showFrame)
 
     prvs = curr
     led.turnOffAll()
-    led.turnOnConfig(3, activity)
+    led.turnOnConfig(5, activity)
     fps.update()
     localfps.update()
     if localfps.isPassed(30):
