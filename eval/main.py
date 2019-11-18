@@ -54,7 +54,7 @@ while True:
     normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
-    activity = snn.getAllActivityInOrder()
+    activity = snn.getFirstNActivityInOrder(12)
 
     if args["display_flow"]:
         showFrame = curr.copy()
@@ -88,15 +88,15 @@ while True:
         cv2.waitKey(1)
 
     if args["demo_nov"]:
-        if counter % 5 == 0:
-            gui.displayConfig((5, 3), activity)
+        if counter % 3 == 0:
+            gui.displayConfig((3, 3), activity)
         counter += 1
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         cv2.imshow("Preview", showFrame)
 
     prvs = curr
     led.turnOffAll()
-    led.turnOnConfig(5, activity)
+    led.turnOnConfig(3, activity)
     fps.update()
     localfps.update()
     if localfps.isPassed(30):

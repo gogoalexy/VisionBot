@@ -36,7 +36,7 @@ The program is under the `gen` folder and named as `Generator.py`. You only have
 Moonshot project November demo core.
 
 ### Hardware Setup
-Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25 are used.
+Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25, 5, 6, 12 and 16 are used.
 ![routing diagram from Pi to LEDs on a bread board](/eval/wiring/wirePi_LED_bb.png)
 
 ### Prerequisites

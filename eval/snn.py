@@ -37,7 +37,13 @@ class SNN:
         for index in range(0, self.numNeurons):
             activity.append(self.getSpikeCount(index))
         return activity
-    
+
+    def getFirstNActivityInOrder(self, n):
+        activity = []
+        for index in range(0, n):
+            activity.append(self.getSpikeCount(index))
+        return activity
+
     def getPotential(self, neuronID):
         return self.network.potential(neuronID)
 
