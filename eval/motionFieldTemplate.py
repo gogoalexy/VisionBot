@@ -176,6 +176,7 @@ def createAvoidRightTemplate(height, width):
     return template
 
 def createAllFlattenTemplate(height, width):
+    print("The function -createAllFlattenTemplate- is depricated. You may want to use -readAllFlattenTemplate- instead.")
     allTemplates = []
     allTemplates.append(createCamRotateCWTemplate(height, width).flatten())
     allTemplates.append(createCamRotateCCWTemplate(height, width).flatten())
@@ -185,14 +186,13 @@ def createAllFlattenTemplate(height, width):
     allTemplates.append(createCamUpShiftTemplate(height, width).flatten())
     allTemplates.append(createCamRightShiftTemplate(height, width).flatten())
     allTemplates.append(createCamLeftShiftTemplate(height, width).flatten())
-    allTemplates.append(createAvoidRearTemplate(height, width).flatten())
-    allTemplates.append(createAvoidFrontTemplate(height, width).flatten())
-    allTemplates.append(createAvoidLeftTemplate(height, width).flatten())
-    allTemplates.append(createAvoidRightTemplate(height, width).flatten())
+    # allTemplates.append(createAvoidRearTemplate(height, width).flatten())
+    # allTemplates.append(createAvoidFrontTemplate(height, width).flatten())
+    # allTemplates.append(createAvoidLeftTemplate(height, width).flatten())
+    # allTemplates.append(createAvoidRightTemplate(height, width).flatten())
     return allTemplates
 
 def readAllFlattenTemplate():
-    allTemplates = []
     xfile = open("assets/matricesX.txt", 'r')
     yfile = open("assets/matricesY.txt", 'r')
     Fields = [ [], [], [], [], [], [], [], [] ]
@@ -217,6 +217,7 @@ def dotWithTemplatesOpt(tobeDotted, templates):
     return results
 
 def dotWithTemplates(tobeDotted, templates):
+    print("The function -dotWithTemplates- is depricated. Use it with -createAllFlattenTemplates- only.")
     results = []
     for template in templates:
         results.append(np.inner(tobeDotted, template))
