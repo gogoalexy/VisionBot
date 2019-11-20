@@ -214,6 +214,8 @@ def dotWithTemplatesOpt(tobeDotted, templates):
     results.insert(3, -results[2])
     results.insert(5, -results[4])
     results.insert(7, -results[6])
+    for index in range(8, 12):
+          results[index] = np.abs(results[index])
     return results
 
 def dotWithTemplates(tobeDotted, templates):
