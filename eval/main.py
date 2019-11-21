@@ -25,8 +25,8 @@ ap.add_argument("-i", "--input", type=str, help="Input video file instead of liv
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
-# Order: ROTATECW, ROTATECCW, ZOOMIN, ZOOMOUT, DOWN, UP, RIGHT, LEFT, avoidFront, avoidRear, avoidLeft, avoidRight, Inh(not show)
-label = "CW CCW  IN  OUT  DWN UP  LFT  RT wFRT wRR wLT wRT"
+# Order: ROTATECCW, ROTATECW, ZOOMIN, ZOOMOUT, UP, DOWN, LEFT, RIGHT, avoidFront, avoidRear, avoidLeft, avoidRight, Inh(not show)
+label = "CCW CW  IN  OUT  UP DWN  RT  LFT wFRT wRR wLT wRT"
 frameHW = (64, 64)
 frameRate = 32
 if args["input"]:
@@ -47,8 +47,9 @@ if args["demo_nov"]:
     gui.mountWindowAt(0, 0)
     showFrame = cv2.resize(cv2.cvtColor(prvs, cv2.COLOR_GRAY2BGR), (256, 256))
     cv2.imshow("Preview", showFrame)
-    cv2.moveWindow("Preview", 1000, 0)
+    cv2.moveWindow("Preview", 1050, 0)
 
+prvsActivity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
@@ -60,7 +61,7 @@ while True:
     normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
-    activity = snn.getFirstNActivityInOrder(12)
+    activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(12), prvsActivity) )
 
     if args["display_flow"]:
         showFrame = curr.copy()
@@ -95,12 +96,14 @@ while True:
 
     if args["demo_nov"]:
         if counter % 3 == 0:
-            gui.displayConfig((3, 3), activity)
+            gui.displayConfig((3, 5), activity)
         counter += 1
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
+        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Preview", showFrame)
 
     prvs = curr
+    prvsActivity = activity
     led.turnOffAll()
     led.turnOnConfig(3, activity)
     fps.update()
