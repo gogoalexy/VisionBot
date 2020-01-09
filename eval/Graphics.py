@@ -13,15 +13,16 @@ class Graphics():
         zoomoutArrow = np.array([ ( (400, 400), (475, 475) ), ( (400, 650), (475, 575) ), ( (650, 400), (575, 475) ), ( (650, 650), (575, 575) ), ( (375, 525), (475, 525) ), ( (675, 525), (575, 525) ), ( (525, 375), (525, 475) ), ( (525, 675), (525, 575) ) ])
         cwArrow = np.array( [  ] )
         ccwArrow = np.array( [  ] )
-        frontSide = np.array([[0, 0], [200, 200], [800, 200], [999, 0]])
-        rearSide = np.array([[999, 999], [800, 800], [200, 800], [0, 999]])
-        leftSide = np.array([[0, 0], [200, 200], [200, 800], [0, 999]])
-        rightSide = np.array([[999, 0], [800, 200], [800, 800], [999, 999]])
+        frontSide = np.array([ ( (0, 0), (249, 50) ) ])
+        rearSide = np.array([ ( (249, 249), (0, 200) ) ])
+        leftSide = np.array([ ( (0, 50), (50, 200) ) ])
+        rightSide = np.array([ ( (200, 50), (249, 200) ) ])
         self.arrows = [ccwArrow, cwArrow, zoominArrow, zoomoutArrow, upArrow, downArrow, rightArrow, leftArrow, frontSide, rearSide, leftSide, rightSide]
         self.inactiveColor = (80, 80, 80)
         self.activeColor = (255, 255, 255)
         self.obstacleColor = (20, 200, 250)
         self.canvas = cv2.imread("assets/MotionBackground.jpg")
+        self.blank = cv2.imread("assets/ObstacleBackground.jpg")
 
     def mountWindowAt(self, x, y):
         cv2.imshow("Motion", self.canvas)
@@ -31,13 +32,23 @@ class Graphics():
         for index in range(positions.shape[0]):
             cv2.arrowedLine(image, tuple(positions[index][0]), tuple(positions[index][1]), color, thickness=20)
         return image
+    
+    def drawObstacles(self, image, locations, color):
+        for index in range(locations.shape[0]):
+            cv2.rectangle(image, tuple(locations[index][0]), tuple(locations[index][1]), color, thickness=cv2.FILLED)
+        return image
 
     # front, rear, left, right
     def displayConfig(self, thresholds, config):
         motion = self.canvas.copy()
+        obstacle = self.blank.copy()
         for index in range(8):
             if config[index] > thresholds[0]:
                 motion = self.drawArrows(motion, self.arrows[index], self.activeColor)
+        for index in range(8, 12):
+            if config[index] > thresholds[1]:
+                obstacle = self.drawObstacles(obstacle, self.arrows[index], self.activeColor)
         
         cv2.imshow("Motion", motion)
+        cv2.imshow("Obstacle", obstacle)
         cv2.waitKey(10)
