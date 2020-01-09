@@ -47,7 +47,7 @@ if args["demo_nov"]:
     gui.mountWindowAt(0, 0)
     showFrame = cv2.resize(cv2.cvtColor(prvs, cv2.COLOR_GRAY2BGR), (256, 256))
     cv2.imshow("Preview", showFrame)
-    cv2.moveWindow("Preview", 1050, 0)
+    cv2.moveWindow("Preview", 1055, 35)
 
 prvsActivity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 fps = FPS().start()

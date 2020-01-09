@@ -17,7 +17,7 @@ class Graphics():
         rearSide = np.array([[999, 999], [800, 800], [200, 800], [0, 999]])
         leftSide = np.array([[0, 0], [200, 200], [200, 800], [0, 999]])
         rightSide = np.array([[999, 0], [800, 200], [800, 800], [999, 999]])
-        self.arrows = [ccwArrow, cwArrow, zoominArrow, zoomoutArrow, upArrow, downArrow, leftArrow, rightArrow, frontSide, rearSide, leftSide, rightSide]
+        self.arrows = [ccwArrow, cwArrow, zoominArrow, zoomoutArrow, upArrow, downArrow, rightArrow, leftArrow, frontSide, rearSide, leftSide, rightSide]
         self.inactiveColor = (80, 80, 80)
         self.activeColor = (255, 255, 255)
         self.obstacleColor = (20, 200, 250)

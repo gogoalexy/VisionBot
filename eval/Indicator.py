@@ -24,7 +24,7 @@ class Indicator():
 class GeneralIndicator():
 
     def __init__(self):
-        self.lookup = [ "ccw", "cw", "in", "out", "up", "down", "left", "right",
+        self.lookup = [ "ccw", "cw", "in", "out", "up", "down", "right", "left",
                         "OBSfront", "OBSrear", "OBSleft", "OBSright" ]
 
     def turnOn(self, index):

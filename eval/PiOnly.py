@@ -58,7 +58,7 @@ class PiIndicator():
         avoidrear = LED(6)
         avoidleft = LED(12)
         avoidright = LED(16)
-        self.lookup = [ rotateccwLight, rotatecwLight, zoominLight, zoomoutLight, upLight, downLight, leftLight, rightLight,
+        self.lookup = [ rotateccwLight, rotatecwLight, zoominLight, zoomoutLight, upLight, downLight, rightLight, leftLight,
                         avoidfront, avoidrear, avoidleft, avoidright ]
 
     def turnOn(self, index):
