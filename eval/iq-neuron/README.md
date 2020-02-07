@@ -14,7 +14,8 @@
 mkdir build && cd build
 cmake ..
 make
-python ../iqif.py
+cd ../..
+python iq-neuron/iqif.py
 ```
 
 You can change the synaptic weights in the [Connection Table](inputs/Connection_Table_IQIF.txt). The numbers in each lines are `pre-synapse neuron index, post-synapse neuron index, weight, time constant` respectively.
