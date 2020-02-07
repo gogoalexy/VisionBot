@@ -54,7 +54,7 @@ class WebcamVideoStreamCroppedMono:
 
             (self.grabbed, rawframe) = self.stream.read()
             rawframe = self.preprocessor.cropFrameIntoSquare(rawframe)
-            self.frame = cv2.resize(rawframe, (64, 64))
+            self.frame = cv2.resize(rawframe, (64, 64), cv2.INTER_AREA)
             self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
 
     def read(self):
