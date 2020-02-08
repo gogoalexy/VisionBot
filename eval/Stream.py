@@ -1,6 +1,7 @@
 from threading import Thread
 
 import cv2
+import platform
 
 import ImageProcessing
 
@@ -11,6 +12,8 @@ class VideoStreamMono:
             from PiOnly import PiVideoStreamMono
             self.stream = PiVideoStreamMono(resolution=resolution, framerate=framerate)
         else:
+            if platform.system() == "Linux":
+                src=0+cv2.CAP_V4L2
             self.stream = WebcamVideoStreamCroppedMono(src=src)
 
     def start(self):
