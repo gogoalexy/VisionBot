@@ -6,7 +6,7 @@ import ImageProcessing
 
 class VideoStreamMono:
 
-    def __init__(self, src=0 + cv2.CAP_V4L2, usePiCamera=False, resolution=(640, 480), framerate=32):
+    def __init__(self, src=0, usePiCamera=False, resolution=(640, 480), framerate=32):
         if usePiCamera:
             from PiOnly import PiVideoStreamMono
             self.stream = PiVideoStreamMono(resolution=resolution, framerate=framerate)
