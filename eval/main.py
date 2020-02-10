@@ -54,11 +54,19 @@ fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
 counter = 0
+prvsDottedFlow = [0, 0, 0, 0, 0, 0, 0, 0]
 while True:
     curr = vs.readMono()
-    FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
-    dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(FlattenFlow, AllFlattenTemplates)
-    normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
+    Flow = algo.calculateOpticalFlow(prvs, curr)
+    meanFlattenFlow = motionFieldTemplate.meanOpticalFlow(Flow).flatten()
+    dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
+    #normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
+    normalizedDottedFlow = [ dotted/4.0 for dotted in meanDottedFlow ]
+    movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
+    prvsDottedFlow = movingAvgNormalizedDottedFlow
+    '''
+    ...
+    '''
     snn.stimulateInOrder(normalizedDottedFlow)
     snn.run(args["steps"])
     activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(12), prvsActivity) )

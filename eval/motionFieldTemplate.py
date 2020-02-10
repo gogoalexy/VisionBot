@@ -192,7 +192,7 @@ def createAllFlattenTemplate(height, width):
     # allTemplates.append(createAvoidRightTemplate(height, width).flatten())
     return allTemplates
 
-def readAllFlattenTemplate():
+def readAllFlattenTemplate_old():
     xfile = open("assets/matricesX.txt", 'r')
     yfile = open("assets/matricesY.txt", 'r')
     Fields = [ [], [], [], [], [], [], [], [] ]
@@ -206,7 +206,21 @@ def readAllFlattenTemplate():
       container = np.array(container)
     return Fields
 
-def dotWithTemplatesOpt(tobeDotted, templates):
+def readAllFlattenTemplate():
+    xfile = open("assets/ExternalSynapse_X.txt", 'r')
+    yfile = open("assets/ExternalSynapse_Y.txt", 'r')
+    Fields = [ [], [], [], [] ]
+    for xline, yline in zip(xfile, yfile):
+        xmotions = xline.split()
+        ymotions = yline.split()
+        for container, xelement, yelement in zip(Fields, xmotions, ymotions):
+            container.append(float(xelement))
+            container.append(float(yelement))
+    for container in Fields:
+        container = np.array(container)
+    return Fields
+
+def dotWithTemplatesOpt_old(tobeDotted, templates):
     results = []
     for template in templates:
         results.append(np.inner(tobeDotted, template))
@@ -218,9 +232,39 @@ def dotWithTemplatesOpt(tobeDotted, templates):
           results[index] = np.abs(results[index])
     return results
 
+def dotWithTemplatesOpt(tobeDotted, templates):
+    results = []
+    for template in templates:
+        results.append(np.inner(tobeDotted, template))
+    results.insert(1, -results[0])
+    results.insert(3, -results[2])
+    results.insert(5, -results[4])
+    results.insert(7, -results[6])
+    return results
+
 def dotWithTemplates(tobeDotted, templates):
     print("The function -dotWithTemplates- is depricated. Use it with -createAllFlattenTemplates- only.")
     results = []
     for template in templates:
         results.append(np.inner(tobeDotted, template))
     return results
+
+def meanOpticalFlow(flow):
+    '''
+    for j in range(0, 63, 8):
+        for i in range(0, 63, 8):
+            x = flow[j:j+8, i:i+8, 0]
+            y = flow[j:j+8, i:i+8, 1]
+            mean[0][j//8][i//8] = np.mean(x)
+            mean[1][j//8][i//8] = np.mean(y)
+    '''
+    flowX = flow[:, :, 0]
+    flowY = flow[:, :, 1]
+    #shape = (8, 8)
+    #sh = shape[0],flow.shape[0]//shape[0],shape[1],flow.shape[1]//shape[1]
+    sh = (8, 8, 8, 8)
+    meanFlowX = flowX.reshape(sh).mean(-1).mean(1)
+    meanFlowY = flowY.reshape(sh).mean(-1).mean(1)
+    meanFlow = np.dstack((meanFlowX, meanFlowY))
+    return meanFlow
+
