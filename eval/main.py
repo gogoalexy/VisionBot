@@ -57,11 +57,11 @@ counter = 0
 prvsDottedFlow = [0, 0, 0, 0, 0, 0, 0, 0]
 while True:
     curr = vs.readMono()
-    Flow = algo.calculateOpticalFlow(prvs, curr)
-    meanFlattenFlow = motionFieldTemplate.meanOpticalFlow(Flow).flatten()
+    FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
+    meanFlattenFlow = motionFieldTemplate.meanOpticalFlow(FlattenFlow).flatten()
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
     #normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
-    normalizedDottedFlow = [ dotted/4.0 for dotted in meanDottedFlow ]
+    normalizedDottedFlow = [ dotted/4.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
     prvsDottedFlow = movingAvgNormalizedDottedFlow
     '''
