@@ -58,16 +58,16 @@ prvsDottedFlow = [0, 0, 0, 0, 0, 0, 0, 0]
 while True:
     curr = vs.readMono()
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
+    # note the different parameters between old and new Farneback
     meanFlattenFlow = motionFieldTemplate.meanOpticalFlow(FlattenFlow).flatten()
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
     #normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
     normalizedDottedFlow = [ dotted/4.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
     prvsDottedFlow = movingAvgNormalizedDottedFlow
-    '''
-    ...
-    '''
-    snn.stimulateInOrder(normalizedDottedFlow)
+    neuronCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(movingAvgNormalizedDottedFlow, AllFlattenTemplates)
+    #snn.stimulateInOrder(normalizedDottedFlow)
+    snn.stimulateInOrder(neuronCurrents)
     snn.run(args["steps"])
     activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(12), prvsActivity) )
 

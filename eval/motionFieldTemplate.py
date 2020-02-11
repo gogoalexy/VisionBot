@@ -268,3 +268,7 @@ def meanOpticalFlow(flow):
     meanFlow = np.dstack((meanFlowX, meanFlowY))
     return meanFlow
 
+def obstacleAvoidanceCurrent(flow, templates):
+
+    return neuronCurrent
+
