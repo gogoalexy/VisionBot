@@ -274,7 +274,8 @@ def obstacleAvoidanceCurrent(globalMotion, flow, templates):
     
     # global motion detection
     globalMotion = np.array(globalMotion)
-    neuronCurrent[0:8] = globalMotion
+    neuronCurrent[0:4] = globalMotion[0:8:2]
+    neuronCurrent[4:8] = globalMotion[1:8:2]
 
     # obstacle avoidance:
     flow = flow.reshape((8, 8, 2))
