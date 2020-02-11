@@ -269,6 +269,6 @@ def meanOpticalFlow(flow):
     return meanFlow
 
 def obstacleAvoidanceCurrent(flow, templates):
-
+    neuronCurrent = []
     return neuronCurrent
 
