@@ -65,7 +65,7 @@ while True:
     normalizedDottedFlow = [ dotted/4.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
     prvsDottedFlow = movingAvgNormalizedDottedFlow
-    neuronCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(movingAvgNormalizedDottedFlow, AllFlattenTemplates)
+    neuronCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(movingAvgNormalizedDottedFlow, meanFlattenFlow, AllFlattenTemplates)
     #snn.stimulateInOrder(normalizedDottedFlow)
     snn.stimulateInOrder(neuronCurrents)
     snn.run(args["steps"])

@@ -258,6 +258,7 @@ def meanOpticalFlow(flow):
             mean[0][j//8][i//8] = np.mean(x)
             mean[1][j//8][i//8] = np.mean(y)
     '''
+    flow = flow.reshape((64, 64, 2))
     flowX = flow[:, :, 0]
     flowY = flow[:, :, 1]
     #shape = (8, 8)
@@ -268,7 +269,56 @@ def meanOpticalFlow(flow):
     meanFlow = np.dstack((meanFlowX, meanFlowY))
     return meanFlow
 
-def obstacleAvoidanceCurrent(flow, templates):
-    neuronCurrent = []
-    return neuronCurrent
+def obstacleAvoidanceCurrent(globalMotion, flow, templates):
+    neuronCurrent = np.zeros(21)
+    
+    # global motion detection
+    globalMotion = np.array(globalMotion)
+    neuronCurrent[0:8] = globalMotion
+
+    # obstacle avoidance:
+    flow = flow.reshape((8, 8, 2))
+    templates = np.array(templates)
+    forwardTemplate = templates[1].reshape((8, 8, 2))
+    
+    # outerUp
+    neuronCurrent[8] = np.inner(flow[0, 0:8, :].flatten(), forwardTemplate[0, 0:8, :].flatten())
+    
+    # outerLeft
+    neuronCurrent[9] = np.inner(flow[0:8, 0, :].flatten(), forwardTemplate[0:8, 0, :].flatten())
+    
+    # outerRight
+    neuronCurrent[10] = np.inner(flow[0:8, 7, :].flatten(), forwardTemplate[0:8, 7, :].flatten())
+    
+    # outerDown
+    neuronCurrent[11] = np.inner(flow[7, 0:8, :].flatten(), forwardTemplate[7, 0:8, :].flatten())
+    
+    # middleUp
+    neuronCurrent[12] = np.inner(flow[1, 1:7, :].flatten(), forwardTemplate[1, 1:7, :].flatten())
+    
+    # middleLeft 
+    neuronCurrent[13] = np.inner(flow[1:7, 1, :].flatten(), forwardTemplate[1:7, 1, :].flatten())
+    
+    # middleRight
+    neuronCurrent[14] = np.inner(flow[1:7, 6, :].flatten(), forwardTemplate[1:7, 6, :].flatten())
+    
+    # middleDown
+    neuronCurrent[15] = np.inner(flow[6, 1:7, :].flatten(), forwardTemplate[6, 1:7, :].flatten())
+    
+    # innerUp
+    neuronCurrent[16] = np.inner(flow[2, 2:6, :].flatten(), forwardTemplate[2, 2:6, :].flatten())
+    
+    # innerLeft
+    neuronCurrent[17] = np.inner(flow[2:6, 2, :].flatten(), forwardTemplate[2:6, 2, :].flatten())
+    
+    # innerRight
+    neuronCurrent[18] = np.inner(flow[2:6, 5, :].flatten(), forwardTemplate[2:6, 5, :].flatten())
+    
+    # innerUp
+    neuronCurrent[19] = np.inner(flow[5, 2:6, :].flatten(), forwardTemplate[5, 2:6, :].flatten())
+    
+    # central
+    neuronCurrent[20] = np.inner(flow[3:5, 3:5, :].flatten(), forwardTemplate[3:5, 3:5, :].flatten())
+
+    return neuronCurrent.tolist()
 
