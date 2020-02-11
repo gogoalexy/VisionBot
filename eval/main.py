@@ -18,6 +18,7 @@ framesToLoop.add_argument("-c", "--continuous", help="Set number of frames to lo
 ap.add_argument("-s", "--steps", type=int, default=50, help="# of steps to simulate for each frame")
 ap.add_argument("-t", "--num-threads", type=int, default=1, help="# of threads to accelerate")
 ap.add_argument("-dn", "--display-neuron", help="Whether or not neural activities should be displayed", action="store_true")
+ap.add_argument("-do", "--display-obstacle", help="Whether or not obstacles should be displayed", action="store_true")
 ap.add_argument("-dd", "--display-dot", help="Whether or not dotted results should be displayed", action="store_true")
 ap.add_argument("-df", "--display-flow", help="Whether or not flow frames should be displayed", action="store_true")
 ap.add_argument("-demo", "--demo-nov", help="Whether to get into graphical demo mode", action="store_true")
@@ -28,7 +29,7 @@ args = vars(ap.parse_args())
 # Order: ROTATECCW, ROTATECW, ZOOMIN, ZOOMOUT, UP, DOWN, LEFT, RIGHT, avoidFront, avoidRear, avoidLeft, avoidRight, Inh(not show)
 label = "CCW CW  IN  OUT  UP DWN  RT  LFT wFRT wRR wLT wRT"
 frameHW = (64, 64)
-frameRate = 32
+frameRate = 30
 if args["input"]:
     vs = VideoStreamMono(src=args["input"], usePiCamera=False, resolution=frameHW, framerate=frameRate).start()
 else:
@@ -42,7 +43,7 @@ prvs = algo.contrastEnhance(prvs)
 
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
-led = Indicator.Indicator()
+#led = Indicator.Indicator()
 gui = Graphics.Graphics()
 
 if args["demo_nov"]:
@@ -51,14 +52,16 @@ if args["demo_nov"]:
     cv2.imshow("Preview", showFrame)
     cv2.moveWindow("Preview", 1055, 35)
 
-prvsActivity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+prvsActivity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
 counter = 0
 prvsDottedFlow = [0, 0, 0, 0, 0, 0, 0, 0]
+prvsAvoidCurrents = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 while True:
     curr = vs.readMono()
+    mono = curr
     curr = algo.contrastEnhance(curr)
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     # note the different parameters between old and new Farneback
@@ -67,13 +70,14 @@ while True:
     normalizedDottedFlow = [ dotted / 4.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
-    weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
+    #weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
+    weightedAvoidCurrents = avoidCurrents
     movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
     #snn.stimulateInOrder(normalizedDottedFlow)
     snn.stimulateInOrder(neuronCurrents)
     snn.run(args["steps"])
-    activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(12), prvsActivity) )
+    activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
 
     if args["display_flow"]:
         showFrame = curr.copy()
@@ -97,12 +101,34 @@ while True:
         cv2.waitKey(1)
 
     if args["display_neuron"]:
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = cv2.resize(cv2.cvtColor(mono, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 40
         cv2.putText(showFrame, label, (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
-            cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-int(val)*20), color=(255, 255, 55), thickness=15)
+            #cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-int(val)*20), color=(255, 255, 55), thickness=15)
+            cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
+        cv2.imshow("Neuron", showFrame)
+        cv2.waitKey(1)
+
+    if args["display_obstacle"]:
+        showFrame = cv2.resize(cv2.cvtColor(mono, cv2.COLOR_GRAY2BGR), (512, 512))
+        cv2.rectangle(showFrame, (0, 0), (510, 62), (0, int(activity[8])*255, 0), 2)
+        cv2.rectangle(showFrame, (0, 0), (62, 510), (0, int(activity[9])*255, 0), 2)
+        cv2.rectangle(showFrame, (448, 0), (510, 510), (0, int(activity[10])*255, 0), 2)
+        cv2.rectangle(showFrame, (0, 448), (510, 510), (0, int(activity[11])*255, 0), 2)
+
+        cv2.rectangle(showFrame, (64, 64), (446, 126), (0, int(activity[12])*255, 0), 2)
+        cv2.rectangle(showFrame, (64, 64), (126, 446), (0, int(activity[13])*255, 0), 2)
+        cv2.rectangle(showFrame, (384, 64), (446, 446), (0, int(activity[14])*255, 0), 2)
+        cv2.rectangle(showFrame, (64, 384), (446, 446), (0, int(activity[15])*255, 0), 2)
+
+        cv2.rectangle(showFrame, (128, 128), (382, 190), (0, int(activity[16])*255, 0), 2)
+        cv2.rectangle(showFrame, (128, 128), (190, 382), (0, int(activity[17])*255, 0), 2)
+        cv2.rectangle(showFrame, (320, 128), (382, 382), (0, int(activity[18])*255, 0), 2)
+        cv2.rectangle(showFrame, (128, 320), (382, 382), (0, int(activity[19])*255, 0), 2)
+
+        cv2.rectangle(showFrame, (192, 192), (318, 318), (0, int(activity[20])*255, 0), 2)
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 
@@ -118,8 +144,8 @@ while True:
     prvsDottedFlow = movingAvgNormalizedDottedFlow
     prvsAvoidCurrents = movingAvgWeightedAvoidCurrents
     prvsActivity = activity
-    led.turnOffAll()
-    led.turnOnConfig(3, activity)
+    #led.turnOffAll()
+    #led.turnOnConfig(3, activity)
     fps.update()
     localfps.update()
     if localfps.isPassed(30):
@@ -130,7 +156,7 @@ while True:
     if not args["continuous"] and fps.isPassed(args["num_frames"]):
         break
 
-led.turnOffAll()
+#led.turnOffAll()
 fps.stop()
 print("Elasped time: {:.3f} s".format(fps.elapsed()))
 print("Approx. average FPS: {:.3f}".format(fps.fps()))
