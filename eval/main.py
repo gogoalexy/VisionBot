@@ -35,9 +35,11 @@ else:
     vs = VideoStreamMono(usePiCamera=args["picamera"], resolution=frameHW, framerate=frameRate).start()
 
 time.sleep(2.0)
-prvs = vs.readMono()
 
 algo = Algorithm()
+prvs = vs.readMono()
+prvs = algo.contrastEnhance(prvs)
+
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
 led = Indicator.Indicator()
@@ -57,15 +59,17 @@ counter = 0
 prvsDottedFlow = [0, 0, 0, 0, 0, 0, 0, 0]
 while True:
     curr = vs.readMono()
+    curr = algo.contrastEnhance(curr)
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     # note the different parameters between old and new Farneback
     meanFlattenFlow = motionFieldTemplate.meanOpticalFlow(FlattenFlow).flatten()
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
-    #normalizedDottedFlow = [ int(dotted/50) for dotted in dottedFlow ]
-    normalizedDottedFlow = [ dotted/4.0 for dotted in dottedFlow ]
+    normalizedDottedFlow = [ dotted / 4.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
-    prvsDottedFlow = movingAvgNormalizedDottedFlow
-    neuronCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(movingAvgNormalizedDottedFlow, meanFlattenFlow, AllFlattenTemplates)
+    avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
+    weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
+    movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
+    neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
     #snn.stimulateInOrder(normalizedDottedFlow)
     snn.stimulateInOrder(neuronCurrents)
     snn.run(args["steps"])
@@ -111,6 +115,8 @@ while True:
         cv2.imshow("Preview", showFrame)
 
     prvs = curr
+    prvsDottedFlow = movingAvgNormalizedDottedFlow
+    prvsAvoidCurrents = movingAvgWeightedAvoidCurrents
     prvsActivity = activity
     led.turnOffAll()
     led.turnOnConfig(3, activity)

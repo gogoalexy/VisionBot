@@ -55,3 +55,11 @@ class Algorithm:
     def calculateOpticalFlow(self, previousFrame, currentFrame):
         flow = cv2.calcOpticalFlowFarneback(previousFrame, currentFrame, None, 0.5, 8, 15, 3, 5, 1.2, 0)
         return flow
+
+    def contrastEnhance(self, frame):
+        # GaussianKernalSize1 = 7
+        # GaussianSTD1 = 5.0
+        blur = cv2.GaussianBlur(frame, (7, 7), 5.0)
+        unsharpFrame = cv2.addWeighted(frame, t, blur, -4, 0, frame)
+        return unsharpFrame
+
