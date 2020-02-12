@@ -70,8 +70,8 @@ while True:
     normalizedDottedFlow = [ dotted / 4.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
-    #weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
-    weightedAvoidCurrents = avoidCurrents
+    weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
+    #weightedAvoidCurrents = avoidCurrents
     movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
     #snn.stimulateInOrder(normalizedDottedFlow)

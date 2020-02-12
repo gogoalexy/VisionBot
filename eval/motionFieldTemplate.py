@@ -224,10 +224,10 @@ def dotWithTemplatesOpt_old(tobeDotted, templates):
     results = []
     for template in templates:
         results.append(np.inner(tobeDotted, template))
-    results.insert(1, -results[0])
-    results.insert(3, -results[2])
-    results.insert(5, -results[4])
-    results.insert(7, -results[6])
+    results.append(-results[0])
+    results.append(-results[1])
+    results.append(-results[2])
+    results.append(-results[3])
     for index in range(8, 12):
           results[index] = np.abs(results[index])
     return results
@@ -236,10 +236,16 @@ def dotWithTemplatesOpt(tobeDotted, templates):
     results = []
     for template in templates:
         results.append(np.inner(tobeDotted, template))
+    '''
     results.insert(1, -results[0])
     results.insert(3, -results[2])
     results.insert(5, -results[4])
     results.insert(7, -results[6])
+    '''
+    results.append(-results[0])
+    results.append(-results[1])
+    results.append(-results[2])
+    results.append(-results[3])
     return results
 
 def dotWithTemplates(tobeDotted, templates):
