@@ -26,8 +26,7 @@ ap.add_argument("-i", "--input", type=str, help="Input video file instead of liv
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
-# Order: ROTATECCW, ROTATECW, ZOOMIN, ZOOMOUT, UP, DOWN, LEFT, RIGHT, avoidFront, avoidRear, avoidLeft, avoidRight, Inh(not show)
-#label = "CCW CW  IN  OUT  UP DWN  RT  LFT wFRT wRR wLT wRT"
+# Order: ROTATECCW, ZOOMIN, UP, RIGHT, ROTATECW, ZOOMOUT, DOWN, LEFT, outer[UP, Rear, Left, Right], middle[UP, Rear, Left, Right], inner[UP, Rear, Left, Right], center, modeInh(not shown), obsInh(not shown)
 label =  "CCW IN   UP  RT  CW  OUT DWN  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
 frameHW = (64, 64)
 frameRate = 30
