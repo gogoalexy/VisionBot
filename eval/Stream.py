@@ -13,7 +13,7 @@ class VideoStreamMono:
             self.stream = PiVideoStreamMono(resolution=resolution, framerate=framerate)
         else:
             if platform.system() == "Linux":
-                src=0+cv2.CAP_V4L2
+                src= 0 + cv2.CAP_V4L2
             self.stream = WebcamVideoStreamCroppedMono(src=src)
 
     def start(self):
@@ -34,7 +34,7 @@ class VideoStreamMono:
 
 class WebcamVideoStreamCroppedMono:
 
-    def __init__(self, src=0):
+    def __init__(self, src = 0):
         self.stream = cv2.VideoCapture(src)
         (self.grabbed, rawframe) = self.stream.read()
         self.frame = None

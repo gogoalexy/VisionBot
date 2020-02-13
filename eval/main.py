@@ -27,7 +27,8 @@ ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
 # Order: ROTATECCW, ROTATECW, ZOOMIN, ZOOMOUT, UP, DOWN, LEFT, RIGHT, avoidFront, avoidRear, avoidLeft, avoidRight, Inh(not show)
-label = "CCW CW  IN  OUT  UP DWN  RT  LFT wFRT wRR wLT wRT"
+#label = "CCW CW  IN  OUT  UP DWN  RT  LFT wFRT wRR wLT wRT"
+label =  "CCW IN   UP  RT  CW  OUT DWN  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
 frameHW = (64, 64)
 frameRate = 30
 if args["input"]:
@@ -52,16 +53,15 @@ if args["demo_nov"]:
     cv2.imshow("Preview", showFrame)
     cv2.moveWindow("Preview", 1055, 35)
 
-prvsActivity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+prvsActivity = [0] * 21
 fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
 counter = 0
-prvsDottedFlow = [0, 0, 0, 0, 0, 0, 0, 0]
-prvsAvoidCurrents = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+prvsDottedFlow = [0] * 8
+prvsAvoidCurrents = [0] * 13
 while True:
     curr = vs.readMono()
-    mono = curr
     curr = algo.contrastEnhance(curr)
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     # note the different parameters between old and new Farneback
@@ -71,10 +71,8 @@ while True:
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
     weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
-    #weightedAvoidCurrents = avoidCurrents
     movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
-    #snn.stimulateInOrder(normalizedDottedFlow)
     snn.stimulateInOrder(neuronCurrents)
     snn.run(args["steps"])
     activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
@@ -93,26 +91,25 @@ while True:
     if args["display_dot"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 40
-        cv2.putText(showFrame, label, (15, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, label[0:33], (15, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(normalizedDottedFlow):
-            cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-val*30), color=(255, 55, 255), thickness=20)
+            cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-int(val*2)), color=(255, 55, 255), thickness=20)
         cv2.imshow("Dotted", showFrame)
         cv2.waitKey(1)
 
     if args["display_neuron"]:
-        showFrame = cv2.resize(cv2.cvtColor(mono, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         interval = 40
-        cv2.putText(showFrame, label, (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, label[0:32], (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
-            #cv2.line(showFrame, (25+loc*interval, 450), (25+loc*interval, 450-int(val)*20), color=(255, 255, 55), thickness=15)
             cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 
     if args["display_obstacle"]:
-        showFrame = cv2.resize(cv2.cvtColor(mono, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         cv2.rectangle(showFrame, (0, 0), (510, 62), (0, int(activity[8])*255, 0), 2)
         cv2.rectangle(showFrame, (0, 0), (62, 510), (0, int(activity[9])*255, 0), 2)
         cv2.rectangle(showFrame, (448, 0), (510, 510), (0, int(activity[10])*255, 0), 2)
