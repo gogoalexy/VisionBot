@@ -18,6 +18,7 @@ framesToLoop.add_argument("-c", "--continuous", help="Set number of frames to lo
 ap.add_argument("-s", "--steps", type=int, default=50, help="# of steps to simulate for each frame")
 ap.add_argument("-t", "--num-threads", type=int, default=1, help="# of threads to accelerate")
 ap.add_argument("-dn", "--display-neuron", help="Whether or not neural activities should be displayed", action="store_true")
+ap.add_argument("-dp", "--display-potential", help="Whether or not neural potentials should be displayed", action="store_true")
 ap.add_argument("-do", "--display-obstacle", help="Whether or not obstacles should be displayed", action="store_true")
 ap.add_argument("-dd", "--display-dot", help="Whether or not dotted results should be displayed", action="store_true")
 ap.add_argument("-df", "--display-flow", help="Whether or not flow frames should be displayed", action="store_true")
@@ -60,6 +61,8 @@ counter = 0
 prvsDottedFlow = [0] * 8
 prvsAvoidCurrents = [0] * 13
 while True:
+    start = time.time()
+
     curr = vs.readMono()
     curr = algo.contrastEnhance(curr)
     
@@ -75,17 +78,19 @@ while True:
     
     # same as above, but are local for obstacle avoidance
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
-    #weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
-    weightedAvoidCurrents = avoidCurrents
-    #movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
-    movingAvgWeightedAvoidCurrents = weightedAvoidCurrents
+    weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
+    movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
     
     # generate neuron input currents
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
     
     # IQIF simulation
     snn.stimulateInOrder(neuronCurrents)
-    snn.run(args["steps"])
+    #snn.run(args["steps"])
+    potentials = []
+    for index in range(args["steps"]):
+        snn.run(1)
+        potentials = potentials + snn.getAllPotential()
     activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
 
     if args["display_flow"]:
@@ -118,6 +123,10 @@ while True:
             cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
+
+    if args["display_potential"]:
+        time.sleep(0.001)
+
 
     if args["display_obstacle"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
@@ -163,6 +172,9 @@ while True:
         localfps.start()
     if not args["continuous"] and fps.isPassed(args["num_frames"]):
         break
+    end = time.time()
+    if args["input"]:
+        time.sleep(abs(1/frameRate - (end-start)))
 
 #led.turnOffAll()
 fps.stop()
