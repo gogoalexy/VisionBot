@@ -11,10 +11,12 @@ class VideoStreamMono:
         if usePiCamera:
             from PiOnly import PiVideoStreamMono
             self.stream = PiVideoStreamMono(resolution=resolution, framerate=framerate)
+        elif src != 0:
+            self.stream = FileVideoStreamCroppedMono(src = src)
         else:
-            if platform.system() == "Linux" and src == 0:
-                src= 0 + cv2.CAP_V4L2
-            self.stream = WebcamVideoStreamCroppedMono(src=src)
+            if platform.system() == "Linux":
+                src = 0 + cv2.CAP_V4L2
+            self.stream = WebcamVideoStreamCroppedMono(src = src)
 
     def start(self):
         return self.stream.start()
@@ -64,6 +66,40 @@ class WebcamVideoStreamCroppedMono:
         return self.frame
 
     def readMono(self):
+        return self.monoFrame
+
+    def stop(self):
+        self.stopped = True
+
+
+class FileVideoStreamCroppedMono:
+
+    def __init__(self, src = 0):
+        self.stream = cv2.VideoCapture(src)
+        (self.grabbed, rawframe) = self.stream.read()
+        self.frame = None
+        self.monoFrame = None
+        self.stopped = False
+        fwidth = int( self.stream.get(cv2.CAP_PROP_FRAME_WIDTH) )
+        fheight = int( self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT) )
+        self.preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
+        self.preprocessor.findSideToCrop()
+        self.preprocessor.findCropPoints()
+
+    def start(self):
+        return self
+
+    def read(self):
+        (self.grabbed, rawframe) = self.stream.read()
+        rawframe = self.preprocessor.cropFrameIntoSquare(rawframe)
+        self.frame = cv2.resize(rawframe, (64, 64), cv2.INTER_AREA)
+        return self.frame
+
+    def readMono(self):
+        (self.grabbed, rawframe) = self.stream.read()
+        rawframe = self.preprocessor.cropFrameIntoSquare(rawframe)
+        self.frame = cv2.resize(rawframe, (64, 64), cv2.INTER_AREA)
+        self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         return self.monoFrame
 
     def stop(self):
