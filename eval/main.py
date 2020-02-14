@@ -62,16 +62,28 @@ prvsAvoidCurrents = [0] * 13
 while True:
     curr = vs.readMono()
     curr = algo.contrastEnhance(curr)
-    FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
+    
+    # calculate dense optical flow 
     # note the different parameters between old and new Farneback
+    FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     meanFlattenFlow = motionFieldTemplate.meanOpticalFlow(FlattenFlow).flatten()
+    
+    # inner products of measured and template flows for motion compensation
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
     normalizedDottedFlow = [ dotted / 4.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
+    
+    # same as above, but are local for obstacle avoidance
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
-    weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
-    movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
+    #weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
+    weightedAvoidCurrents = avoidCurrents
+    #movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
+    movingAvgWeightedAvoidCurrents = weightedAvoidCurrents
+    
+    # generate neuron input currents
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
+    
+    # IQIF simulation
     snn.stimulateInOrder(neuronCurrents)
     snn.run(args["steps"])
     activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
