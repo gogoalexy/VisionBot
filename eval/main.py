@@ -77,8 +77,6 @@ fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
 counter = 0
-tbf = 0
-tfor = 0
 prvsDottedFlow = [0] * 8
 prvsAvoidCurrents = [0] * 13
 while True:
@@ -215,8 +213,6 @@ while True:
 fps.stop()
 print("Elasped time: {:.3f} s".format(fps.elapsed()))
 print("Approx. average FPS: {:.3f}".format(fps.fps()))
-print(tbf)
-print(tfor)
 
 cv2.destroyAllWindows()
 vs.stop()
