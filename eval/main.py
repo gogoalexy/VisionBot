@@ -207,7 +207,9 @@ while True:
         break
     end = time.time()
     if args["input"]:
-        time.sleep(abs(1/frameRate - (end-start)))
+        remaining = 1/frameRate - (end-start)
+        remaining = remaining * (remaining > 0)
+        time.sleep(remaining)
 
 #led.turnOffAll()
 fps.stop()
