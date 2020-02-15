@@ -59,9 +59,9 @@ if args["display_potential"]:
     ax = [0] * snn.getNumNeurons()
     axbackground = [0] * snn.getNumNeurons()
     plt.ion()
-    potentials = []
-    potentialX = np.arange(250)
-    potentialY = np.full(250, 255)
+    potentials = [0]
+    potentialX = np.arange(2000)
+    potentialY = np.full(2000, 255)
     figPotential = plt.figure()
     line = [0] * snn.getNumNeurons()
     for index in range(snn.getNumNeurons()):
@@ -145,11 +145,11 @@ while True:
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 
-    if args["display_potential"]:
-        potentials = potentials[-250 * snn.getNumNeurons():]
-        npPotentials = np.zeros(250 * snn.getNumNeurons())
+    if args["display_potential"] and counter % 3 == 0:
+        potentials = potentials[-2000 * snn.getNumNeurons():]
+        npPotentials = np.zeros(2000 * snn.getNumNeurons())
         npPotentials[-len(potentials):] = np.array(potentials)
-        npPotentials = npPotentials.reshape(250, snn.getNumNeurons())
+        npPotentials = npPotentials.reshape(2000, snn.getNumNeurons())
         for index in range(snn.getNumNeurons()):
             line[index].set_ydata(npPotentials[:, index])
         for index in range(snn.getNumNeurons()):
@@ -158,7 +158,6 @@ while True:
             ax[index].draw_artist(line[index])
         for index in range(snn.getNumNeurons()):
             figPotential.canvas.blit(ax[index].bbox)
-        #figPotential.canvas.draw()
         figPotential.canvas.flush_events()
 
     if args["display_obstacle"]:
@@ -182,10 +181,9 @@ while True:
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 
-    if args["demo_nov"]:
+    if args["demo_nov"] and counter % 3 == 0:
         if counter % 3 == 0:
             gui.displayConfig((3, 5), activity)
-        counter += 1
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Preview", showFrame)
@@ -198,6 +196,7 @@ while True:
     #led.turnOnConfig(3, activity)
     fps.update()
     localfps.update()
+    counter += 1
     if localfps.isPassed(30):
         localfps.stop()
         realtimeFPS = localfps.fps()
