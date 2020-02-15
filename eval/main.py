@@ -2,6 +2,8 @@ import time
 import argparse
 
 import cv2
+import matplotlib.pyplot as plt
+import numpy as np
 
 from snn import SNN
 from timer import FPS
@@ -53,11 +55,30 @@ if args["demo_nov"]:
     cv2.imshow("Preview", showFrame)
     cv2.moveWindow("Preview", 1055, 35)
 
+if args["display_potential"]:
+    ax = [0] * snn.getNumNeurons()
+    axbackground = [0] * snn.getNumNeurons()
+    plt.ion()
+    potentials = []
+    potentialX = np.arange(250)
+    potentialY = np.full(250, 255)
+    figPotential = plt.figure()
+    line = [0] * snn.getNumNeurons()
+    for index in range(snn.getNumNeurons()):
+        ax[index] = figPotential.add_subplot(snn.getNumNeurons() // 4 + 1*bool(snn.getNumNeurons()%4), 4, index + 1)
+        ax[index].set_ylim([-10, 256])
+        line[index], = ax[index].plot(potentialX, potentialY, 'r-')
+    figPotential.canvas.draw()
+    for index in range(snn.getNumNeurons()):
+        axbackground[index] = figPotential.canvas.copy_from_bbox(ax[index].bbox)
+
 prvsActivity = [0] * 21
 fps = FPS().start()
 localfps = FPS().start()
 realtimeFPS = 0
 counter = 0
+tbf = 0
+tfor = 0
 prvsDottedFlow = [0] * 8
 prvsAvoidCurrents = [0] * 13
 while True:
@@ -74,7 +95,8 @@ while True:
     # inner products of measured and template flows for motion compensation
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
     normalizedDottedFlow = [ dotted / 4.0 for dotted in dottedFlow ]
-    movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
+    #movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
+    movingAvgNormalizedDottedFlow = normalizedDottedFlow
     
     # same as above, but are local for obstacle avoidance
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
@@ -87,12 +109,13 @@ while True:
     # IQIF simulation
     snn.stimulateInOrder(neuronCurrents)
     #snn.run(args["steps"])
-    potentials = []
     for index in range(args["steps"]):
         snn.run(1)
-        potentials = potentials + snn.getAllPotential()
+        if args["display_potential"]:
+            potentials = potentials + snn.getAllPotential()
     activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
 
+    
     if args["display_flow"]:
         showFrame = curr.copy()
         interval = 8
@@ -125,8 +148,20 @@ while True:
         cv2.waitKey(1)
 
     if args["display_potential"]:
-        time.sleep(0.001)
-
+        potentials = potentials[-250 * snn.getNumNeurons():]
+        npPotentials = np.zeros(250 * snn.getNumNeurons())
+        npPotentials[-len(potentials):] = np.array(potentials)
+        npPotentials = npPotentials.reshape(250, snn.getNumNeurons())
+        for index in range(snn.getNumNeurons()):
+            line[index].set_ydata(npPotentials[:, index])
+        for index in range(snn.getNumNeurons()):
+            figPotential.canvas.restore_region(axbackground[index])
+        for index in range(snn.getNumNeurons()):
+            ax[index].draw_artist(line[index])
+        for index in range(snn.getNumNeurons()):
+            figPotential.canvas.blit(ax[index].bbox)
+        #figPotential.canvas.draw()
+        figPotential.canvas.flush_events()
 
     if args["display_obstacle"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
@@ -180,6 +215,8 @@ while True:
 fps.stop()
 print("Elasped time: {:.3f} s".format(fps.elapsed()))
 print("Approx. average FPS: {:.3f}".format(fps.fps()))
+print(tbf)
+print(tfor)
 
 cv2.destroyAllWindows()
 vs.stop()

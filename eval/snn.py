@@ -25,6 +25,9 @@ class SNN:
             self.network.send_synapse()
             step += 1
 
+    def getNumNeurons(self):
+        return self.numNeurons
+
     def getMostActiveNeuron(self):
         activity = []
         for index in range(0, self.numNeurons):
