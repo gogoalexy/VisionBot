@@ -43,6 +43,7 @@ Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25, 5, 6, 12 and 16 are used.
 * Python 3.4 or later
 * OpenCV 4
 * Numpy
+* pyqtgraph (if you need to plot neuron potentials)
 * IQIF simulator (come with the repo)
 
 Raspberry Pi Specific:
