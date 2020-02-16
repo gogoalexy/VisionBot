@@ -2,8 +2,9 @@ import time
 import argparse
 
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtCore, QtGui
 
 from snn import SNN
 from timer import FPS
@@ -56,21 +57,17 @@ if args["demo_nov"]:
     cv2.moveWindow("Preview", 1055, 35)
 
 if args["display_potential"]:
-    ax = [0] * snn.getNumNeurons()
-    axbackground = [0] * snn.getNumNeurons()
-    plt.ion()
     potentials = [0]
-    potentialX = np.arange(2000)
     potentialY = np.full(2000, 255)
-    figPotential = plt.figure()
-    line = [0] * snn.getNumNeurons()
+    win = pg.GraphicsWindow()
+    win.setWindowTitle('Potentials')
+    curvePotentials = [0] * snn.getNumNeurons()
     for index in range(snn.getNumNeurons()):
-        ax[index] = figPotential.add_subplot(snn.getNumNeurons() // 4 + 1*bool(snn.getNumNeurons()%4), 4, index + 1)
-        ax[index].set_ylim([-10, 256])
-        line[index], = ax[index].plot(potentialX, potentialY, 'r-')
-    figPotential.canvas.draw()
-    for index in range(snn.getNumNeurons()):
-        axbackground[index] = figPotential.canvas.copy_from_bbox(ax[index].bbox)
+        if index % 4 == 0:
+            win.nextRow()
+        plotPotentials = win.addPlot()
+        plotPotentials.setYRange(-10, 260, padding=0)
+        curvePotentials[index] = plotPotentials.plot(potentialY)
 
 prvsActivity = [0] * 21
 fps = FPS().start()
@@ -99,7 +96,9 @@ while True:
     # same as above, but are local for obstacle avoidance
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
     weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
-    movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
+    weightedAvoidCurrents = avoidCurrents
+    #movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
+    movingAvgWeightedAvoidCurrents = weightedAvoidCurrents
     
     # generate neuron input currents
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
@@ -145,20 +144,13 @@ while True:
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 
-    if args["display_potential"] and counter % 3 == 0:
+    if args["display_potential"]:
         potentials = potentials[-2000 * snn.getNumNeurons():]
         npPotentials = np.zeros(2000 * snn.getNumNeurons())
         npPotentials[-len(potentials):] = np.array(potentials)
         npPotentials = npPotentials.reshape(2000, snn.getNumNeurons())
         for index in range(snn.getNumNeurons()):
-            line[index].set_ydata(npPotentials[:, index])
-        for index in range(snn.getNumNeurons()):
-            figPotential.canvas.restore_region(axbackground[index])
-        for index in range(snn.getNumNeurons()):
-            ax[index].draw_artist(line[index])
-        for index in range(snn.getNumNeurons()):
-            figPotential.canvas.blit(ax[index].bbox)
-        figPotential.canvas.flush_events()
+            curvePotentials[index].setData(npPotentials[:, index])
 
     if args["display_obstacle"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
