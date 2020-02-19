@@ -89,16 +89,14 @@ while True:
     
     # inner products of measured and template flows for motion compensation
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
-    normalizedDottedFlow = [ dotted / 4.0 for dotted in dottedFlow ]
-    #movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.05 + y*0.95, normalizedDottedFlow, prvsDottedFlow) )
-    movingAvgNormalizedDottedFlow = normalizedDottedFlow
+    normalizedDottedFlow = [ dotted / 10.0 for dotted in dottedFlow ]
+    movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.25 + y*0.75, normalizedDottedFlow, prvsDottedFlow) )
     
     # same as above, but are local for obstacle avoidance
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
-    weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
+    #weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
     weightedAvoidCurrents = avoidCurrents
-    #movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
-    movingAvgWeightedAvoidCurrents = weightedAvoidCurrents
+    movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.5 + y*0.5, weightedAvoidCurrents, prvsAvoidCurrents) )
     
     # generate neuron input currents
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
@@ -110,7 +108,8 @@ while True:
         snn.run(1)
         if args["display_potential"]:
             potentials = potentials + snn.getAllPotential()
-    activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
+    #activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
+    activity = snn.getFirstNActivityInOrder(21)
 
     
     if args["display_flow"]:
@@ -154,22 +153,23 @@ while True:
 
     if args["display_obstacle"]:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
-        cv2.rectangle(showFrame, (0, 0), (510, 62), (0, int(activity[8])*255, 0), 2)
-        cv2.rectangle(showFrame, (0, 0), (62, 510), (0, int(activity[9])*255, 0), 2)
-        cv2.rectangle(showFrame, (448, 0), (510, 510), (0, int(activity[10])*255, 0), 2)
-        cv2.rectangle(showFrame, (0, 448), (510, 510), (0, int(activity[11])*255, 0), 2)
+        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        cv2.rectangle(showFrame, (0, 0), (510, 62), (0, int(activity[8])*100, 0), 2)
+        cv2.rectangle(showFrame, (0, 0), (62, 510), (0, int(activity[9])*100, 0), 2)
+        cv2.rectangle(showFrame, (448, 0), (510, 510), (0, int(activity[10])*100, 0), 2)
+        cv2.rectangle(showFrame, (0, 448), (510, 510), (0, int(activity[11])*100, 0), 2)
 
-        cv2.rectangle(showFrame, (64, 64), (446, 126), (0, int(activity[12])*255, 0), 2)
-        cv2.rectangle(showFrame, (64, 64), (126, 446), (0, int(activity[13])*255, 0), 2)
-        cv2.rectangle(showFrame, (384, 64), (446, 446), (0, int(activity[14])*255, 0), 2)
-        cv2.rectangle(showFrame, (64, 384), (446, 446), (0, int(activity[15])*255, 0), 2)
+        cv2.rectangle(showFrame, (64, 64), (446, 126), (0, int(activity[12])*100, 0), 2)
+        cv2.rectangle(showFrame, (64, 64), (126, 446), (0, int(activity[13])*100, 0), 2)
+        cv2.rectangle(showFrame, (384, 64), (446, 446), (0, int(activity[14])*100, 0), 2)
+        cv2.rectangle(showFrame, (64, 384), (446, 446), (0, int(activity[15])*100, 0), 2)
 
-        cv2.rectangle(showFrame, (128, 128), (382, 190), (0, int(activity[16])*255, 0), 2)
-        cv2.rectangle(showFrame, (128, 128), (190, 382), (0, int(activity[17])*255, 0), 2)
-        cv2.rectangle(showFrame, (320, 128), (382, 382), (0, int(activity[18])*255, 0), 2)
-        cv2.rectangle(showFrame, (128, 320), (382, 382), (0, int(activity[19])*255, 0), 2)
+        cv2.rectangle(showFrame, (128, 128), (382, 190), (0, int(activity[16])*100, 0), 2)
+        cv2.rectangle(showFrame, (128, 128), (190, 382), (0, int(activity[17])*100, 0), 2)
+        cv2.rectangle(showFrame, (320, 128), (382, 382), (0, int(activity[18])*100, 0), 2)
+        cv2.rectangle(showFrame, (128, 320), (382, 382), (0, int(activity[19])*100, 0), 2)
 
-        cv2.rectangle(showFrame, (192, 192), (318, 318), (0, int(activity[20])*255, 0), 2)
+        cv2.rectangle(showFrame, (192, 192), (318, 318), (0, int(activity[20])*100, 0), 2)
         cv2.imshow("Neuron", showFrame)
         cv2.waitKey(1)
 
@@ -200,7 +200,7 @@ while True:
     if args["input"]:
         remaining = 1/frameRate - (end-start)
         remaining = remaining * (remaining > 0)
-        time.sleep(remaining)
+        #time.sleep(remaining)
 
 #led.turnOffAll()
 fps.stop()

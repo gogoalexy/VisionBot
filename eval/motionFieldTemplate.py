@@ -240,7 +240,9 @@ def dotWithTemplatesOpt(tobeDotted, templates):
     results.insert(7, -results[6])
     '''
     results = results + [-dotProduct for dotProduct in results]
-    return results
+    results = np.array(results)
+    results = results * (results > 0)
+    return results.tolist()
 
 def dotWithTemplates(tobeDotted, templates):
     print("The function -dotWithTemplates- is depricated. Use it with -createAllFlattenTemplates- only.")
@@ -278,28 +280,28 @@ def obstacleAvoidanceCurrent(flow, templates):
     forwardTemplate = templates[1].reshape((8, 8, 2))
     
     # outerUp
-    avoidCurrents[0] = np.inner(flow[0, 0:8, :].flatten(), forwardTemplate[0, 0:8, :].flatten())
+    avoidCurrents[0] = np.inner(flow[0, 0:8, :].flatten(), forwardTemplate[0, 0:8, :].flatten()) / 2
     
     # outerLeft
-    avoidCurrents[1] = np.inner(flow[0:8, 0, :].flatten(), forwardTemplate[0:8, 0, :].flatten())
+    avoidCurrents[1] = np.inner(flow[0:8, 0, :].flatten(), forwardTemplate[0:8, 0, :].flatten()) / 2
     
     # outerRight
-    avoidCurrents[2] = np.inner(flow[0:8, 7, :].flatten(), forwardTemplate[0:8, 7, :].flatten())
+    avoidCurrents[2] = np.inner(flow[0:8, 7, :].flatten(), forwardTemplate[0:8, 7, :].flatten()) / 2
     
     # outerDown
-    avoidCurrents[3] = np.inner(flow[7, 0:8, :].flatten(), forwardTemplate[7, 0:8, :].flatten())
+    avoidCurrents[3] = np.inner(flow[7, 0:8, :].flatten(), forwardTemplate[7, 0:8, :].flatten()) / 2
     
     # middleUp
-    avoidCurrents[4] = np.inner(flow[1, 1:7, :].flatten(), forwardTemplate[1, 1:7, :].flatten())
+    avoidCurrents[4] = np.inner(flow[1, 1:7, :].flatten(), forwardTemplate[1, 1:7, :].flatten()) / 1.5
     
     # middleLeft 
-    avoidCurrents[5] = np.inner(flow[1:7, 1, :].flatten(), forwardTemplate[1:7, 1, :].flatten())
+    avoidCurrents[5] = np.inner(flow[1:7, 1, :].flatten(), forwardTemplate[1:7, 1, :].flatten()) / 1.5
     
     # middleRight
-    avoidCurrents[6] = np.inner(flow[1:7, 6, :].flatten(), forwardTemplate[1:7, 6, :].flatten())
+    avoidCurrents[6] = np.inner(flow[1:7, 6, :].flatten(), forwardTemplate[1:7, 6, :].flatten()) / 1.5
     
     # middleDown
-    avoidCurrents[7] = np.inner(flow[6, 1:7, :].flatten(), forwardTemplate[6, 1:7, :].flatten())
+    avoidCurrents[7] = np.inner(flow[6, 1:7, :].flatten(), forwardTemplate[6, 1:7, :].flatten()) / 1.5
     
     # innerUp
     avoidCurrents[8] = np.inner(flow[2, 2:6, :].flatten(), forwardTemplate[2, 2:6, :].flatten())

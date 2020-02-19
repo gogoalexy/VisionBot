@@ -76,7 +76,9 @@ class FileVideoStreamCroppedMono:
 
     def __init__(self, src = 0):
         self.stream = cv2.VideoCapture(src)
-        (self.grabbed, rawframe) = self.stream.read()
+        #(self.grabbed, rawframe) = self.stream.read()
+        self.grabbed = False
+        self.rawframe = None
         self.frame = None
         self.monoFrame = None
         self.stopped = False
