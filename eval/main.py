@@ -170,7 +170,7 @@ while True:
         cv2.rectangle(showFrame, (128, 320), (382, 382), (0, int(activity[19])*100, 0), 2)
 
         cv2.rectangle(showFrame, (192, 192), (318, 318), (0, int(activity[20])*100, 0), 2)
-        cv2.imshow("Neuron", showFrame)
+        cv2.imshow("Obstacle", showFrame)
         cv2.waitKey(1)
 
     if args["demo_nov"] and counter % 3 == 0:
