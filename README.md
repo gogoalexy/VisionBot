@@ -35,6 +35,8 @@ The program is under the `gen` folder and named as `Generator.py`. You only have
 ## November Demo
 Moonshot project November demo core.
 
+![demo](https://imgur.com/AgMg8Jq.jpg)
+
 ### Hardware Setup
 Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25, 5, 6, 12 and 16 are used.
 ![routing diagram from Pi to LEDs on a bread board](/eval/wiring/wirePi_LED_bb.png)
@@ -43,6 +45,7 @@ Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25, 5, 6, 12 and 16 are used.
 * Python 3.4 or later
 * OpenCV 4
 * Numpy
+* pyqtgraph (if you need to plot neuron potentials)
 * IQIF simulator (come with the repo)
 
 Raspberry Pi Specific:

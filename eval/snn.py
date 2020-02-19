@@ -25,6 +25,9 @@ class SNN:
             self.network.send_synapse()
             step += 1
 
+    def getNumNeurons(self):
+        return self.numNeurons
+
     def getMostActiveNeuron(self):
         activity = []
         for index in range(0, self.numNeurons):
@@ -46,6 +49,12 @@ class SNN:
 
     def getPotential(self, neuronID):
         return self.network.potential(neuronID)
+
+    def getAllPotential(self):
+        potentials = []
+        for index in range(0, self.numNeurons):
+            potentials.append(self.network.potential(index))
+        return potentials
 
     def getSpikeCount(self, neuronID):
         return self.network.spike_count(neuronID)
