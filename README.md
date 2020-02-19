@@ -34,7 +34,8 @@ The program is under the `gen` folder and named as `Generator.py`. You only have
 
 ## November Demo
 Moonshot project November demo core.
-![demo](https://imgur.com/AgMg8Jq)
+
+![demo](https://imgur.com/AgMg8Jq.jpg)
 
 ### Hardware Setup
 Currently, BCM pin 4, 17, 27, 22, 18, 23, 24, 25, 5, 6, 12 and 16 are used.
