@@ -152,6 +152,7 @@ while True:
             curvePotentials[index].setData(npPotentials[:, index])
 
     if args["display_obstacle"]:
+        showFrame = curr.copy()
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.rectangle(showFrame, (0, 0), (510, 62), (0, int(activity[8])*100, 0), 2)
@@ -170,7 +171,7 @@ while True:
         cv2.rectangle(showFrame, (128, 320), (382, 382), (0, int(activity[19])*100, 0), 2)
 
         cv2.rectangle(showFrame, (192, 192), (318, 318), (0, int(activity[20])*100, 0), 2)
-        cv2.imshow("Obstacle", showFrame)
+        cv2.imshow("Obstacles", showFrame)
         cv2.waitKey(1)
 
     if args["demo_nov"] and counter % 3 == 0:
