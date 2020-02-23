@@ -31,7 +31,7 @@ ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
 # Order: ROTATECCW, ZOOMIN, UP, RIGHT, ROTATECW, ZOOMOUT, DOWN, LEFT, outer[UP, Rear, Left, Right], middle[UP, Rear, Left, Right], inner[UP, Rear, Left, Right], center, modeInh(not shown), obsInh(not shown)
-label =  "CCW IN   UP  RT  CW  OUT DWN  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
+label =  "CW  FWD DWN RT CCW  BWD  UP  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
 frameHW = (64, 64)
 frameRate = 30
 if args["input"]:
@@ -114,19 +114,19 @@ while True:
     
     if args["display_flow"]:
         showFrame = raw.copy()
-        length = vs.getSideLength()
-        flow = FlattenFlow.reshape(64, 64, 2)
-        flow = cv2.resize(flow, (length, length), cv2.INTER_NEAREST)
-        for y in range(length//16, length, length//8):
-            for x in range(length//16, length, length//8):
-                cv2.line(showFrame, (x, y), (x+3*int(flow[x][y][0]), y+3*int(flow[x][y][1])), (255, 255, 255), 3)
         showFrame = cv2.resize(showFrame, (512, 512))
+        flow = meanFlattenFlow.reshape(8, 8, 2)
+        flow = cv2.resize(flow, (512, 512), cv2.INTER_NEAREST)
+        for y in range(32, 512, 64):
+            for x in range(32, 512, 64):
+                cv2.line(showFrame, (x, y), (x+int(5*flow[y][x][0]), y+int(5*flow[y][x][1])), (255, 255, 255), 3)
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Flow", showFrame)
         cv2.waitKey(1)
 
     if args["display_dot"]:
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
         interval = 40
         cv2.putText(showFrame, label[0:33], (15, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
@@ -136,7 +136,8 @@ while True:
         cv2.waitKey(1)
 
     if args["display_neuron"]:
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
         interval = 40
         cv2.putText(showFrame, label[0:32], (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
@@ -154,7 +155,8 @@ while True:
             curvePotentials[index].setData(npPotentials[:, index])
 
     if args["display_obstacle"]:
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.rectangle(showFrame, (0, 0), (510, 62), (0, int(activity[8])*100, 0), 2)
         cv2.rectangle(showFrame, (0, 0), (62, 510), (0, int(activity[9])*100, 0), 2)
@@ -202,7 +204,7 @@ while True:
     if args["input"]:
         remaining = 1/frameRate - (end-start)
         remaining = remaining * (remaining > 0)
-        #time.sleep(remaining)
+        time.sleep(remaining)
 
 #led.turnOffAll()
 fps.stop()

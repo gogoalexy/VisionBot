@@ -30,6 +30,9 @@ class VideoStreamMono:
     def stop(self):
         self.stream.stop()
 
+    def getSideLength(self):
+        return self.stream.sideLength()
+
 
 class WebcamVideoStreamCroppedMono:
 
@@ -44,6 +47,7 @@ class WebcamVideoStreamCroppedMono:
         self.preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
         self.preprocessor.findSideToCrop()
         self.preprocessor.findCropPoints()
+        self.sideLength = self.preprocessor.getSideLengthAfterCrop()
 
     def start(self):
         Thread(target=self.update, args=(), daemon=True).start()
@@ -64,6 +68,9 @@ class WebcamVideoStreamCroppedMono:
 
     def stop(self):
         self.stopped = True
+    
+    def getSideLength(self):
+        return self.sideLength
 
 
 class FileVideoStreamCroppedMono:
@@ -81,6 +88,7 @@ class FileVideoStreamCroppedMono:
         self.preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
         self.preprocessor.findSideToCrop()
         self.preprocessor.findCropPoints()
+        self.sideLength = self.preprocessor.getSideLengthAfterCrop()
 
     def start(self):
         return self
@@ -94,4 +102,7 @@ class FileVideoStreamCroppedMono:
 
     def stop(self):
         self.stopped = True
+
+    def getSideLength(self):
+        return self.sideLength
 
