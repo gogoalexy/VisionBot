@@ -113,12 +113,14 @@ while True:
 
     
     if args["display_flow"]:
-        showFrame = curr.copy()
-        interval = 8
-        for y in range(4, 64, 8):
-            for x in range(4, 64, 8):
-                cv2.line(showFrame, (x, y), (x+int(FlattenFlow[y*128+2*x]), y+int(FlattenFlow[y*128+2*x+1])), color=(255, 255, 255))
-        showFrame = cv2.resize(cv2.cvtColor(showFrame, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        length = vs.getSideLength()
+        flow = FlattenFlow.reshape(64, 64, 2)
+        flow = cv2.resize(flow, (length, length), cv2.INTER_NEAREST)
+        for y in range(length//16, length, length//8):
+            for x in range(length//16, length, length//8):
+                cv2.line(showFrame, (x, y), (x+3*int(flow[x][y][0]), y+3*int(flow[x][y][1])), (255, 255, 255), 3)
+        showFrame = cv2.resize(showFrame, (512, 512))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Flow", showFrame)
         cv2.waitKey(1)
