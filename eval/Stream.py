@@ -27,9 +27,6 @@ class VideoStreamMono:
     def read(self):
         return self.stream.read()
 
-    def readMono(self):
-        return self.stream.readMono()
-
     def stop(self):
         self.stream.stop()
 
@@ -38,7 +35,7 @@ class WebcamVideoStreamCroppedMono:
 
     def __init__(self, src = 0):
         self.stream = cv2.VideoCapture(src)
-        (self.grabbed, rawframe) = self.stream.read()
+        (self.grabbed, self.rawframe) = self.stream.read()
         self.frame = None
         self.monoFrame = None
         self.stopped = False
@@ -57,16 +54,13 @@ class WebcamVideoStreamCroppedMono:
             if self.stopped:
                 return
 
-            (self.grabbed, rawframe) = self.stream.read()
-            rawframe = self.preprocessor.cropFrameIntoSquare(rawframe)
-            self.frame = cv2.resize(rawframe, (64, 64), cv2.INTER_AREA)
+            (self.grabbed, self.rawframe) = self.stream.read()
+            self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
+            self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
             self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
 
     def read(self):
-        return self.frame
-
-    def readMono(self):
-        return self.monoFrame
+        return self.rawframe, self.frame, self.monoFrame
 
     def stop(self):
         self.stopped = True
@@ -76,7 +70,7 @@ class FileVideoStreamCroppedMono:
 
     def __init__(self, src = 0):
         self.stream = cv2.VideoCapture(src)
-        #(self.grabbed, rawframe) = self.stream.read()
+        #(self.grabbed, self.rawframe) = self.stream.read()
         self.grabbed = False
         self.rawframe = None
         self.frame = None
@@ -92,17 +86,11 @@ class FileVideoStreamCroppedMono:
         return self
 
     def read(self):
-        (self.grabbed, rawframe) = self.stream.read()
-        rawframe = self.preprocessor.cropFrameIntoSquare(rawframe)
-        self.frame = cv2.resize(rawframe, (64, 64), cv2.INTER_AREA)
-        return self.frame
-
-    def readMono(self):
-        (self.grabbed, rawframe) = self.stream.read()
-        rawframe = self.preprocessor.cropFrameIntoSquare(rawframe)
-        self.frame = cv2.resize(rawframe, (64, 64), cv2.INTER_AREA)
+        (self.grabbed, self.rawframe) = self.stream.read()
+        self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
+        self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
         self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
-        return self.monoFrame
+        return self.rawframe, self.frame, self.monoFrame
 
     def stop(self):
         self.stopped = True
