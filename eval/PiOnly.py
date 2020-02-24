@@ -34,10 +34,7 @@ class PiVideoStreamMono:
                 return
 
     def read(self):
-        return self.frame
-
-    def readMono(self):
-        return self.monoFrame
+        return True, self.frame, self.frame, self.monoFrame
 
     def stop(self):
         self.stopped = True

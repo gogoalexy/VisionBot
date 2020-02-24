@@ -31,7 +31,7 @@ ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
 # Order: ROTATECCW, ZOOMIN, UP, RIGHT, ROTATECW, ZOOMOUT, DOWN, LEFT, outer[UP, Rear, Left, Right], middle[UP, Rear, Left, Right], inner[UP, Rear, Left, Right], center, modeInh(not shown), obsInh(not shown)
-label =  "CCW IN   UP  RT  CW  OUT DWN  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
+label =  "CW  FWD DWN RT CCW  BWD  UP  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
 frameHW = (64, 64)
 frameRate = 30
 if args["input"]:
@@ -42,7 +42,7 @@ else:
 time.sleep(2.0)
 
 algo = Algorithm()
-prvs = vs.readMono()
+[ret, raw, _, prvs] = vs.read()
 prvs = algo.contrastEnhance(prvs)
 
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
@@ -76,10 +76,13 @@ realtimeFPS = 0
 counter = 0
 prvsDottedFlow = [0] * 8
 prvsAvoidCurrents = [0] * 13
+
 while True:
     start = time.time()
 
-    curr = vs.readMono()
+    [ret, raw, _, curr] = vs.read()
+    if not ret:
+        break
     curr = algo.contrastEnhance(curr)
     
     # calculate dense optical flow 
@@ -113,35 +116,38 @@ while True:
 
     
     if args["display_flow"]:
-        showFrame = curr.copy()
-        interval = 8
-        for y in range(4, 64, 8):
-            for x in range(4, 64, 8):
-                cv2.line(showFrame, (x, y), (x+int(FlattenFlow[y*128+2*x]), y+int(FlattenFlow[y*128+2*x+1])), color=(255, 255, 255))
-        showFrame = cv2.resize(cv2.cvtColor(showFrame, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
+        flow = meanFlattenFlow.reshape(8, 8, 2)
+        flow = cv2.resize(flow, (512, 512), cv2.INTER_NEAREST)
+        for y in range(32, 512, 64):
+            for x in range(32, 512, 64):
+                cv2.line(showFrame, (x, y), (x+int(5*flow[y][x][0]), y+int(5*flow[y][x][1])), (255, 255, 255), 3)
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Flow", showFrame)
-        cv2.waitKey(1)
+        key = cv2.waitKey(1)
 
     if args["display_dot"]:
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
         interval = 40
         cv2.putText(showFrame, label[0:33], (15, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(normalizedDottedFlow):
             cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-int(val*2)), color=(255, 55, 255), thickness=20)
         cv2.imshow("Dotted", showFrame)
-        cv2.waitKey(1)
+        key = cv2.waitKey(1)
 
     if args["display_neuron"]:
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
         interval = 40
         cv2.putText(showFrame, label[0:32], (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
-        cv2.waitKey(1)
+        key = cv2.waitKey(1)
 
     if args["display_potential"]:
         potentials = potentials[-2000 * snn.getNumNeurons():]
@@ -152,26 +158,74 @@ while True:
             curvePotentials[index].setData(npPotentials[:, index])
 
     if args["display_obstacle"]:
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (512, 512))
+        showFrame = raw.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
+        
+        pts = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[8] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[0, 2], [0, 511], [62, 446], [62, 64]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[9] > 2:
+             cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[511, 2], [511, 510], [448, 446], [448, 64]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[10] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[2, 511], [510, 511], [446, 448], [64, 448]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[11] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+
+        pts = np.array([[64, 64], [446, 64], [384, 126], [128, 126]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[12] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[64, 64], [64, 446], [126, 384], [126, 128]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[13] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[446, 64], [446, 446], [384, 382], [384, 128]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[14] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[64, 446], [446, 446], [382, 384], [128, 384]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[15] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+
+        pts = np.array([[128, 128], [382, 128], [318, 190], [192, 190]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[16] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[128, 128], [128, 382], [190, 318], [190, 192]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[17] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[382, 128], [382, 382], [320, 318], [320, 192]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[18] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+        pts = np.array([[128, 382], [382, 382], [318, 320], [192, 320]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[19] > 2:
+            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
+
+        if activity[20] > 2:
+            cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), -1)
+
+        cv2.line(showFrame, (0, 0), (192, 192), (0, 0, 0), 2)
+        cv2.line(showFrame, (320, 320), (512, 512), (0, 0, 0), 2)
+        cv2.line(showFrame, (0, 512), (192, 320), (0, 0, 0), 2)
+        cv2.line(showFrame, (512, 0), (320, 192), (0, 0, 0), 2)
+        cv2.rectangle(showFrame, (64, 64), (448, 448), (0, 0, 0), 2)
+        cv2.rectangle(showFrame, (128, 128), (384, 384), (0, 0, 0), 2)
+        cv2.rectangle(showFrame, (192, 192), (320, 320), (0, 0, 0), 2)
+        
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
-        cv2.rectangle(showFrame, (0, 0), (510, 62), (0, int(activity[8])*100, 0), 2)
-        cv2.rectangle(showFrame, (0, 0), (62, 510), (0, int(activity[9])*100, 0), 2)
-        cv2.rectangle(showFrame, (448, 0), (510, 510), (0, int(activity[10])*100, 0), 2)
-        cv2.rectangle(showFrame, (0, 448), (510, 510), (0, int(activity[11])*100, 0), 2)
-
-        cv2.rectangle(showFrame, (64, 64), (446, 126), (0, int(activity[12])*100, 0), 2)
-        cv2.rectangle(showFrame, (64, 64), (126, 446), (0, int(activity[13])*100, 0), 2)
-        cv2.rectangle(showFrame, (384, 64), (446, 446), (0, int(activity[14])*100, 0), 2)
-        cv2.rectangle(showFrame, (64, 384), (446, 446), (0, int(activity[15])*100, 0), 2)
-
-        cv2.rectangle(showFrame, (128, 128), (382, 190), (0, int(activity[16])*100, 0), 2)
-        cv2.rectangle(showFrame, (128, 128), (190, 382), (0, int(activity[17])*100, 0), 2)
-        cv2.rectangle(showFrame, (320, 128), (382, 382), (0, int(activity[18])*100, 0), 2)
-        cv2.rectangle(showFrame, (128, 320), (382, 382), (0, int(activity[19])*100, 0), 2)
-
-        cv2.rectangle(showFrame, (192, 192), (318, 318), (0, int(activity[20])*100, 0), 2)
-        cv2.imshow("Obstacle", showFrame)
-        cv2.waitKey(1)
+        cv2.imshow("Obstacles", showFrame)
+        key = cv2.waitKey(1)
 
     if args["demo_nov"] and counter % 3 == 0:
         if counter % 3 == 0:
@@ -179,6 +233,7 @@ while True:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Preview", showFrame)
+        key = cv2.waitKey(1)
 
     prvs = curr
     prvsDottedFlow = movingAvgNormalizedDottedFlow
@@ -201,6 +256,9 @@ while True:
         remaining = 1/frameRate - (end-start)
         remaining = remaining * (remaining > 0)
         #time.sleep(remaining)
+
+    if key & 0xFF == ord('q'):
+        break
 
 #led.turnOffAll()
 fps.stop()
