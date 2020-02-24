@@ -42,7 +42,7 @@ else:
 time.sleep(2.0)
 
 algo = Algorithm()
-[raw, _, prvs] = vs.read()
+[ret, raw, _, prvs] = vs.read()
 prvs = algo.contrastEnhance(prvs)
 
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
@@ -80,7 +80,9 @@ prvsAvoidCurrents = [0] * 13
 while True:
     start = time.time()
 
-    [raw, _, curr] = vs.read()
+    [ret, raw, _, curr] = vs.read()
+    if not ret:
+        break
     curr = algo.contrastEnhance(curr)
     
     # calculate dense optical flow 

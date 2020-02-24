@@ -38,7 +38,8 @@ class WebcamVideoStreamCroppedMono:
 
     def __init__(self, src = 0):
         self.stream = cv2.VideoCapture(src)
-        (self.grabbed, self.rawframe) = self.stream.read()
+        #(self.grabbed, self.rawframe) = self.stream.read()
+        self.grabbed = False
         self.frame = None
         self.monoFrame = None
         self.stopped = False
@@ -59,12 +60,16 @@ class WebcamVideoStreamCroppedMono:
                 return
 
             (self.grabbed, self.rawframe) = self.stream.read()
+            if not self.grabbed:
+                self.stop()
+                return
+
             self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
             self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
             self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
 
     def read(self):
-        return self.rawframe, self.frame, self.monoFrame
+        return self.grabbed, self.rawframe, self.frame, self.monoFrame
 
     def stop(self):
         self.stopped = True
@@ -95,10 +100,12 @@ class FileVideoStreamCroppedMono:
 
     def read(self):
         (self.grabbed, self.rawframe) = self.stream.read()
+        if not self.grabbed:
+            return False, None, None, None
         self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
         self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
         self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
-        return self.rawframe, self.frame, self.monoFrame
+        return True, self.rawframe, self.frame, self.monoFrame
 
     def stop(self):
         self.stopped = True
