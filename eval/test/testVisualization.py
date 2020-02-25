@@ -3,10 +3,10 @@ import sys
 import numpy as np
 import cv2
 
-sys.path.append("../")
+sys.path.append("./")
 import Graphics
 
-activity = [0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0]
+activity = [4, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
 
 gui = Graphics.Graphics()
 
