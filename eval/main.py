@@ -161,60 +161,6 @@ while True:
         showFrame = raw.copy()
         showFrame = cv2.resize(showFrame, (512, 512))
         
-        pts = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[8] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[0, 2], [0, 511], [62, 446], [62, 64]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[9] > 2:
-             cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[511, 2], [511, 510], [448, 446], [448, 64]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[10] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[2, 511], [510, 511], [446, 448], [64, 448]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[11] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-
-        pts = np.array([[64, 64], [446, 64], [384, 126], [128, 126]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[12] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[64, 64], [64, 446], [126, 384], [126, 128]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[13] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[446, 64], [446, 446], [384, 382], [384, 128]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[14] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[64, 446], [446, 446], [382, 384], [128, 384]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[15] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-
-        pts = np.array([[128, 128], [382, 128], [318, 190], [192, 190]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[16] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[128, 128], [128, 382], [190, 318], [190, 192]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[17] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[382, 128], [382, 382], [320, 318], [320, 192]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[18] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[128, 382], [382, 382], [318, 320], [192, 320]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[19] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-
-        if activity[20] > 2:
-            cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), -1)
-
         cv2.line(showFrame, (0, 0), (192, 192), (0, 0, 0), 2)
         cv2.line(showFrame, (320, 320), (512, 512), (0, 0, 0), 2)
         cv2.line(showFrame, (0, 512), (192, 320), (0, 0, 0), 2)
@@ -223,6 +169,60 @@ while True:
         cv2.rectangle(showFrame, (128, 128), (384, 384), (0, 0, 0), 2)
         cv2.rectangle(showFrame, (192, 192), (320, 320), (0, 0, 0), 2)
         
+        pts = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[8] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[0, 2], [0, 511], [62, 446], [62, 64]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[9] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[511, 2], [511, 510], [448, 446], [448, 64]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[10] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[2, 511], [510, 511], [446, 448], [64, 448]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[11] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+
+        pts = np.array([[64, 64], [446, 64], [384, 126], [128, 126]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[12] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[64, 64], [64, 446], [126, 384], [126, 128]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[13] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[446, 64], [446, 446], [384, 382], [384, 128]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[14] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[64, 446], [446, 446], [382, 384], [128, 384]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[15] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+
+        pts = np.array([[128, 128], [382, 128], [318, 190], [192, 190]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[16] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[128, 128], [128, 382], [190, 318], [190, 192]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[17] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[382, 128], [382, 382], [320, 318], [320, 192]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[18] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[128, 382], [382, 382], [318, 320], [192, 320]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[19] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+
+        if activity[20] > 2:
+            cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), 12)
+
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Obstacles", showFrame)
         key = cv2.waitKey(1)
