@@ -17,7 +17,9 @@ class Graphics():
         rearSide = np.array([ ( (249, 249), (0, 200) ) ])
         leftSide = np.array([ ( (0, 50), (50, 200) ) ])
         rightSide = np.array([ ( (200, 50), (249, 200) ) ])
-        self.arrows = [ccwArrow, cwArrow, zoominArrow, zoomoutArrow, upArrow, downArrow, rightArrow, leftArrow, frontSide, rearSide, leftSide, rightSide]
+        #label =  "CW  FWD DWN RT CCW  BWD  UP  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
+        #self.arrows = [ccwArrow, cwArrow, zoominArrow, zoomoutArrow, upArrow, downArrow, rightArrow, leftArrow, frontSide, rearSide, leftSide, rightSide]
+        self.arrows = [cwArrow, zoominArrow, downArrow, rightArrow, ccwArrow, zoomoutArrow, upArrow, leftArrow, frontSide, rearSide, leftSide, rightSide]
         self.inactiveColor = (80, 80, 80)
         self.activeColor = (255, 255, 255)
         self.obstacleColor = (20, 200, 250)
@@ -41,14 +43,14 @@ class Graphics():
     # front, rear, left, right
     def displayConfig(self, thresholds, config):
         motion = self.canvas.copy()
-        obstacle = self.blank.copy()
+        #obstacle = self.blank.copy()
         for index in range(8):
             if config[index] > thresholds[0]:
                 motion = self.drawArrows(motion, self.arrows[index], self.activeColor)
-        for index in range(8, 12):
-            if config[index] > thresholds[1]:
-                obstacle = self.drawObstacles(obstacle, self.arrows[index], self.activeColor)
+        #for index in range(8, 12):
+        #    if config[index] > thresholds[1]:
+        #        obstacle = self.drawObstacles(obstacle, self.arrows[index], self.activeColor)
         
         cv2.imshow("Motion", motion)
-        cv2.imshow("Obstacle", obstacle)
+        #cv2.imshow("Obstacle", obstacle)
         cv2.waitKey(10)

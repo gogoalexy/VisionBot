@@ -53,8 +53,8 @@ gui = Graphics.Graphics()
 if args["demo_nov"]:
     gui.mountWindowAt(0, 0)
     showFrame = cv2.resize(cv2.cvtColor(prvs, cv2.COLOR_GRAY2BGR), (256, 256))
-    cv2.imshow("Preview", showFrame)
-    cv2.moveWindow("Preview", 1055, 35)
+    #cv2.imshow("Preview", showFrame)
+    #cv2.moveWindow("Preview", 1055, 35)
 
 if args["display_potential"]:
     potentials = [0]
@@ -125,7 +125,6 @@ while True:
                 cv2.line(showFrame, (x, y), (x+int(5*flow[y][x][0]), y+int(5*flow[y][x][1])), (255, 255, 255), 3)
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Flow", showFrame)
-        key = cv2.waitKey(1)
 
     if args["display_dot"]:
         showFrame = raw.copy()
@@ -136,7 +135,6 @@ while True:
         for loc, val in enumerate(normalizedDottedFlow):
             cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-int(val*2)), color=(255, 55, 255), thickness=20)
         cv2.imshow("Dotted", showFrame)
-        key = cv2.waitKey(1)
 
     if args["display_neuron"]:
         showFrame = raw.copy()
@@ -147,7 +145,6 @@ while True:
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
-        key = cv2.waitKey(1)
 
     if args["display_potential"]:
         potentials = potentials[-2000 * snn.getNumNeurons():]
@@ -161,60 +158,6 @@ while True:
         showFrame = raw.copy()
         showFrame = cv2.resize(showFrame, (512, 512))
         
-        pts = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[8] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[0, 2], [0, 511], [62, 446], [62, 64]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[9] > 2:
-             cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[511, 2], [511, 510], [448, 446], [448, 64]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[10] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[2, 511], [510, 511], [446, 448], [64, 448]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[11] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-
-        pts = np.array([[64, 64], [446, 64], [384, 126], [128, 126]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[12] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[64, 64], [64, 446], [126, 384], [126, 128]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[13] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[446, 64], [446, 446], [384, 382], [384, 128]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[14] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[64, 446], [446, 446], [382, 384], [128, 384]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[15] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-
-        pts = np.array([[128, 128], [382, 128], [318, 190], [192, 190]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[16] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[128, 128], [128, 382], [190, 318], [190, 192]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[17] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[382, 128], [382, 382], [320, 318], [320, 192]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[18] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-        pts = np.array([[128, 382], [382, 382], [318, 320], [192, 320]], np.int)
-        pts = pts.reshape((-1, 1, 2))
-        if activity[19] > 2:
-            cv2.fillPoly(showFrame, [pts], (0, 255, 0))
-
-        if activity[20] > 2:
-            cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), -1)
-
         cv2.line(showFrame, (0, 0), (192, 192), (0, 0, 0), 2)
         cv2.line(showFrame, (320, 320), (512, 512), (0, 0, 0), 2)
         cv2.line(showFrame, (0, 512), (192, 320), (0, 0, 0), 2)
@@ -223,17 +166,69 @@ while True:
         cv2.rectangle(showFrame, (128, 128), (384, 384), (0, 0, 0), 2)
         cv2.rectangle(showFrame, (192, 192), (320, 320), (0, 0, 0), 2)
         
+        pts = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[8] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[0, 2], [0, 511], [62, 446], [62, 64]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[9] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[511, 2], [511, 510], [448, 446], [448, 64]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[10] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[2, 511], [510, 511], [446, 448], [64, 448]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[11] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+
+        pts = np.array([[64, 64], [446, 64], [384, 126], [128, 126]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[12] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[64, 64], [64, 446], [126, 384], [126, 128]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[13] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[446, 64], [446, 446], [384, 382], [384, 128]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[14] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[64, 446], [446, 446], [382, 384], [128, 384]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[15] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+
+        pts = np.array([[128, 128], [382, 128], [318, 190], [192, 190]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[16] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[128, 128], [128, 382], [190, 318], [190, 192]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[17] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[382, 128], [382, 382], [320, 318], [320, 192]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[18] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+        pts = np.array([[128, 382], [382, 382], [318, 320], [192, 320]], np.int)
+        pts = pts.reshape((-1, 1, 2))
+        if activity[19] > 2:
+            cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
+
+        if activity[20] > 2:
+            cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), 12)
+
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Obstacles", showFrame)
-        key = cv2.waitKey(1)
 
     if args["demo_nov"] and counter % 3 == 0:
         if counter % 3 == 0:
             gui.displayConfig((3, 5), activity)
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
-        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
-        cv2.imshow("Preview", showFrame)
-        key = cv2.waitKey(1)
+        #showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
+        #cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        #cv2.imshow("Preview", showFrame)
 
     prvs = curr
     prvsDottedFlow = movingAvgNormalizedDottedFlow
@@ -257,6 +252,7 @@ while True:
         remaining = remaining * (remaining > 0)
         #time.sleep(remaining)
 
+    key = cv2.waitKey(1)
     if key & 0xFF == ord('q'):
         break
 
