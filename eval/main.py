@@ -125,7 +125,6 @@ while True:
                 cv2.line(showFrame, (x, y), (x+int(5*flow[y][x][0]), y+int(5*flow[y][x][1])), (255, 255, 255), 3)
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Flow", showFrame)
-        key = cv2.waitKey(1)
 
     if args["display_dot"]:
         showFrame = raw.copy()
@@ -136,7 +135,6 @@ while True:
         for loc, val in enumerate(normalizedDottedFlow):
             cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-int(val*2)), color=(255, 55, 255), thickness=20)
         cv2.imshow("Dotted", showFrame)
-        key = cv2.waitKey(1)
 
     if args["display_neuron"]:
         showFrame = raw.copy()
@@ -147,7 +145,6 @@ while True:
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
-        key = cv2.waitKey(1)
 
     if args["display_potential"]:
         potentials = potentials[-2000 * snn.getNumNeurons():]
@@ -225,7 +222,6 @@ while True:
 
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Obstacles", showFrame)
-        key = cv2.waitKey(1)
 
     if args["demo_nov"] and counter % 3 == 0:
         if counter % 3 == 0:
@@ -233,7 +229,6 @@ while True:
         showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Preview", showFrame)
-        key = cv2.waitKey(1)
 
     prvs = curr
     prvsDottedFlow = movingAvgNormalizedDottedFlow
@@ -257,6 +252,7 @@ while True:
         remaining = remaining * (remaining > 0)
         #time.sleep(remaining)
 
+    key = cv2.waitKey(1)
     if key & 0xFF == ord('q'):
         break
 
