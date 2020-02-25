@@ -43,14 +43,14 @@ class Graphics():
     # front, rear, left, right
     def displayConfig(self, thresholds, config):
         motion = self.canvas.copy()
-        obstacle = self.blank.copy()
+        #obstacle = self.blank.copy()
         for index in range(8):
             if config[index] > thresholds[0]:
                 motion = self.drawArrows(motion, self.arrows[index], self.activeColor)
-        for index in range(8, 12):
-            if config[index] > thresholds[1]:
-                obstacle = self.drawObstacles(obstacle, self.arrows[index], self.activeColor)
+        #for index in range(8, 12):
+        #    if config[index] > thresholds[1]:
+        #        obstacle = self.drawObstacles(obstacle, self.arrows[index], self.activeColor)
         
         cv2.imshow("Motion", motion)
-        cv2.imshow("Obstacle", obstacle)
+        #cv2.imshow("Obstacle", obstacle)
         cv2.waitKey(10)

@@ -53,8 +53,8 @@ gui = Graphics.Graphics()
 if args["demo_nov"]:
     gui.mountWindowAt(0, 0)
     showFrame = cv2.resize(cv2.cvtColor(prvs, cv2.COLOR_GRAY2BGR), (256, 256))
-    cv2.imshow("Preview", showFrame)
-    cv2.moveWindow("Preview", 1055, 35)
+    #cv2.imshow("Preview", showFrame)
+    #cv2.moveWindow("Preview", 1055, 35)
 
 if args["display_potential"]:
     potentials = [0]
@@ -226,9 +226,9 @@ while True:
     if args["demo_nov"] and counter % 3 == 0:
         if counter % 3 == 0:
             gui.displayConfig((3, 5), activity)
-        showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
-        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
-        cv2.imshow("Preview", showFrame)
+        #showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
+        #cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        #cv2.imshow("Preview", showFrame)
 
     prvs = curr
     prvsDottedFlow = movingAvgNormalizedDottedFlow
