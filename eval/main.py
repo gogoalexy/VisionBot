@@ -32,8 +32,8 @@ ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead
 args = vars(ap.parse_args())
 # Order: ROTATECCW, ZOOMIN, UP, RIGHT, ROTATECW, ZOOMOUT, DOWN, LEFT, outer[UP, Rear, Left, Right], middle[UP, Rear, Left, Right], inner[UP, Rear, Left, Right], center, modeInh(not shown), obsInh(not shown)
 label =  "CW  FWD DWN RT CCW  BWD  UP  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
-frameHW = (64, 64)
-frameRate = 30
+frameHW = (640, 480)
+frameRate = 32
 if args["input"]:
     vs = VideoStreamMono(src=args["input"], usePiCamera=False, resolution=frameHW, framerate=frameRate).start()
 else:
@@ -168,56 +168,56 @@ while True:
         
         pts = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[8] > 2:
+        if activity[8] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[0, 2], [0, 511], [62, 446], [62, 64]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[9] > 2:
+        if activity[9] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[511, 2], [511, 510], [448, 446], [448, 64]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[10] > 2:
+        if activity[10] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[2, 511], [510, 511], [446, 448], [64, 448]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[11] > 2:
+        if activity[11] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
 
         pts = np.array([[64, 64], [446, 64], [384, 126], [128, 126]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[12] > 2:
+        if activity[12] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[64, 64], [64, 446], [126, 384], [126, 128]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[13] > 2:
+        if activity[13] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[446, 64], [446, 446], [384, 382], [384, 128]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[14] > 2:
+        if activity[14] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[64, 446], [446, 446], [382, 384], [128, 384]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[15] > 2:
+        if activity[15] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
 
         pts = np.array([[128, 128], [382, 128], [318, 190], [192, 190]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[16] > 2:
+        if activity[16] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[128, 128], [128, 382], [190, 318], [190, 192]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[17] > 2:
+        if activity[17] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[382, 128], [382, 382], [320, 318], [320, 192]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[18] > 2:
+        if activity[18] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
         pts = np.array([[128, 382], [382, 382], [318, 320], [192, 320]], np.int)
         pts = pts.reshape((-1, 1, 2))
-        if activity[19] > 2:
+        if activity[19] > 1:
             cv2.polylines(showFrame, [pts], True, (0, 255, 0), 12)
 
-        if activity[20] > 2:
+        if activity[20] > 1:
             cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), 12)
 
         cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
