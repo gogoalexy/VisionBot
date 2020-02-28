@@ -77,12 +77,11 @@ counter = 0
 prvsDottedFlow = [0] * 8
 prvsAvoidCurrents = [0] * 13
 
-while True:
+[ret, raw, _, curr] = vs.read()
+key = cv2.waitKey(1)
+while ret and key & 0xFF != ord('q'):
     start = time.time()
 
-    [ret, raw, _, curr] = vs.read()
-    if not ret:
-        break
     curr = algo.contrastEnhance(curr)
     
     # calculate dense optical flow 
@@ -252,8 +251,7 @@ while True:
         #time.sleep(remaining)
 
     key = cv2.waitKey(1)
-    if key & 0xFF == ord('q'):
-        break
+    [ret, raw, _, curr] = vs.read()
 
 #led.turnOffAll()
 fps.stop()
