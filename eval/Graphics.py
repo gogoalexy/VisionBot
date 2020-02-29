@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-class Graphics():
+class Demo():
 
 
     def __init__(self):

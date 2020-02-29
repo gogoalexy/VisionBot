@@ -48,7 +48,7 @@ prvs = algo.contrastEnhance(prvs)
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
 #led = Indicator.Indicator()
-gui = Graphics.Graphics()
+gui = Graphics.Demo()
 
 if args["demo_nov"]:
     gui.mountWindowAt(0, 0)
