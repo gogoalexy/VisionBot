@@ -87,7 +87,7 @@ while ret and key & 0xFF != ord('q'):
 
     curr = algo.contrastEnhance(curr)
 
-    if args["picamera"] and np.array_equal(curr, prvs):
+    if (not args["input"]) and np.array_equal(curr, prvs):
         print("Identical frame skipped.({:d})".format(counter))
         continue
     
