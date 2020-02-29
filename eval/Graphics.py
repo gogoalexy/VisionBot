@@ -1,5 +1,7 @@
 import numpy as np
 import cv2
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtCore, QtGui
 
 class Demo():
 
@@ -105,7 +107,6 @@ class Neuron():
         None
 
     def display(self, frame, label, fps, activity):
-        None
         showFrame = frame.copy()
         showFrame = cv2.resize(showFrame, (512, 512))
         interval = 40
@@ -114,5 +115,26 @@ class Neuron():
         for loc, val in enumerate(activity):
             cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
         cv2.imshow("Neuron", showFrame)
+
+class Potential():
+
+    def __init__(self, numNeurons):
+        potentialY = np.full(500, 255)
+        self.win = pg.GraphicsWindow()
+        self.win.setWindowTitle('Potentials')
+        self.curvePotentials = [0] * numNeurons
+        for index in range(numNeurons):
+            if index % 4 == 0:
+                self.win.nextRow()
+            self.plotPotentials = self.win.addPlot()
+            self.plotPotentials.setYRange(-10, 260, padding=0)
+            self.curvePotentials[index] = self.plotPotentials.plot(potentialY)
+
+    def display(self, potentials, numNeurons):
+        npPotentials = np.zeros(500 * numNeurons)
+        npPotentials[-len(potentials):] = np.array(potentials)
+        npPotentials = npPotentials.reshape(500, numNeurons)
+        for index in range(numNeurons):
+            self.curvePotentials[index].setData(npPotentials[:, index])
 
 

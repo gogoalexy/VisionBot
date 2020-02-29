@@ -3,8 +3,6 @@ import argparse
 
 import cv2
 import numpy as np
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
 
 from snn import SNN
 from timer import FPS
@@ -58,25 +56,16 @@ if args["display_dot"]:
 if args["display_neuron"]:
     guiNeuron = Graphics.Neuron()
 
+if args["display_potential"]:
+    potentials = [0]
+    guiPotential = Graphics.Potential(snn.getNumNeurons())
+
 if args["demo_nov"]:
     guiDemo = Graphics.Demo()
     guiDemo.mountWindowAt(0, 0)
     showFrame = cv2.resize(cv2.cvtColor(prvs, cv2.COLOR_GRAY2BGR), (256, 256))
     #cv2.imshow("Preview", showFrame)
     #cv2.moveWindow("Preview", 1055, 35)
-
-if args["display_potential"]:
-    potentials = [0]
-    potentialY = np.full(2000, 255)
-    win = pg.GraphicsWindow()
-    win.setWindowTitle('Potentials')
-    curvePotentials = [0] * snn.getNumNeurons()
-    for index in range(snn.getNumNeurons()):
-        if index % 4 == 0:
-            win.nextRow()
-        plotPotentials = win.addPlot()
-        plotPotentials.setYRange(-10, 260, padding=0)
-        curvePotentials[index] = plotPotentials.plot(potentialY)
 
 prvsActivity = [0] * 21
 fps = FPS().start()
@@ -133,12 +122,8 @@ while ret and key & 0xFF != ord('q'):
         guiNeuron.display(raw, label, realtimeFPS, activity)
 
     if args["display_potential"]:
-        potentials = potentials[-2000 * snn.getNumNeurons():]
-        npPotentials = np.zeros(2000 * snn.getNumNeurons())
-        npPotentials[-len(potentials):] = np.array(potentials)
-        npPotentials = npPotentials.reshape(2000, snn.getNumNeurons())
-        for index in range(snn.getNumNeurons()):
-            curvePotentials[index].setData(npPotentials[:, index])
+        potentials = potentials[-500 * snn.getNumNeurons():]
+        guiPotential.display(potentials, snn.getNumNeurons())
 
     if args["display_obstacle"]:
         showFrame = raw.copy()
