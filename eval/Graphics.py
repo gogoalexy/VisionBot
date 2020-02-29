@@ -137,4 +137,69 @@ class Potential():
         for index in range(numNeurons):
             self.curvePotentials[index].setData(npPotentials[:, index])
 
+class Obstacle():
+
+    def __init__(self, threshold):
+        self.trapezoids = []
+        outUp = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
+        outUp = outUp.reshape((-1, 1, 2))
+        self.trapezoids.append(outUp)
+        outLeft = np.array([[0, 2], [0, 511], [62, 446], [62, 64]], np.int)
+        outLeft = outLeft.reshape((-1, 1, 2))
+        self.trapezoids.append(outLeft)
+        outRight = np.array([[511, 2], [511, 510], [448, 446], [448, 64]], np.int)
+        outRight = outRight.reshape((-1, 1, 2))
+        self.trapezoids.append(outRight)
+        outDown = np.array([[2, 511], [510, 511], [446, 448], [64, 448]], np.int)
+        outDown = outDown.reshape((-1, 1, 2))
+        self.trapezoids.append(outDown)
+        midUp = np.array([[64, 64], [446, 64], [384, 126], [128, 126]], np.int)
+        midUp = midUp.reshape((-1, 1, 2))
+        self.trapezoids.append(midUp)
+        midLeft = np.array([[64, 64], [64, 446], [126, 384], [126, 128]], np.int)
+        midLeft = midLeft.reshape((-1, 1, 2))
+        self.trapezoids.append(midLeft)
+        midRight = np.array([[446, 64], [446, 446], [384, 382], [384, 128]], np.int)
+        midRight = midRight.reshape((-1, 1, 2))
+        self.trapezoids.append(midRight)
+        midDown = np.array([[64, 446], [446, 446], [382, 384], [128, 384]], np.int)
+        midDown = midDown.reshape((-1, 1, 2))
+        self.trapezoids.append(midDown)
+        inUp = np.array([[128, 128], [382, 128], [318, 190], [192, 190]], np.int)
+        inUp = inUp.reshape((-1, 1, 2))
+        self.trapezoids.append(inUp)
+        inLeft = np.array([[128, 128], [128, 382], [190, 318], [190, 192]], np.int)
+        inLeft = inLeft.reshape((-1, 1, 2))
+        self.trapezoids.append(inLeft)
+        inRight = np.array([[382, 128], [382, 382], [320, 318], [320, 192]], np.int)
+        inRight = inRight.reshape((-1, 1, 2))
+        self.trapezoids.append(inRight)
+        inDown = np.array([[128, 382], [382, 382], [318, 320], [192, 320]], np.int)
+        inDown = inDown.reshape((-1, 1, 2))
+        self.trapezoids.append(inDown)
+
+        self.threshold = threshold
+
+    def display(self, frame, activity, fps):
+        showFrame = frame.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
+        
+        cv2.line(showFrame, (0, 0), (192, 192), (0, 0, 0), 2)
+        cv2.line(showFrame, (320, 320), (512, 512), (0, 0, 0), 2)
+        cv2.line(showFrame, (0, 512), (192, 320), (0, 0, 0), 2)
+        cv2.line(showFrame, (512, 0), (320, 192), (0, 0, 0), 2)
+        cv2.rectangle(showFrame, (64, 64), (448, 448), (0, 0, 0), 2)
+        cv2.rectangle(showFrame, (128, 128), (384, 384), (0, 0, 0), 2)
+        cv2.rectangle(showFrame, (192, 192), (320, 320), (0, 0, 0), 2)
+        
+        for loc, val in enumerate(self.trapezoids):
+            if activity[loc + 8] > self.threshold:
+                cv2.polylines(showFrame, [val], True, (0, 255, 0), 12)
+
+        if activity[20] > self.threshold:
+            cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), 12)
+
+        cv2.putText(showFrame, "FPS={:.1f}".format(fps), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        cv2.imshow("Obstacles", showFrame)
+
 
