@@ -55,6 +55,9 @@ if args["display_flow"]:
 if args["display_dot"]:
     guiDot = Graphics.Dot()
 
+if args["display_neuron"]:
+    guiNeuron = Graphics.Neuron()
+
 if args["demo_nov"]:
     guiDemo = Graphics.Demo()
     guiDemo.mountWindowAt(0, 0)
@@ -127,14 +130,7 @@ while ret and key & 0xFF != ord('q'):
         guiDot.display(raw, label, normalizedDottedFlow, realtimeFPS)
 
     if args["display_neuron"]:
-        showFrame = raw.copy()
-        showFrame = cv2.resize(showFrame, (512, 512))
-        interval = 40
-        cv2.putText(showFrame, label[0:32], (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
-        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
-        for loc, val in enumerate(activity):
-            cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
-        cv2.imshow("Neuron", showFrame)
+        guiNeuron.display(raw, label, realtimeFPS, activity)
 
     if args["display_potential"]:
         potentials = potentials[-2000 * snn.getNumNeurons():]

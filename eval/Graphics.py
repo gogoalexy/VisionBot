@@ -99,4 +99,20 @@ class Dot():
         cv2.imshow("Dotted", showFrame)
 
 
+class Neuron():
+
+    def __init__(self):
+        None
+
+    def display(self, frame, label, fps, activity):
+        None
+        showFrame = frame.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
+        interval = 40
+        cv2.putText(showFrame, label[0:32], (15, 480), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, "FPS={:.1f}".format(fps), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        for loc, val in enumerate(activity):
+            cv2.line(showFrame, (25+(loc%8)*interval, 512-(62*(1+loc//8))), (25+(loc%8)*interval, 512-(62*(1+loc//8))-int(val)*20), color=(255, 255, 55), thickness=15)
+        cv2.imshow("Neuron", showFrame)
+
 
