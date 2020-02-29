@@ -52,6 +52,9 @@ snn = SNN(args["izhikevich"], args["num_threads"])
 if args["display_flow"]:
     guiFlow = Graphics.Flow()
 
+if args["display_dot"]:
+    guiDot = Graphics.Dot()
+
 if args["demo_nov"]:
     guiDemo = Graphics.Demo()
     guiDemo.mountWindowAt(0, 0)
@@ -118,17 +121,10 @@ while ret and key & 0xFF != ord('q'):
 
     
     if args["display_flow"]:
-        guiFlow.displayFlow(raw, meanFlattenFlow, realtimeFPS)
+        guiFlow.display(raw, meanFlattenFlow, realtimeFPS)
 
     if args["display_dot"]:
-        showFrame = raw.copy()
-        showFrame = cv2.resize(showFrame, (512, 512))
-        interval = 40
-        cv2.putText(showFrame, label[0:33], (15, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
-        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
-        for loc, val in enumerate(normalizedDottedFlow):
-            cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-int(val*2)), color=(255, 55, 255), thickness=20)
-        cv2.imshow("Dotted", showFrame)
+        guiDot.display(raw, label, normalizedDottedFlow, realtimeFPS)
 
     if args["display_neuron"]:
         showFrame = raw.copy()

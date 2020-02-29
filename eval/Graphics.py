@@ -72,7 +72,7 @@ class Flow():
     def __init__(self):
         None
 
-    def displayFlow(self, frame, flow, fps):
+    def display(self, frame, flow, fps):
         showFrame = frame.copy()
         showFrame = cv2.resize(showFrame, (512, 512))
         flow = flow.reshape(8, 8, 2)
@@ -82,5 +82,21 @@ class Flow():
                 cv2.line(showFrame, (x, y), (x+int(5*flow[y][x][0]), y+int(5*flow[y][x][1])), (255, 255, 255), 3)
         cv2.putText(showFrame, "FPS={:.1f}".format(fps), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Flow", showFrame)
+
+class Dot():
+
+    def __init__(self):
+        None
+
+    def display(self, frame, label, flow, fps):
+        showFrame = frame.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
+        interval = 40
+        cv2.putText(showFrame, label[0:33], (15, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255))
+        cv2.putText(showFrame, "FPS={:.1f}".format(fps), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        for loc, val in enumerate(flow):
+            cv2.line(showFrame, (25+loc*interval, 300), (25+loc*interval, 300-int(val*2)), color=(255, 55, 255), thickness=20)
+        cv2.imshow("Dotted", showFrame)
+
 
 
