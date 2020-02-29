@@ -48,10 +48,13 @@ prvs = algo.contrastEnhance(prvs)
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
 #led = Indicator.Indicator()
-gui = Graphics.Demo()
+
+if args["display_flow"]:
+    guiFlow = Graphics.Flow()
 
 if args["demo_nov"]:
-    gui.mountWindowAt(0, 0)
+    guiDemo = Graphics.Demo()
+    guiDemo.mountWindowAt(0, 0)
     showFrame = cv2.resize(cv2.cvtColor(prvs, cv2.COLOR_GRAY2BGR), (256, 256))
     #cv2.imshow("Preview", showFrame)
     #cv2.moveWindow("Preview", 1055, 35)
@@ -115,15 +118,7 @@ while ret and key & 0xFF != ord('q'):
 
     
     if args["display_flow"]:
-        showFrame = raw.copy()
-        showFrame = cv2.resize(showFrame, (512, 512))
-        flow = meanFlattenFlow.reshape(8, 8, 2)
-        flow = cv2.resize(flow, (512, 512), cv2.INTER_NEAREST)
-        for y in range(32, 512, 64):
-            for x in range(32, 512, 64):
-                cv2.line(showFrame, (x, y), (x+int(5*flow[y][x][0]), y+int(5*flow[y][x][1])), (255, 255, 255), 3)
-        cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
-        cv2.imshow("Flow", showFrame)
+        guiFlow.displayFlow(raw, meanFlattenFlow, realtimeFPS)
 
     if args["display_dot"]:
         showFrame = raw.copy()
@@ -223,7 +218,7 @@ while ret and key & 0xFF != ord('q'):
         cv2.imshow("Obstacles", showFrame)
 
     if args["demo_nov"] and counter % 3 == 0:
-        gui.displayConfig((1, 1), activity)
+        guiDemo.displayConfig((1, 1), activity)
         #showFrame = cv2.resize(cv2.cvtColor(curr, cv2.COLOR_GRAY2BGR), (256, 256))
         #cv2.putText(showFrame, "FPS={:.1f}".format(realtimeFPS), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         #cv2.imshow("Preview", showFrame)

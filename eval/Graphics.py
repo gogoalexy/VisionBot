@@ -65,4 +65,22 @@ class Demo():
                 cv2.fillConvexPoly(motion, self.arrows[index], self.obstacleColor)
 
         cv2.imshow("Motion", motion)
-        cv2.waitKey(10)
+
+
+class Flow():
+
+    def __init__(self):
+        None
+
+    def displayFlow(self, frame, flow, fps):
+        showFrame = frame.copy()
+        showFrame = cv2.resize(showFrame, (512, 512))
+        flow = flow.reshape(8, 8, 2)
+        flow = cv2.resize(flow, (512, 512), cv2.INTER_NEAREST)
+        for y in range(32, 512, 64):
+            for x in range(32, 512, 64):
+                cv2.line(showFrame, (x, y), (x+int(5*flow[y][x][0]), y+int(5*flow[y][x][1])), (255, 255, 255), 3)
+        cv2.putText(showFrame, "FPS={:.1f}".format(fps), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        cv2.imshow("Flow", showFrame)
+
+
