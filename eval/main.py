@@ -31,7 +31,7 @@ args = vars(ap.parse_args())
 
 # Order: ROTATECW, ZOOMIN, DOWN, RIGHT, ROTATECCW, ZOOMOUT, UP, LEFT, outer[UP, Rear, Left, Right], middle[UP, Rear, Left, Right], inner[UP, Rear, Left, Right], center, modeInh(not shown), obsInh(not shown)
 label =  "CW  FWD DWN RT CCW  BWD  UP  LFT oUP oLFT oRT oDWN mUP mLFT mRT mDWN iUP iLFT iRT iDWN C"
-frameHW = (640, 480)
+frameHW = (320, 240)
 frameRate = 32
 
 if args["input"]:
@@ -86,6 +86,10 @@ while ret and key & 0xFF != ord('q'):
     start = time.time()
 
     curr = algo.contrastEnhance(curr)
+
+    if args["picamera"] and np.array_equal(curr, prvs):
+        print("Identical frame skipped.({:d})".format(counter))
+        continue
     
     # calculate dense optical flow 
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
