@@ -5,6 +5,8 @@ from picamera import PiCamera
 from gpiozero import LED
 import cv2
 
+import ImageProcessing
+
 class PiVideoStreamMono:
     def __init__(self, resolution=(64, 64), framerate=32):
         self.camera = PiCamera()
@@ -13,9 +15,15 @@ class PiVideoStreamMono:
         self.rawCapture = PiRGBArray(self.camera, size=resolution)
         self.stream = self.camera.capture_continuous(self.rawCapture,
             format="bgr", use_video_port=True)
-        self.frame = None
+        self.rawframe = None
         self.monoFrame = None
         self.stopped = False
+        fwidth = resolution[0]
+        fheight = resolution[1]
+        self.preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
+        self.preprocessor.findSideToCrop()
+        self.preprocessor.findCropPoints()
+        self.sideLength = self.preprocessor.getSideLengthAfterCrop()
 
     def start(self):
         Thread(target=self.update, args=(), daemon=True).start()
@@ -23,8 +31,10 @@ class PiVideoStreamMono:
 
     def update(self):
         for f in self.stream:
-            self.frame = f.array
+            self.rawframe = f.array
             self.rawCapture.truncate(0)
+            self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
+            self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
             self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
 
             if self.stopped:
@@ -34,7 +44,7 @@ class PiVideoStreamMono:
                 return
 
     def read(self):
-        return True, self.frame, self.frame, self.monoFrame
+        return True, self.rawframe, self.frame, self.monoFrame
 
     def stop(self):
         self.stopped = True
