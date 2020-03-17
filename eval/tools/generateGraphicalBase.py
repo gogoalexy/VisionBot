@@ -1,10 +1,11 @@
 import numpy as np
 import cv2
 
-canvas = np.zeros((700, 1050, 3), dtype=np.uint8)
+canvas = np.zeros((700, 1400, 3), dtype=np.uint8)
 cv2.line(canvas, (350, 0), (350, 699), (255, 255, 255), thickness=3)
 cv2.line(canvas, (700, 0), (700, 699), (255, 255, 255), thickness=3)
-cv2.line(canvas, (0, 350), (1049, 350), (255, 255, 255), thickness=3)
+cv2.line(canvas, (1050, 0), (1050, 699), (255, 255, 255), thickness=3)
+cv2.line(canvas, (0, 350), (1399, 350), (255, 255, 255), thickness=3)
 
 inactiveColor = (80, 80, 80)
 activeColor = (255, 255, 255)
@@ -42,15 +43,17 @@ cv2.arrowedLine(canvas, (375, 525), (475, 525), inactiveColor, thickness=20)
 cv2.arrowedLine(canvas, (675, 525), (575, 525), inactiveColor, thickness=20)
 cv2.arrowedLine(canvas, (525, 375), (525, 475), inactiveColor, thickness=20)
 cv2.arrowedLine(canvas, (525, 675), (525, 575), inactiveColor, thickness=20)
+#CW
+cv2.circle(canvas, (1225, 175), 125, inactiveColor, thickness=20)
+cv2.drawMarker(canvas, (1100, 175), inactiveColor, markerType=cv2.MARKER_TRIANGLE_UP, markerSize=45, thickness=20)
+cv2.drawMarker(canvas, (1350, 175), inactiveColor, markerType=cv2.MARKER_TRIANGLE_DOWN, markerSize=45, thickness=20)
+#CCW
+cv2.circle(canvas, (1225, 525), 125, inactiveColor, thickness=20)
+cv2.drawMarker(canvas, (1100, 525), inactiveColor, markerType=cv2.MARKER_TRIANGLE_DOWN, markerSize=45, thickness=20)
+cv2.drawMarker(canvas, (1350, 525), inactiveColor, markerType=cv2.MARKER_TRIANGLE_UP, markerSize=45, thickness=20)
 
 cv2.imshow("Motion", canvas)
 cv2.waitKey(0)
 cv2.imwrite("MotionBackground.jpg", canvas)
-
-
-canvas = np.zeros((250, 250, 3), dtype=np.uint8)
-cv2.imshow("Obstacle", canvas)
-cv2.waitKey(0)
-cv2.imwrite("ObstacleBackground.jpg", canvas)
 
 cv2.destroyAllWindows()
