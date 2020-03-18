@@ -43,7 +43,8 @@ time.sleep(2.0)
 
 algo = Algorithm()
 [ret, raw, _, prvs] = vs.read()
-prvs = algo.contrastEnhance(prvs)
+#prvs = algo.contrastEnhance(prvs)
+prvs = prvs.copy()
 
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
@@ -85,8 +86,9 @@ key = cv2.waitKey(1)
 while ret and key & 0xFF != ord('q'):
     start = time.time()
 
-    curr = algo.contrastEnhance(curr)
-
+    #curr = algo.contrastEnhance(curr)
+    [ret, raw, _, curr] = vs.read()
+    
     if (not args["input"]) and np.array_equal(curr, prvs):
         print("Identical frame skipped.({:d})".format(counter))
         continue
@@ -98,13 +100,13 @@ while ret and key & 0xFF != ord('q'):
     # inner products of measured and template flows for motion compensation
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
     normalizedDottedFlow = [ dotted / 10.0 for dotted in dottedFlow ]
-    movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.25 + y*0.75, normalizedDottedFlow, prvsDottedFlow) )
+    movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.2 + y*0.8, normalizedDottedFlow, prvsDottedFlow) )
     
     # same as above, but are local for obstacle avoidance
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
-    #weightedAvoidCurrents = [ avoid * 0.23 for avoid in avoidCurrents ]
-    weightedAvoidCurrents = avoidCurrents
-    movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.5 + y*0.5, weightedAvoidCurrents, prvsAvoidCurrents) )
+    weightedAvoidCurrents = [ avoid * 3.0 for avoid in avoidCurrents ]
+    weightedAvoidCurrents = np.abs(avoidCurrents)
+    movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
     
     # generate neuron input currents
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
@@ -165,7 +167,7 @@ while ret and key & 0xFF != ord('q'):
         #time.sleep(remaining)
 
     key = cv2.waitKey(1)
-    [ret, raw, _, curr] = vs.read()
+    #[ret, raw, _, curr] = vs.read()
 
 #led.turnOffAll()
 fps.stop()
