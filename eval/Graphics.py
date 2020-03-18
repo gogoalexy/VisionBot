@@ -134,7 +134,8 @@ class Potential():
 
 class Obstacle():
 
-    def __init__(self, threshold):
+    def __init__(self, threshold, saver=None):
+        self.saver = saver
         self.trapezoids = []
         outUp = np.array([[2, 0], [511, 0], [446, 62], [64, 62]], np.int)
         outUp = outUp.reshape((-1, 1, 2))
@@ -194,7 +195,9 @@ class Obstacle():
         if activity[20] > self.threshold:
             cv2.rectangle(showFrame, (192, 192), (318, 318), (0, 255, 0), 12)
 
-        cv2.putText(showFrame, "FPS={:.1f}".format(fps), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
+        if self.saver is not None:
+            self.saver.write(showFrame)
+        else:
+            cv2.putText(showFrame, "FPS={:.1f}".format(fps), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 5))
         cv2.imshow("Obstacles", showFrame)
-
 

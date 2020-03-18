@@ -25,6 +25,7 @@ ap.add_argument("-dd", "--display-dot", help="Whether or not dotted results shou
 ap.add_argument("-df", "--display-flow", help="Whether or not flow frames should be displayed", action="store_true")
 ap.add_argument("-demo", "--demo-nov", help="Whether to get into graphical demo mode", action="store_true")
 ap.add_argument("-i", "--input", type=str, help="Input video file instead of live stream.")
+ap.add_argument("-o", "--output", type=str, help="Output processed video file for obstacle detection.")
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
@@ -39,12 +40,17 @@ if args["input"]:
 else:
     vs = VideoStreamMono(usePiCamera=args["picamera"], resolution=frameHW, framerate=frameRate).start()
 
+if args["output"]:
+    fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+    saver = cv2.VideoWriter(args["output"] + '.avi', fourcc, 30, (512, 512))
+else:
+    saver = None
+    
 time.sleep(2.0)
 
 algo = Algorithm()
 [ret, raw, _, prvs] = vs.read()
 #prvs = algo.contrastEnhance(prvs)
-prvs = prvs.copy()
 
 AllFlattenTemplates = motionFieldTemplate.readAllFlattenTemplate()
 snn = SNN(args["izhikevich"], args["num_threads"])
@@ -64,7 +70,7 @@ if args["display_potential"]:
     guiPotential = Graphics.Potential(snn.getNumNeurons())
 
 if args["display_obstacle"]:
-    guiObstacle = Graphics.Obstacle(threshold = 5)
+    guiObstacle = Graphics.Obstacle(threshold = 5, saver=saver)
 
 if args["demo_nov"]:
     guiDemo = Graphics.Demo()
@@ -167,7 +173,6 @@ while ret and key & 0xFF != ord('q'):
         #time.sleep(remaining)
 
     key = cv2.waitKey(1)
-    #[ret, raw, _, curr] = vs.read()
 
 #led.turnOffAll()
 fps.stop()
@@ -175,4 +180,5 @@ print("Elasped time: {:.3f} s".format(fps.elapsed()))
 print("Approx. average FPS: {:.3f}".format(fps.fps()))
 
 cv2.destroyAllWindows()
+saver.release()
 vs.stop()
