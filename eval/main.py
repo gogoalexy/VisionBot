@@ -27,6 +27,7 @@ ap.add_argument("-demo", "--demo-nov", help="Whether to get into graphical demo 
 ap.add_argument("-i", "--input", type=str, help="Input video file instead of live stream.")
 ap.add_argument("-o", "--output", type=str, help="Output processed video file for obstacle detection.")
 ap.add_argument("-p", "--picamera", help="Whether or not the Raspberry Pi camera should be used", action="store_true")
+ap.add_argument("--port", type=int, default=0, help="Receive video stream from a UDP port")
 ap.add_argument("-iz", "--izhikevich", help="Use Izhikevich neuron model instead of IQIF", action="store_true")
 args = vars(ap.parse_args())
 
@@ -37,6 +38,8 @@ frameRate = 32
 
 if args["input"]:
     vs = VideoStreamMono(src=args["input"], usePiCamera=False, resolution=frameHW, framerate=frameRate).start()
+elif args["port"] != 0:
+    vs = VideoStreamMono(usePiCamera=False, rtsp_port=args["port"], resolution=frameHW, framerate=frameRate).start()
 else:
     vs = VideoStreamMono(usePiCamera=args["picamera"], resolution=frameHW, framerate=frameRate).start()
 
