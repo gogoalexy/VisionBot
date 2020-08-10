@@ -2,6 +2,9 @@ from threading import Thread
 
 import cv2
 import platform
+import gi
+gi.require_version('Gst', '1.0')
+from gi.repository import Gst
 
 import ImageProcessing
 
@@ -14,9 +17,6 @@ class VideoStreamMono:
         elif src != 0:
             self.stream = FileVideoStreamCroppedMono(src = src)
         elif rtsp_port != 0:
-            import gi
-            gi.require_version('Gst', '1.0')
-            from gi.repository import Gst
             self.stream = UDPStreamCroppedMono(port = rtsp_port)
         else:
             if platform.system() == "Linux":
@@ -78,7 +78,7 @@ class WebcamVideoStreamCroppedMono:
 
     def stop(self):
         self.stopped = True
-    
+
     def getSideLength(self):
         return self.sideLength
 
@@ -117,7 +117,7 @@ class FileVideoStreamCroppedMono:
 
     def getSideLength(self):
         return self.sideLength
-        
+
 class UDPStreamCroppedMono:
 
     def __init__(self, port = 0):
@@ -129,14 +129,14 @@ class UDPStreamCroppedMono:
         self.video_sink_conf = '! appsink emit-signals=true sync=false max-buffers=2 drop=true'
         self.video_pipe = None
         self.video_sink = None
-        
+
         self.rawframe = None
         self.frame = None
         self.monoFrame = None
         self.stopped = False
-        fwidth = None
-        fheight = None
-        
+        self.fwidth = None
+        self.fheight = None
+
     def start_gst(self, config=None):
         if not config:
             config = \
@@ -178,7 +178,7 @@ class UDPStreamCroppedMono:
         sample = sink.emit('pull-sample')
         self.rawframe = self.gst_to_opencv(sample)
         return Gst.FlowReturn.OK
-        
+
     def start(self):
         self.start_gst(
             [
@@ -191,7 +191,7 @@ class UDPStreamCroppedMono:
         return self
 
     def read(self):
-        if not frame_available:
+        if not self.frame_available():
             return False, None, None, None
         self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
         self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)

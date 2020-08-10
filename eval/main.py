@@ -48,7 +48,7 @@ if args["output"]:
     saver = cv2.VideoWriter(args["output"] + '.avi', fourcc, 30, (512, 512))
 else:
     saver = None
-    
+
 time.sleep(2.0)
 
 algo = Algorithm()
@@ -97,29 +97,29 @@ while ret and key & 0xFF != ord('q'):
 
     #curr = algo.contrastEnhance(curr)
     [ret, raw, _, curr] = vs.read()
-    
+
     if (not args["input"]) and np.array_equal(curr, prvs):
         print("Identical frame skipped.({:d})".format(counter))
         continue
-    
-    # calculate dense optical flow 
+
+    # calculate dense optical flow
     FlattenFlow = algo.calculateOpticalFlow(prvs, curr).flatten()
     meanFlattenFlow = motionFieldTemplate.meanOpticalFlow(FlattenFlow).flatten()
-    
+
     # inner products of measured and template flows for motion compensation
     dottedFlow = motionFieldTemplate.dotWithTemplatesOpt(meanFlattenFlow, AllFlattenTemplates)
     normalizedDottedFlow = [ dotted / 10.0 for dotted in dottedFlow ]
     movingAvgNormalizedDottedFlow = list( map(lambda x, y: x*0.2 + y*0.8, normalizedDottedFlow, prvsDottedFlow) )
-    
+
     # same as above, but are local for obstacle avoidance
     avoidCurrents = motionFieldTemplate.obstacleAvoidanceCurrent(meanFlattenFlow, AllFlattenTemplates)
     weightedAvoidCurrents = [ avoid * 3.0 for avoid in avoidCurrents ]
     weightedAvoidCurrents = np.abs(avoidCurrents)
     movingAvgWeightedAvoidCurrents = list( map(lambda x, y: x*0.2 + y*0.8, weightedAvoidCurrents, prvsAvoidCurrents) )
-    
+
     # generate neuron input currents
     neuronCurrents = list( map(int, movingAvgNormalizedDottedFlow + movingAvgWeightedAvoidCurrents) )
-    
+
     # IQIF simulation
     snn.stimulateInOrder(neuronCurrents)
     #snn.run(args["steps"])
@@ -130,7 +130,7 @@ while ret and key & 0xFF != ord('q'):
     #activity = list( map(lambda x, y: x*0.25 + y*0.75, snn.getFirstNActivityInOrder(21), prvsActivity) )
     activity = snn.getFirstNActivityInOrder(21)
 
-    
+
     if args["display_flow"]:
         guiFlow.display(raw, meanFlattenFlow, realtimeFPS)
 
@@ -183,5 +183,6 @@ print("Elasped time: {:.3f} s".format(fps.elapsed()))
 print("Approx. average FPS: {:.3f}".format(fps.fps()))
 
 cv2.destroyAllWindows()
-saver.release()
+if saver != None:
+    saver.release()
 vs.stop()
