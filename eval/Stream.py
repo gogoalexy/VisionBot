@@ -5,6 +5,7 @@ import platform
 import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
+import numpy as np
 
 import ImageProcessing
 
@@ -151,14 +152,14 @@ class UDPStreamCroppedMono:
         self.video_pipe.set_state(Gst.State.PLAYING)
         self.video_sink = self.video_pipe.get_by_name('appsink0')
 
-    @staticmethod
-    def gst_to_opencv(sample):
+    #@staticmethod
+    def gst_to_opencv(self, sample):
         buf = sample.get_buffer()
         if self.fwidth == None or self.fheight == None:
             caps = sample.get_caps()
             self.fheight = caps.get_structure(0).get_value('height')
             self.fwidth = caps.get_structure(0).get_value('width')
-            self.preprocessor = ImageProcessing.VideoPreprocessor(fheight, fwidth)
+            self.preprocessor = ImageProcessing.VideoPreprocessor(self.fheight, self.fwidth)
             self.preprocessor.findSideToCrop()
             self.preprocessor.findCropPoints()
             self.sideLength = self.preprocessor.getSideLengthAfterCrop()
@@ -191,9 +192,10 @@ class UDPStreamCroppedMono:
         return self
 
     def read(self):
-        if not self.frame_available():
-            return False, None, None, None
+        while not self.frame_available():
+            continue
         self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
+        print(self.rawframe)
         self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
         self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         return True, self.rawframe, self.frame, self.monoFrame
