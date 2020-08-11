@@ -70,8 +70,8 @@ class WebcamVideoStreamCroppedMono:
                 self.stop()
                 return
 
-            self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
-            self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
+            tempframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
+            self.frame = cv2.resize(tempframe, (64, 64), cv2.INTER_AREA)
             self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
 
     def read(self):
@@ -108,8 +108,8 @@ class FileVideoStreamCroppedMono:
         (self.grabbed, self.rawframe) = self.stream.read()
         if not self.grabbed:
             return False, None, None, None
-        self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
-        self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
+        tempframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
+        self.frame = cv2.resize(tempframe, (64, 64), cv2.INTER_AREA)
         self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         return True, self.rawframe, self.frame, self.monoFrame
 
@@ -189,14 +189,15 @@ class UDPStreamCroppedMono:
                 self.video_sink_conf
             ])
         self.video_sink.connect('new-sample', self.callback)
+        while not self.frame_available():
+            continue
         return self
 
     def read(self):
-        while not self.frame_available():
-            continue
-        self.rawframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
-        print(self.rawframe)
-        self.frame = cv2.resize(self.rawframe, (64, 64), cv2.INTER_AREA)
+        #while not self.frame_available():
+        #    continue
+        tempframe = self.preprocessor.cropFrameIntoSquare(self.rawframe)
+        self.frame = cv2.resize(tempframe, (64, 64), cv2.INTER_AREA)
         self.monoFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         return True, self.rawframe, self.frame, self.monoFrame
 
